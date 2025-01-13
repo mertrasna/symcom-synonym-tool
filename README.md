@@ -1,6 +1,6 @@
 # Introduction
 This repo contains parts and extracts of the Symcom Program, which is a web based application for Homeopathy doctors and scholars to carry research based work on Homeopathy sources, symptoms and medicines.
-In order to get the program running, the repo along with database will be provided. 
+In order to get the program running, the repo along with database is needed. 
 
 # Local Setup Guidelines
 #### Download XAMPP 7.1.33: 
