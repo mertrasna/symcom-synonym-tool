@@ -1,0 +1,30 @@
+.text-frame {
+	display: inline-block;
+	border: 1px solid #2276d2;
+	border-radius: 5px;
+	padding: 2px 5px;
+	margin: 0 2px;
+	color: #2276d2;
+}
+
+ss, .text-sperrschrift {
+	letter-spacing: 0.3em;
+}
+
+.text-gross {
+    text-transform: uppercase;
+}
+
+.text-red {
+	color: #f00;
+}
+
+.image-left {
+	float: left;
+	margin: 0 10px 10px 0;
+}
+
+.image-right {
+	float: right;
+	margin: 0 0 10px 10px;
+}

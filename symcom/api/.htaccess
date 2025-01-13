@@ -1,0 +1,8 @@
+<FilesMatch "\.(htaccess|htpasswd|ini|psd|log|sh|env|env.example)$">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
+<FilesMatch artisan|composer\.json|composer\.lock|phpunit\.xml|readme\.md>
+    Order allow,deny
+    Deny from all
+</FilesMatch>

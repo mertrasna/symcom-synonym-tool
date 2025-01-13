@@ -1,0 +1,42 @@
+{
+    "sEmptyTable":      "There is no data in the table",
+    "sInfo":            "_START_ to _END_ of _TOTAL_ entries",
+    "sInfoEmpty":       "No data available",
+    "sInfoFiltered":    "(filtered from _MAX_ entries)",
+    "sInfoPostFix":     "",
+    "sInfoThousands":   ".",
+    "sLengthMenu":      "_MENU_ show entries",
+    "sLoadingRecords":  "Loading ..",
+    "sProcessing":      "Please wait ..",
+    "sSearch":          "Search",
+    "sZeroRecords":     "No entries available",
+    "oPaginate": {
+        "sFirst":       "First",
+        "sPrevious":    "Return",
+        "sNext":        "Next",
+        "sLast":        "Last"
+    },
+    "oAria": {
+        "sSortAscending":  ": activate to sort column in ascending order",
+        "sSortDescending": ": enable to sort column in descending order"
+    },
+    "select": {
+        "rows": {
+            "_": "%d Rows selected",
+            "0": "",
+            "1": "1 Row selected"
+        }
+    },
+    "buttons": {
+        "print":    "Press",
+        "colvis":   "Columns",
+        "copy":     "Copy",
+        "copyTitle":    "Copy to clipboard",
+        "copyKeys": "Button <i>ctrl</i> or <i>\u2318</i> + <i>C</i> around table<br>copy to clipboard.<br><br>To cancel, click on the message or press Escape.",
+        "copySuccess": {
+            "_": "%d Columns copied",
+            "1": "1 Column copied"
+        }
+    }
+}
+

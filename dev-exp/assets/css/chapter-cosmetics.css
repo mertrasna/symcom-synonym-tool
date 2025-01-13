@@ -1,0 +1,154 @@
+.content-header>.breadcrumb{
+    top:50px
+}
+.suggestion-container-scroll{
+    overflow-y: scroll;
+    overflow-x: hidden;
+    height: 200px;
+}
+.h4-without-top-margin {
+    margin-top: 0px;
+}
+.comparison-navigation-ul li {
+    display: inline-block;
+    margin-bottom: 10px;
+}
+.ui-dialog{
+    width: auto !important;
+    height: auto !important;
+}
+.ui-dialog-titlebar{
+    background-color: #1E90FF !important;
+}
+#loaderCEOverlay{
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 10;
+}
+.chapter-head-style{
+    text-align: center;
+}
+.arrowPage{
+    padding-top: 15px;
+    transform: scale(1.3,1);
+}
+#symptomNoSmallInput{
+    width: 30px;
+}
+#symptomNoSmallInputSection{
+    padding-left: 15px;
+    padding-top: 5px;
+}
+.chapter-assign-head{
+    padding-top: 20px;
+}
+.chapter-assign-head .panel{
+    border-radius: 0px;
+}
+.chapterWeightRow{
+    padding-left: 20px;
+}
+.chapter-button-group{
+    text-align: center;
+    padding-left: 70px;
+}
+.chapterAssignedRow{
+    padding-top: 50px;
+}
+.auto_chapter_table tbody tr td{
+    padding-left: 20px;
+}
+.pointerCursorStyle{
+    cursor: pointer;
+}
+
+.floatRightCssClass{
+    float: right;
+}
+.dropMenuWidth{
+    min-width: -webkit-fill-available;
+}
+.floatRightEdit{
+    float: right;
+    cursor: pointer;
+}
+.chapterHeadColor{
+    background-color: #f1f3ee;
+}
+
+.auto_chapter_table {
+    overflow: scroll;
+}
+
+.symptomWidthControl{
+    max-width:250px;
+}
+.nsActiveColor{
+    background-color: #ff00001a;
+}
+
+.alreadyAssignedSymptomsColor{
+    background-color: lemonchiffon;
+}
+.boldFontChapterNavbar{
+    font-weight: bold;
+}
+.weightHeadCol{
+    min-width: 150px;
+}
+#assignedTableHead{
+    text-align: center
+}
+.symptomStringAdjust{
+    padding-left: 12px;
+}
+.earlierChapterColor{
+    background-color: #f5f51d;
+}
+.earlierChapterInfo{
+    background-color: #f51df345;
+}
+.symptomTextToAssign{
+    font-size: large;
+}
+.modeChange{
+    font-size: large;
+}
+.connected-symptom{
+    padding-left: inherit;
+}
+.nonSecureMessage{
+    padding-left: 30px;
+    color: #721515;
+}
+
+.fa-sort{
+    padding-right:6px;
+}
+
+.highlight-new{
+    background-color: #4f8f0e99;
+}
+
+.highlight-old{
+    background-color: #68bb152e;
+}
+
+.item_focus{
+    background-color: #d1dfe9;
+}
+#sortable{
+    cursor: pointer;
+}
+.nonSecureActiveColor{
+    background-color: #f7a12b;
+    border-color: #f7a12b;
+}
+.unassignedNsColor{
+    color:red;
+}

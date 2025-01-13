@@ -1,0 +1,47 @@
+.toggleInitial{
+    color: orange !important;
+}
+.disconnect{
+    color: orange !important;
+}
+.comparativesConnectedCD .comparing {
+    background-color: #fdd2a7;
+}
+.comparativesConnectedCE .comparing {
+    background-color: #fdd2a7;
+}
+.heading .is-excluded{
+    width: 7%;
+    text-align: left;
+    overflow-wrap: normal
+}
+.heading .include-it{
+    width: 5%;
+    text-align: left;
+    overflow-wrap: normal
+}
+.initial .is-excluded{
+    width: 7%;
+    text-align: left;
+}
+.initial .include-it{
+    width: 5%;
+    text-align: left;
+}
+.source-code{
+    padding-left: 30px;
+}
+.comparing .is-excluded {
+    width: 7%;
+    text-align: left;
+}
+.comparing .include-it {
+    width: 5%;
+    text-align: left;
+}
+.comparing .info{
+    width: 10%;
+}
+.comparativesConnectedCD .comparing, .comparativesConnectedCE .comparing, .comparativesConnectedPASTE .comparing, .comparativesConnectedPE .comparing{
+    padding-left: 0%;
+}

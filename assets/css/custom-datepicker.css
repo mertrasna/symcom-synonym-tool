@@ -1,0 +1,19 @@
+.ui-datepicker-calendar {
+   display: none;
+}
+.ui-datepicker-month {
+   display: none;
+}
+.ui-datepicker-prev{
+   display: none;
+}
+.ui-datepicker-next{
+   display: none;
+}
+.ui-datepicker .ui-datepicker-buttonpane button {
+	width: 100%;
+	float: none;
+}
+.ui-datepicker .ui-datepicker-buttonpane button.ui-datepicker-current {
+	display: none;
+}
