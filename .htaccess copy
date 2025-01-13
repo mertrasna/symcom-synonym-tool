@@ -1,0 +1,31 @@
+#Options +Multiviews
+RewriteEngine On
+#RewriteBase /
+RewriteCond %{REQUEST_FILENAME}\.php -f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+RewriteRule !.*\.php$ %{REQUEST_FILENAME}.php [QSA,L]
+#RewriteRule ^(.*)$ $1.php [NC,L]
+#RewriteRule . /login.php [L]
+RewriteRule ˆlogin$ login.php$1 [L]
+
+#ErrorDocument 404 /mukesh/symcom/error
+#ErrorDocument 500 /mukesh/symcom/connection-failure
+#ErrorDocument 403 /404.html
+#ErrorDocument 400 /404.html
+#ErrorDocument 401 /mukesh/symcom/unauthorised
+
+#<filesMatch ".(css|jpg|jpeg|png|gif|js|ico)$">
+#Header set Cache-Control "max-age=2592000, public"
+#</filesMatch>
+
+Options -Indexes
+
+
+# Add www to any URLs that do not have them:
+#RewriteEngine on
+# RewriteCond %{HTTP_HOST} !^www\.
+# RewriteRule ^(.*)$ http://www.%{HTTP_HOST}/$1 [R=301,L]
+
+# RewriteCond %{REQUEST_FILENAME} !-f
+

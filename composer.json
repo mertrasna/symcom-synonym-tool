@@ -1,0 +1,6 @@
+{
+    "require": {
+        "phpoffice/phpword": "^0.18.3",
+        "sentry/sentry": "^1.0"
+    }
+}

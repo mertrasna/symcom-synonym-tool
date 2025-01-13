@@ -1,0 +1,18 @@
+version: 0.0
+os: linux
+files:
+  - source: /
+    destination: /var/www/html/devreper01
+hooks:
+  ApplicationStop:
+    - location: scripts/ApplicationStop.sh
+      timeout: 900
+      runas: ubuntu
+  BeforeInstall:
+    - location: scripts/BeforeInstall.sh
+      timeout: 900
+      runas: ubuntu
+  ApplicationStart:
+    - location: scripts/ApplicationStart.sh
+      timeout: 900
+      runas: ubuntu
