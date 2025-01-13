@@ -1,12 +1,12 @@
 # Developer Guidelines for implementation of Synonym Classification Tool
 ### File Structure
-Inside the project root directory, the folder `synonym-tool` will be responsible for Synonym Classification tool. Any new scripts, functions, dependencies should be installed in this directory. 
+Inside the project root directory, the folder `synonym-tool` will be responsible for Synonym Classification tool. Any new scripts, functions, dependencies should be done in this directory. 
 In case of addition of new codes in the root directory, do let us know. 
 
 Currently the `synonym-tool` folder has `all-symptoms.php` script which is redirected in the browser when a source is clicked from the "Materia Medica" webpage. 
 
 The source ID is sent as a GET parameter along with the URL and this ID is used for symptoms retrieval in the `all-symptoms.php` page. 
-**This script is just an example on how the code works insdide this folder.**
+**This script is just an example on how the code works inside this folder.**
 
 ### Database Help
 The provided database needs to be imported.
