@@ -11,14 +11,9 @@ class ComposerStaticInitf73c47c96851f5210d4d2bc9b958aa85
     );
 
     public static $prefixLengthsPsr4 = array (
-        'T' => 
-        array (
-            'Tests\\PhpOffice\\Math\\' => 21,
-        ),
         'P' => 
         array (
             'PhpOffice\\PhpWord\\' => 18,
-            'PhpOffice\\Math\\' => 15,
         ),
         'L' => 
         array (
@@ -28,17 +23,9 @@ class ComposerStaticInitf73c47c96851f5210d4d2bc9b958aa85
     );
 
     public static $prefixDirsPsr4 = array (
-        'Tests\\PhpOffice\\Math\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/phpoffice/math/tests/Math',
-        ),
         'PhpOffice\\PhpWord\\' => 
         array (
             0 => __DIR__ . '/..' . '/phpoffice/phpword/src/PhpWord',
-        ),
-        'PhpOffice\\Math\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/phpoffice/math/src/Math',
         ),
         'Laminas\\ZendFrameworkBridge\\' => 
         array (

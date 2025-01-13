@@ -11,23 +11,23 @@
  * contributors, visit https://github.com/PHPOffice/PHPWord/contributors.
  *
  * @see         https://github.com/PHPOffice/PHPWord
- *
+ * @copyright   2010-2018 PHPWord contributors
  * @license     http://www.gnu.org/licenses/lgpl.txt LGPL version 3
  */
 
 namespace PhpOffice\PhpWord\Writer\HTML\Element;
 
-use PhpOffice\PhpWord\Writer\HTML;
+use PhpOffice\PhpWord\Settings;
 
 /**
- * TextRun element HTML writer.
+ * TextRun element HTML writer
  *
  * @since 0.10.0
  */
 class Title extends AbstractElement
 {
     /**
-     * Write heading.
+     * Write heading
      *
      * @return string
      */
@@ -41,8 +41,10 @@ class Title extends AbstractElement
 
         $text = $this->element->getText();
         if (is_string($text)) {
-            $text = $this->parentWriter->escapeHTML($text);
-        } else {
+            if (Settings::isOutputEscapingEnabled()) {
+                $text = $this->escaper->escapeHtml($text);
+            }
+        } elseif ($text instanceof \PhpOffice\PhpWord\Element\AbstractContainer) {
             $writer = new Container($this->parentWriter, $text);
             $text = $writer->write();
         }

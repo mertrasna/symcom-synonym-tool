@@ -11,7 +11,7 @@
  * contributors, visit https://github.com/PHPOffice/PHPWord/contributors.
  *
  * @see         https://github.com/PHPOffice/PhpWord
- *
+ * @copyright   2010-2018 PHPWord contributors
  * @license     http://www.gnu.org/licenses/lgpl.txt LGPL version 3
  */
 
@@ -20,30 +20,33 @@ namespace PhpOffice\PhpWord\Writer;
 use PhpOffice\PhpWord\Exception\Exception;
 use PhpOffice\PhpWord\PhpWord;
 use PhpOffice\PhpWord\Settings;
-use PhpOffice\PhpWord\Writer\PDF\AbstractRenderer;
 
 /**
- * PDF Writer.
+ * PDF Writer
  *
  * @since 0.10.0
  */
 class PDF
 {
     /**
-     * The wrapper for the requested PDF rendering engine.
+     * The wrapper for the requested PDF rendering engine
      *
      * @var \PhpOffice\PhpWord\Writer\PDF\AbstractRenderer
      */
-    private $renderer;
+    private $renderer = null;
 
     /**
-     * Instantiate a new renderer of the configured type within this container class.
+     * Instantiate a new renderer of the configured type within this container class
+     *
+     * @param \PhpOffice\PhpWord\PhpWord $phpWord
+     *
+     * @throws \PhpOffice\PhpWord\Exception\Exception
      */
     public function __construct(PhpWord $phpWord)
     {
         $pdfLibraryName = Settings::getPdfRendererName();
         $pdfLibraryPath = Settings::getPdfRendererPath();
-        if (null === $pdfLibraryName || null === $pdfLibraryPath) {
+        if (is_null($pdfLibraryName) || is_null($pdfLibraryPath)) {
             throw new Exception('PDF rendering library or library path has not been defined.');
         }
 
@@ -53,7 +56,7 @@ class PDF
             set_include_path(get_include_path() . PATH_SEPARATOR . $pdfLibraryPath);
         }
 
-        $rendererName = static::class . '\\' . $pdfLibraryName;
+        $rendererName = get_class($this) . '\\' . $pdfLibraryName;
         $this->renderer = new $rendererName($phpWord);
     }
 
@@ -62,7 +65,6 @@ class PDF
      *
      * @param string $name Renderer library method name
      * @param mixed[] $arguments Array of arguments to pass to the renderer method
-     *
      * @return mixed Returned data from the PDF renderer wrapper method
      */
     public function __call($name, $arguments)
@@ -72,16 +74,6 @@ class PDF
         //     throw new Exception("PDF Rendering library has not been defined.");
         // }
 
-        return call_user_func_array([$this->getRenderer(), $name], $arguments);
-    }
-
-    public function save(string $filename): void
-    {
-        $this->getRenderer()->save($filename);
-    }
-
-    public function getRenderer(): AbstractRenderer
-    {
-        return $this->renderer;
+        return call_user_func_array(array($this->renderer, $name), $arguments);
     }
 }

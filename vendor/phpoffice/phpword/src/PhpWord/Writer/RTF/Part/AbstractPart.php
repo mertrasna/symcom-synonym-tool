@@ -11,7 +11,7 @@
  * contributors, visit https://github.com/PHPOffice/PHPWord/contributors.
  *
  * @see         https://github.com/PHPOffice/PHPWord
- *
+ * @copyright   2010-2018 PHPWord contributors
  * @license     http://www.gnu.org/licenses/lgpl.txt LGPL version 3
  */
 
@@ -27,7 +27,7 @@ use PhpOffice\PhpWord\Writer\AbstractWriter;
 abstract class AbstractPart
 {
     /**
-     * @var \PhpOffice\PhpWord\Writer\RTF
+     * @var \PhpOffice\PhpWord\Writer\AbstractWriter
      */
     private $parentWriter;
 
@@ -47,22 +47,22 @@ abstract class AbstractPart
     abstract public function write();
 
     /**
-     * @param \PhpOffice\PhpWord\Writer\RTF $writer
+     * @param \PhpOffice\PhpWord\Writer\AbstractWriter $writer
      */
-    public function setParentWriter(?AbstractWriter $writer = null): void
+    public function setParentWriter(AbstractWriter $writer = null)
     {
         $this->parentWriter = $writer;
     }
 
     /**
-     * @return \PhpOffice\PhpWord\Writer\RTF
+     * @throws \PhpOffice\PhpWord\Exception\Exception
+     * @return \PhpOffice\PhpWord\Writer\AbstractWriter
      */
     public function getParentWriter()
     {
         if ($this->parentWriter !== null) {
             return $this->parentWriter;
         }
-
         throw new Exception('No parent WriterInterface assigned.');
     }
 }

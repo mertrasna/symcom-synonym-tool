@@ -11,47 +11,44 @@
  * contributors, visit https://github.com/PHPOffice/PHPWord/contributors.
  *
  * @see         https://github.com/PHPOffice/PHPWord
- *
+ * @copyright   2010-2018 PHPWord contributors
  * @license     http://www.gnu.org/licenses/lgpl.txt LGPL version 3
  */
 
 namespace PhpOffice\PhpWord\Writer\HTML\Style;
 
-use PhpOffice\PhpWord\Style\AbstractStyle as StyleAbstract;
-use PhpOffice\PhpWord\Writer\HTML;
+use PhpOffice\PhpWord\Style\AbstractStyle as Style;
 
 /**
- * Style writer.
+ * Style writer
  *
  * @since 0.10.0
  */
 abstract class AbstractStyle
 {
     /**
-     * Parent writer.
+     * Parent writer
      *
-     * @var HTML
+     * @var \PhpOffice\PhpWord\Writer\AbstractWriter
      */
     private $parentWriter;
 
     /**
-     * Style.
+     * Style
      *
-     * @var null|array|StyleAbstract
+     * @var array|\PhpOffice\PhpWord\Style\AbstractStyle
      */
     private $style;
 
     /**
-     * Write style.
-     *
-     * @return mixed
+     * Write style
      */
     abstract public function write();
 
     /**
-     * Create new instance.
+     * Create new instance
      *
-     * @param array|StyleAbstract $style
+     * @param array|\PhpOffice\PhpWord\Style\AbstractStyle $style
      */
     public function __construct($style = null)
     {
@@ -61,17 +58,17 @@ abstract class AbstractStyle
     /**
      * Set parent writer.
      *
-     * @param HTML $writer
+     * @param \PhpOffice\PhpWord\Writer\AbstractWriter $writer
      */
-    public function setParentWriter($writer): void
+    public function setParentWriter($writer)
     {
         $this->parentWriter = $writer;
     }
 
     /**
-     * Get parent writer.
+     * Get parent writer
      *
-     * @return HTML
+     * @return \PhpOffice\PhpWord\Writer\AbstractWriter
      */
     public function getParentWriter()
     {
@@ -79,13 +76,13 @@ abstract class AbstractStyle
     }
 
     /**
-     * Get style.
+     * Get style
      *
-     * @return null|array|string|StyleAbstract
+     * @return array|\PhpOffice\PhpWord\Style\AbstractStyle $style
      */
     public function getStyle()
     {
-        if (!$this->style instanceof StyleAbstract && !is_array($this->style)) {
+        if (!$this->style instanceof Style && !is_array($this->style)) {
             return '';
         }
 
@@ -93,15 +90,14 @@ abstract class AbstractStyle
     }
 
     /**
-     * Takes array where of CSS properties / values and converts to CSS string.
+     * Takes array where of CSS properties / values and converts to CSS string
      *
      * @param array $css
-     *
      * @return string
      */
     protected function assembleCss($css)
     {
-        $pairs = [];
+        $pairs = array();
         $string = '';
         foreach ($css as $key => $value) {
             if ($value != '') {
@@ -118,9 +114,8 @@ abstract class AbstractStyle
     /**
      * Get value if ...
      *
-     * @param null|bool $condition
+     * @param bool|null $condition
      * @param string $value
-     *
      * @return string
      */
     protected function getValueIf($condition, $value)

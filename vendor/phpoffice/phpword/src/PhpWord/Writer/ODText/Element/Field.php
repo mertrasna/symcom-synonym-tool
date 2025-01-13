@@ -11,11 +11,11 @@
  * contributors, visit https://github.com/PHPOffice/PHPWord/contributors.
  *
  * @see         https://github.com/PHPOffice/PHPWord
- *
+ * @copyright   2010-2018 PHPWord contributors
  * @license     http://www.gnu.org/licenses/lgpl.txt LGPL version 3
  */
 // Not fully implemented
-//     - supports only PAGE, NUMPAGES, DATE and FILENAME
+//     - supports only PAGE and NUMPAGES
 //     - supports only default formats and options
 //     - supports style only if specified by name
 //     - spaces before and after field may be dropped
@@ -23,7 +23,7 @@
 namespace PhpOffice\PhpWord\Writer\ODText\Element;
 
 /**
- * Field element writer.
+ * Field element writer
  *
  * @since 0.11.0
  */
@@ -32,7 +32,7 @@ class Field extends Text
     /**
      * Write field element.
      */
-    public function write(): void
+    public function write()
     {
         $element = $this->getElement();
         if (!$element instanceof \PhpOffice\PhpWord\Element\Field) {
@@ -44,14 +44,12 @@ class Field extends Text
             case 'date':
             case 'page':
             case 'numpages':
-            case 'filename':
                 $this->writeDefault($element, $type);
-
                 break;
         }
     }
 
-    private function writeDefault(\PhpOffice\PhpWord\Element\Field $element, $type): void
+    private function writeDefault(\PhpOffice\PhpWord\Element\Field $element, $type)
     {
         $xmlWriter = $this->getXmlWriter();
 
@@ -67,30 +65,15 @@ class Field extends Text
                 $xmlWriter->startElement('text:date');
                 $xmlWriter->writeAttribute('text:fixed', 'false');
                 $xmlWriter->endElement();
-
                 break;
             case 'page':
                 $xmlWriter->startElement('text:page-number');
                 $xmlWriter->writeAttribute('text:fixed', 'false');
                 $xmlWriter->endElement();
-
                 break;
             case 'numpages':
                 $xmlWriter->startElement('text:page-count');
                 $xmlWriter->endElement();
-
-                break;
-            case 'filename':
-                $xmlWriter->startElement('text:file-name');
-                $xmlWriter->writeAttribute('text:fixed', 'false');
-                $options = $element->getOptions();
-                if ($options != null && in_array('Path', $options)) {
-                    $xmlWriter->writeAttribute('text:display', 'full');
-                } else {
-                    $xmlWriter->writeAttribute('text:display', 'name');
-                }
-                $xmlWriter->endElement();
-
                 break;
         }
         $xmlWriter->endElement(); // text:span

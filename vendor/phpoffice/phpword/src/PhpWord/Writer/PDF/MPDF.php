@@ -11,7 +11,7 @@
  * contributors, visit https://github.com/PHPOffice/PHPWord/contributors.
  *
  * @see         https://github.com/PHPOffice/PhpWord
- *
+ * @copyright   2010-2018 PHPWord contributors
  * @license     http://www.gnu.org/licenses/lgpl.txt LGPL version 3
  */
 
@@ -22,20 +22,18 @@ use PhpOffice\PhpWord\Settings;
 use PhpOffice\PhpWord\Writer\WriterInterface;
 
 /**
- * MPDF writer.
+ * MPDF writer
  *
  * @see  http://www.mpdf1.com/
  * @since 0.11.0
  */
 class MPDF extends AbstractRenderer implements WriterInterface
 {
-    public const SIMULATED_BODY_START = '<!-- simulated body start -->';
-    private const BODY_TAG = '<body>';
-
     /**
-     * Overridden to set the correct includefile, only needed for MPDF 5.
+     * Overridden to set the correct includefile, only needed for MPDF 5
      *
      * @codeCoverageIgnore
+     * @param PhpWord $phpWord
      */
     public function __construct(PhpWord $phpWord)
     {
@@ -49,24 +47,21 @@ class MPDF extends AbstractRenderer implements WriterInterface
     /**
      * Gets the implementation of external PDF library that should be used.
      *
-     * @return \Mpdf\Mpdf implementation
+     * @return Mpdf implementation
      */
     protected function createExternalWriterInstance()
     {
         $mPdfClass = $this->getMPdfClassName();
 
-        $options = [];
-        if ($this->getFont()) {
-            $options['default_font'] = $this->getFont();
-        }
-
-        return new $mPdfClass($options);
+        return new $mPdfClass();
     }
 
     /**
      * Save PhpWord to file.
+     *
+     * @param string $filename Name of the file to save as
      */
-    public function save(string $filename): void
+    public function save($filename = null)
     {
         $fileHandle = parent::prepareForSave($filename);
 
@@ -88,24 +83,7 @@ class MPDF extends AbstractRenderer implements WriterInterface
         $pdf->setKeywords($docProps->getKeywords());
         $pdf->setCreator($docProps->getCreator());
 
-        $html = $this->getContent();
-        $bodyLocation = strpos($html, self::SIMULATED_BODY_START);
-        if ($bodyLocation === false) {
-            $bodyLocation = strpos($html, self::BODY_TAG);
-            if ($bodyLocation !== false) {
-                $bodyLocation += strlen(self::BODY_TAG);
-            }
-        }
-        // Make sure first data presented to Mpdf includes body tag
-        //   (and any htmlpageheader/htmlpagefooter tags)
-        //   so that Mpdf doesn't parse it as content. Issue 2432.
-        if ($bodyLocation !== false) {
-            $pdf->WriteHTML(substr($html, 0, $bodyLocation));
-            $html = substr($html, $bodyLocation);
-        }
-        foreach (explode("\n", $html) as $line) {
-            $pdf->WriteHTML("$line\n");
-        }
+        $pdf->writeHTML($this->getContent());
 
         //  Write to file
         fwrite($fileHandle, $pdf->output($filename, 'S'));
@@ -114,10 +92,9 @@ class MPDF extends AbstractRenderer implements WriterInterface
     }
 
     /**
-     * Return classname of MPDF to instantiate.
+     * Return classname of MPDF to instantiate
      *
      * @codeCoverageIgnore
-     *
      * @return string
      */
     private function getMPdfClassName()

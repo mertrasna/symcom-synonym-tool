@@ -11,22 +11,19 @@
  * contributors, visit https://github.com/PHPOffice/PHPWord/contributors.
  *
  * @see         https://github.com/PHPOffice/PHPWord
- *
+ * @copyright   2010-2018 PHPWord contributors
  * @license     http://www.gnu.org/licenses/lgpl.txt LGPL version 3
  */
 
 namespace PhpOffice\PhpWord\Style;
 
-use PhpOffice\PhpWord\Settings;
-use PhpOffice\PhpWord\Shared\Validate;
-
 /**
- * Font style.
+ * Font style
  */
 class Font extends AbstractStyle
 {
     /**
-     * Underline types.
+     * Underline types
      *
      * @const string
      */
@@ -36,6 +33,14 @@ class Font extends AbstractStyle
     const UNDERLINE_DASHLONG = 'dashLong';
     const UNDERLINE_DASHLONGHEAVY = 'dashLongHeavy';
     const UNDERLINE_DOUBLE = 'dbl';
+    /**
+     * @deprecated use UNDERLINE_DOTHASH instead, TODO remove in version 1.0
+     */
+    const UNDERLINE_DOTHASH = 'dotDash';  // Incorrect spelling, for backwards compatibility
+    /**
+     * @deprecated use UNDERLINE_DOTDASHHEAVY instead, TODO remove in version 1.0
+     */
+    const UNDERLINE_DOTHASHHEAVY = 'dotDashHeavy';  // Incorrect spelling, for backwards compatibility
     const UNDERLINE_DOTDASH = 'dotDash';
     const UNDERLINE_DOTDASHHEAVY = 'dotDashHeavy';
     const UNDERLINE_DOTDOTDASH = 'dotDotDash';
@@ -50,7 +55,7 @@ class Font extends AbstractStyle
     const UNDERLINE_WORDS = 'words';
 
     /**
-     * Foreground colors.
+     * Foreground colors
      *
      * @const string
      */
@@ -71,174 +76,169 @@ class Font extends AbstractStyle
     const FGCOLOR_BLACK = 'black';
 
     /**
-     * Aliases.
+     * Aliases
      *
      * @var array
      */
-    protected $aliases = ['line-height' => 'lineHeight', 'letter-spacing' => 'spacing'];
+    protected $aliases = array('line-height' => 'lineHeight', 'letter-spacing' => 'spacing');
 
     /**
-     * Font style type.
+     * Font style type
      *
      * @var string
      */
     private $type;
 
     /**
-     * Font name.
+     * Font name
      *
      * @var string
      */
     private $name;
 
     /**
-     * Font Content Type.
+     * Font Content Type
      *
      * @var string
      */
     private $hint;
 
     /**
-     * Font size.
+     * Font size
      *
-     * @var float|int
+     * @var int|float
      */
     private $size;
 
     /**
-     * Font color.
+     * Font color
      *
      * @var string
      */
     private $color;
 
     /**
-     * Bold.
+     * Bold
      *
      * @var bool
      */
     private $bold;
 
     /**
-     * Italic.
+     * Italic
      *
      * @var bool
      */
     private $italic;
 
     /**
-     * Undeline.
+     * Undeline
      *
      * @var string
      */
     private $underline = self::UNDERLINE_NONE;
 
     /**
-     * Superscript.
+     * Superscript
      *
      * @var bool
      */
     private $superScript = false;
 
     /**
-     * Subscript.
+     * Subscript
      *
      * @var bool
      */
     private $subScript = false;
 
     /**
-     * Strikethrough.
+     * Strikethrough
      *
      * @var bool
      */
     private $strikethrough;
 
     /**
-     * Double strikethrough.
+     * Double strikethrough
      *
      * @var bool
      */
     private $doubleStrikethrough;
 
     /**
-     * Small caps.
+     * Small caps
      *
      * @var bool
-     *
      * @see  http://www.schemacentral.com/sc/ooxml/e-w_smallCaps-1.html
      */
     private $smallCaps;
 
     /**
-     * All caps.
+     * All caps
      *
      * @var bool
-     *
      * @see  http://www.schemacentral.com/sc/ooxml/e-w_caps-1.html
      */
     private $allCaps;
 
     /**
-     * Foreground/highlight.
+     * Foreground/highlight
      *
      * @var string
      */
     private $fgColor;
 
     /**
-     * Expanded/compressed text: 0-600 (percent).
+     * Expanded/compressed text: 0-600 (percent)
      *
      * @var int
-     *
      * @since 0.12.0
      * @see  http://www.schemacentral.com/sc/ooxml/e-w_w-1.html
      */
     private $scale;
 
     /**
-     * Character spacing adjustment: twip.
+     * Character spacing adjustment: twip
      *
-     * @var float|int
-     *
+     * @var int|float
      * @since 0.12.0
      * @see  http://www.schemacentral.com/sc/ooxml/e-w_spacing-2.html
      */
     private $spacing;
 
     /**
-     * Font kerning: halfpoint.
+     * Font kerning: halfpoint
      *
-     * @var float|int
-     *
+     * @var int|float
      * @since 0.12.0
      * @see  http://www.schemacentral.com/sc/ooxml/e-w_kern-1.html
      */
     private $kerning;
 
     /**
-     * Paragraph style.
+     * Paragraph style
      *
      * @var \PhpOffice\PhpWord\Style\Paragraph
      */
     private $paragraph;
 
     /**
-     * Shading.
+     * Shading
      *
      * @var \PhpOffice\PhpWord\Style\Shading
      */
     private $shading;
 
     /**
-     * Right to left languages.
+     * Right to left languages
      *
-     * @var ?bool
+     * @var bool
      */
     private $rtl;
 
     /**
-     * noProof (disables AutoCorrect).
+     * noProof (disables AutoCorrect)
      *
      * @var bool
      * http://www.datypic.com/sc/ooxml/e-w_noProof-1.html
@@ -246,49 +246,33 @@ class Font extends AbstractStyle
     private $noProof;
 
     /**
-     * Languages.
+     * Languages
      *
-     * @var null|\PhpOffice\PhpWord\Style\Language
+     * @var \PhpOffice\PhpWord\Style\Language
      */
     private $lang;
 
     /**
-     * Hidden text.
+     * Hidden text
      *
      * @var bool
-     *
      * @see  http://www.datypic.com/sc/ooxml/e-w_vanish-1.html
      */
     private $hidden;
 
     /**
-     * Vertically Raised or Lowered Text.
+     * Vertically Raised or Lowered Text
      *
      * @var int Signed Half-Point Measurement
-     *
      * @see http://www.datypic.com/sc/ooxml/e-w_position-1.html
      */
     private $position;
 
     /**
-     * Preservation of white space in html.
-     *
-     * @var string Value used for css white-space
-     */
-    private $whiteSpace = '';
-
-    /**
-     * Generic font as fallback for html.
-     *
-     * @var string generic font name
-     */
-    private $fallbackFont = '';
-
-    /**
-     * Create new font style.
+     * Create new font style
      *
      * @param string $type Type of font
-     * @param array|\PhpOffice\PhpWord\Style\AbstractStyle|string $paragraph Paragraph styles definition
+     * @param array|string|\PhpOffice\PhpWord\Style\AbstractStyle $paragraph Paragraph styles definition
      */
     public function __construct($type = 'text', $paragraph = null)
     {
@@ -297,52 +281,51 @@ class Font extends AbstractStyle
     }
 
     /**
-     * Get style values.
+     * Get style values
      *
      * @return array
-     *
      * @since 0.12.0
      */
     public function getStyleValues()
     {
-        return [
-            'name' => $this->getStyleName(),
-            'basic' => [
-                'name' => $this->getName(),
-                'size' => $this->getSize(),
-                'color' => $this->getColor(),
-                'hint' => $this->getHint(),
-            ],
-            'style' => [
-                'bold' => $this->isBold(),
-                'italic' => $this->isItalic(),
+        $styles = array(
+            'name'          => $this->getStyleName(),
+            'basic'         => array(
+                'name'      => $this->getName(),
+                'size'      => $this->getSize(),
+                'color'     => $this->getColor(),
+                'hint'      => $this->getHint(),
+            ),
+            'style'         => array(
+                'bold'      => $this->isBold(),
+                'italic'    => $this->isItalic(),
                 'underline' => $this->getUnderline(),
-                'strike' => $this->isStrikethrough(),
-                'dStrike' => $this->isDoubleStrikethrough(),
-                'super' => $this->isSuperScript(),
-                'sub' => $this->isSubScript(),
+                'strike'    => $this->isStrikethrough(),
+                'dStrike'   => $this->isDoubleStrikethrough(),
+                'super'     => $this->isSuperScript(),
+                'sub'       => $this->isSubScript(),
                 'smallCaps' => $this->isSmallCaps(),
-                'allCaps' => $this->isAllCaps(),
-                'fgColor' => $this->getFgColor(),
-                'hidden' => $this->isHidden(),
-            ],
-            'spacing' => [
-                'scale' => $this->getScale(),
-                'spacing' => $this->getSpacing(),
-                'kerning' => $this->getKerning(),
-                'position' => $this->getPosition(),
-            ],
-            'paragraph' => $this->getParagraph(),
-            'rtl' => $this->isRTL(),
-            'shading' => $this->getShading(),
-            'lang' => $this->getLang(),
-            'whiteSpace' => $this->getWhiteSpace(),
-            'fallbackFont' => $this->getFallbackFont(),
-        ];
+                'allCaps'   => $this->isAllCaps(),
+                'fgColor'   => $this->getFgColor(),
+                'hidden'    => $this->isHidden(),
+            ),
+            'spacing'       => array(
+                'scale'     => $this->getScale(),
+                'spacing'   => $this->getSpacing(),
+                'kerning'   => $this->getKerning(),
+                'position'  => $this->getPosition(),
+            ),
+            'paragraph'     => $this->getParagraph(),
+            'rtl'           => $this->isRTL(),
+            'shading'       => $this->getShading(),
+            'lang'          => $this->getLang(),
+        );
+
+        return $styles;
     }
 
     /**
-     * Get style type.
+     * Get style type
      *
      * @return string
      */
@@ -352,7 +335,7 @@ class Font extends AbstractStyle
     }
 
     /**
-     * Get font name.
+     * Get font name
      *
      * @return string
      */
@@ -362,10 +345,9 @@ class Font extends AbstractStyle
     }
 
     /**
-     * Set font name.
+     * Set font name
      *
      * @param string $value
-     *
      * @return self
      */
     public function setName($value = null)
@@ -376,7 +358,7 @@ class Font extends AbstractStyle
     }
 
     /**
-     * Get Font Content Type.
+     * Get Font Content Type
      *
      * @return string
      */
@@ -386,10 +368,9 @@ class Font extends AbstractStyle
     }
 
     /**
-     * Set Font Content Type.
+     * Set Font Content Type
      *
      * @param string $value
-     *
      * @return self
      */
     public function setHint($value = null)
@@ -400,9 +381,9 @@ class Font extends AbstractStyle
     }
 
     /**
-     * Get font size.
+     * Get font size
      *
-     * @return float|int
+     * @return int|float
      */
     public function getSize()
     {
@@ -410,10 +391,9 @@ class Font extends AbstractStyle
     }
 
     /**
-     * Set font size.
+     * Set font size
      *
-     * @param float|int $value
-     *
+     * @param int|float $value
      * @return self
      */
     public function setSize($value = null)
@@ -424,7 +404,7 @@ class Font extends AbstractStyle
     }
 
     /**
-     * Get font color.
+     * Get font color
      *
      * @return string
      */
@@ -434,10 +414,9 @@ class Font extends AbstractStyle
     }
 
     /**
-     * Set font color.
+     * Set font color
      *
      * @param string $value
-     *
      * @return self
      */
     public function setColor($value = null)
@@ -448,7 +427,7 @@ class Font extends AbstractStyle
     }
 
     /**
-     * Get bold.
+     * Get bold
      *
      * @return bool
      */
@@ -458,10 +437,9 @@ class Font extends AbstractStyle
     }
 
     /**
-     * Set bold.
+     * Set bold
      *
      * @param bool $value
-     *
      * @return self
      */
     public function setBold($value = true)
@@ -472,7 +450,7 @@ class Font extends AbstractStyle
     }
 
     /**
-     * Get italic.
+     * Get italic
      *
      * @return bool
      */
@@ -482,10 +460,9 @@ class Font extends AbstractStyle
     }
 
     /**
-     * Set italic.
+     * Set italic
      *
      * @param bool $value
-     *
      * @return self
      */
     public function setItalic($value = true)
@@ -496,7 +473,7 @@ class Font extends AbstractStyle
     }
 
     /**
-     * Get underline.
+     * Get underline
      *
      * @return string
      */
@@ -506,10 +483,9 @@ class Font extends AbstractStyle
     }
 
     /**
-     * Set underline.
+     * Set underline
      *
      * @param string $value
-     *
      * @return self
      */
     public function setUnderline($value = self::UNDERLINE_NONE)
@@ -520,7 +496,7 @@ class Font extends AbstractStyle
     }
 
     /**
-     * Get superscript.
+     * Get superscript
      *
      * @return bool
      */
@@ -530,10 +506,9 @@ class Font extends AbstractStyle
     }
 
     /**
-     * Set superscript.
+     * Set superscript
      *
      * @param bool $value
-     *
      * @return self
      */
     public function setSuperScript($value = true)
@@ -542,7 +517,7 @@ class Font extends AbstractStyle
     }
 
     /**
-     * Get subscript.
+     * Get subscript
      *
      * @return bool
      */
@@ -552,10 +527,9 @@ class Font extends AbstractStyle
     }
 
     /**
-     * Set subscript.
+     * Set subscript
      *
      * @param bool $value
-     *
      * @return self
      */
     public function setSubScript($value = true)
@@ -564,7 +538,7 @@ class Font extends AbstractStyle
     }
 
     /**
-     * Get strikethrough.
+     * Get strikethrough
      *
      * @return bool
      */
@@ -574,10 +548,9 @@ class Font extends AbstractStyle
     }
 
     /**
-     * Set strikethrough.
+     * Set strikethrough
      *
      * @param bool $value
-     *
      * @return self
      */
     public function setStrikethrough($value = true)
@@ -586,7 +559,7 @@ class Font extends AbstractStyle
     }
 
     /**
-     * Get double strikethrough.
+     * Get double strikethrough
      *
      * @return bool
      */
@@ -596,10 +569,9 @@ class Font extends AbstractStyle
     }
 
     /**
-     * Set double strikethrough.
+     * Set double strikethrough
      *
      * @param bool $value
-     *
      * @return self
      */
     public function setDoubleStrikethrough($value = true)
@@ -608,7 +580,7 @@ class Font extends AbstractStyle
     }
 
     /**
-     * Get small caps.
+     * Get small caps
      *
      * @return bool
      */
@@ -618,10 +590,9 @@ class Font extends AbstractStyle
     }
 
     /**
-     * Set small caps.
+     * Set small caps
      *
      * @param bool $value
-     *
      * @return self
      */
     public function setSmallCaps($value = true)
@@ -630,7 +601,7 @@ class Font extends AbstractStyle
     }
 
     /**
-     * Get all caps.
+     * Get all caps
      *
      * @return bool
      */
@@ -640,10 +611,9 @@ class Font extends AbstractStyle
     }
 
     /**
-     * Set all caps.
+     * Set all caps
      *
      * @param bool $value
-     *
      * @return self
      */
     public function setAllCaps($value = true)
@@ -652,7 +622,7 @@ class Font extends AbstractStyle
     }
 
     /**
-     * Get foreground/highlight color.
+     * Get foreground/highlight color
      *
      * @return string
      */
@@ -662,10 +632,9 @@ class Font extends AbstractStyle
     }
 
     /**
-     * Set foreground/highlight color.
+     * Set foreground/highlight color
      *
      * @param string $value
-     *
      * @return self
      */
     public function setFgColor($value = null)
@@ -676,7 +645,7 @@ class Font extends AbstractStyle
     }
 
     /**
-     * Get background.
+     * Get background
      *
      * @return string
      */
@@ -686,19 +655,18 @@ class Font extends AbstractStyle
     }
 
     /**
-     * Set background.
+     * Set background
      *
      * @param string $value
-     *
      * @return \PhpOffice\PhpWord\Style\Table
      */
     public function setBgColor($value = null)
     {
-        $this->setShading(['fill' => $value]);
+        $this->setShading(array('fill' => $value));
     }
 
     /**
-     * Get scale.
+     * Get scale
      *
      * @return int
      */
@@ -708,10 +676,9 @@ class Font extends AbstractStyle
     }
 
     /**
-     * Set scale.
+     * Set scale
      *
      * @param int $value
-     *
      * @return self
      */
     public function setScale($value = null)
@@ -722,9 +689,9 @@ class Font extends AbstractStyle
     }
 
     /**
-     * Get font spacing.
+     * Get font spacing
      *
-     * @return float|int
+     * @return int|float
      */
     public function getSpacing()
     {
@@ -732,10 +699,9 @@ class Font extends AbstractStyle
     }
 
     /**
-     * Set font spacing.
+     * Set font spacing
      *
-     * @param float|int $value
-     *
+     * @param int|float $value
      * @return self
      */
     public function setSpacing($value = null)
@@ -746,9 +712,9 @@ class Font extends AbstractStyle
     }
 
     /**
-     * Get font kerning.
+     * Get font kerning
      *
-     * @return float|int
+     * @return int|float
      */
     public function getKerning()
     {
@@ -756,10 +722,9 @@ class Font extends AbstractStyle
     }
 
     /**
-     * Set font kerning.
+     * Set font kerning
      *
-     * @param float|int $value
-     *
+     * @param int|float $value
      * @return self
      */
     public function setKerning($value = null)
@@ -770,7 +735,7 @@ class Font extends AbstractStyle
     }
 
     /**
-     * Get noProof (disables autocorrect).
+     * Get noProof (disables autocorrect)
      *
      * @return bool
      */
@@ -780,10 +745,9 @@ class Font extends AbstractStyle
     }
 
     /**
-     * Set noProof (disables autocorrect).
+     * Set noProof (disables autocorrect)
      *
      * @param bool $value
-     *
      * @return $this
      */
     public function setNoProof($value = false)
@@ -794,9 +758,9 @@ class Font extends AbstractStyle
     }
 
     /**
-     * Get line height.
+     * Get line height
      *
-     * @return float|int
+     * @return int|float
      */
     public function getLineHeight()
     {
@@ -804,21 +768,20 @@ class Font extends AbstractStyle
     }
 
     /**
-     * Set lineheight.
+     * Set lineheight
      *
-     * @param float|int|string $value
-     *
+     * @param int|float|string $value
      * @return self
      */
     public function setLineHeight($value)
     {
-        $this->setParagraph(['lineHeight' => $value]);
+        $this->setParagraph(array('lineHeight' => $value));
 
         return $this;
     }
 
     /**
-     * Get paragraph style.
+     * Get paragraph style
      *
      * @return \PhpOffice\PhpWord\Style\Paragraph
      */
@@ -828,10 +791,9 @@ class Font extends AbstractStyle
     }
 
     /**
-     * Set Paragraph.
+     * Set Paragraph
      *
      * @param mixed $value
-     *
      * @return self
      */
     public function setParagraph($value = null)
@@ -842,20 +804,19 @@ class Font extends AbstractStyle
     }
 
     /**
-     * Get rtl.
+     * Get rtl
      *
-     * @return ?bool
+     * @return bool
      */
     public function isRTL()
     {
-        return $this->rtl ?? Settings::isDefaultRtl();
+        return $this->rtl;
     }
 
     /**
-     * Set rtl.
+     * Set rtl
      *
-     * @param ?bool $value
-     *
+     * @param bool $value
      * @return self
      */
     public function setRTL($value = true)
@@ -866,7 +827,7 @@ class Font extends AbstractStyle
     }
 
     /**
-     * Get shading.
+     * Get shading
      *
      * @return \PhpOffice\PhpWord\Style\Shading
      */
@@ -876,10 +837,9 @@ class Font extends AbstractStyle
     }
 
     /**
-     * Set shading.
+     * Set shading
      *
      * @param mixed $value
-     *
      * @return self
      */
     public function setShading($value = null)
@@ -890,9 +850,9 @@ class Font extends AbstractStyle
     }
 
     /**
-     * Get language.
+     * Get language
      *
-     * @return null|\PhpOffice\PhpWord\Style\Language
+     * @return \PhpOffice\PhpWord\Style\Language
      */
     public function getLang()
     {
@@ -900,10 +860,9 @@ class Font extends AbstractStyle
     }
 
     /**
-     * Set language.
+     * Set language
      *
      * @param mixed $value
-     *
      * @return self
      */
     public function setLang($value = null)
@@ -917,7 +876,79 @@ class Font extends AbstractStyle
     }
 
     /**
-     * Get hidden text.
+     * Get bold
+     *
+     * @deprecated 0.10.0
+     *
+     * @codeCoverageIgnore
+     */
+    public function getBold()
+    {
+        return $this->isBold();
+    }
+
+    /**
+     * Get italic
+     *
+     * @deprecated 0.10.0
+     *
+     * @codeCoverageIgnore
+     */
+    public function getItalic()
+    {
+        return $this->isItalic();
+    }
+
+    /**
+     * Get superscript
+     *
+     * @deprecated 0.10.0
+     *
+     * @codeCoverageIgnore
+     */
+    public function getSuperScript()
+    {
+        return $this->isSuperScript();
+    }
+
+    /**
+     * Get subscript
+     *
+     * @deprecated 0.10.0
+     *
+     * @codeCoverageIgnore
+     */
+    public function getSubScript()
+    {
+        return $this->isSubScript();
+    }
+
+    /**
+     * Get strikethrough
+     *
+     * @deprecated 0.10.0
+     *
+     * @codeCoverageIgnore
+     */
+    public function getStrikethrough()
+    {
+        return $this->isStrikethrough();
+    }
+
+    /**
+     * Get paragraph style
+     *
+     * @deprecated 0.11.0
+     *
+     * @codeCoverageIgnore
+     */
+    public function getParagraphStyle()
+    {
+        return $this->getParagraph();
+    }
+
+    /**
+     * Get hidden text
      *
      * @return bool
      */
@@ -927,10 +958,9 @@ class Font extends AbstractStyle
     }
 
     /**
-     * Set hidden text.
+     * Set hidden text
      *
      * @param bool $value
-     *
      * @return self
      */
     public function setHidden($value = true)
@@ -941,7 +971,7 @@ class Font extends AbstractStyle
     }
 
     /**
-     * Get position.
+     * Get position
      *
      * @return int
      */
@@ -951,10 +981,9 @@ class Font extends AbstractStyle
     }
 
     /**
-     * Set position.
+     * Set position
      *
      * @param int $value
-     *
      * @return self
      */
     public function setPosition($value = null)
@@ -962,45 +991,5 @@ class Font extends AbstractStyle
         $this->position = $this->setIntVal($value, null);
 
         return $this;
-    }
-
-    /**
-     * Set html css white-space value. It is expected that only pre-wrap and normal (default) are useful.
-     *
-     * @param null|string $value Should be one of pre-wrap, normal, nowrap, pre, pre-line, initial, inherit
-     */
-    public function setWhiteSpace(?string $value): self
-    {
-        $this->whiteSpace = Validate::validateCSSWhiteSpace($value);
-
-        return $this;
-    }
-
-    /**
-     * Get html css white-space value.
-     */
-    public function getWhiteSpace(): string
-    {
-        return $this->whiteSpace;
-    }
-
-    /**
-     * Set generic font for fallback for html.
-     *
-     * @param string $value generic font name
-     */
-    public function setFallbackFont(?string $value): self
-    {
-        $this->fallbackFont = Validate::validateCSSGenericFont($value);
-
-        return $this;
-    }
-
-    /**
-     * Get html fallback generic font.
-     */
-    public function getFallbackFont(): string
-    {
-        return $this->fallbackFont;
     }
 }

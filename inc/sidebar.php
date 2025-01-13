@@ -67,12 +67,6 @@
            </ul>
          </li>
        <?php  } ?>
-       <li class="">
-         <a href="<?php echo $absoluteUrl; ?>synonym-tool/all-symptoms.php">
-           <i class="fa fa-window-maximize"></i>
-           <span>Synonym Tool</span>
-         </a>
-       </li>
        <li class="<?php if(preg_match("/materia-medica/i", $actual_link)) echo 'active'; ?>">
           <a href="<?php echo $absoluteUrl;?>dev-exp/materia-medica.php">
             <i class="fa fa-heartbeat"></i>
