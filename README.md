@@ -76,14 +76,17 @@ password: guest123
 ```
 
 Once logged in the Symcom sidemenu can be seen with different topics. The stop words and synonyms can be accessed via this sidemenu.
-![image](https://github.com/user-attachments/assets/d4d0b6b7-ffa4-4864-b4f1-8231e208fc14)
+![Screenshot 2025-01-13 122212](https://github.com/user-attachments/assets/c742c5c6-6593-42c9-908b-24779e8654a4)
+
 
 The sources inside the program can be viewed going to materia medica from the sidemenu.
 Clicking the "Search" button will display all the sources inside the program.
-![image](https://github.com/user-attachments/assets/5a77d9d9-c7a0-4637-8211-35bc37ab3b6b)
+![Screenshot 2025-01-13 122414](https://github.com/user-attachments/assets/fdd9cab5-e576-4c6b-8c30-7b1be54b19ea)
+
 
 Clicking the source name will redirect the user to a different webpage which displays all the symptoms associated with the source, including information related to the symptom like synonyms, testers etc.
-![image](https://github.com/user-attachments/assets/8685b8fc-49e8-4ed4-89c0-a86e5c0278ec)
+![Screenshot 2025-01-13 122630](https://github.com/user-attachments/assets/fb23d428-0be2-446a-900d-28b9af17494f)
+
 
 The icon under "Synonym Classification" from materia medica can be clicked to start the synonym classification program. Currently it only displays the symptoms associated with the source in a new webpage.
 
