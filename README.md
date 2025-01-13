@@ -1,0 +1,1 @@
+# symcom-synonym-tool
