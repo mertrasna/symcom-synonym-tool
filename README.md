@@ -50,11 +50,11 @@ Go to your xampp installation directory -> php -> (open) php.ini file and make t
     post_max_size = 100M.
 ```
 #### Database and Routing Setup
-Open the project folder in a code editor and navigate to `symcom-synonym-tool/config/route.php` and change the PHP variable `$dbName` to a desired database name. Example: `new_database_synonym_test`.
+Open the project folder in a code editor and navigate to `symcom-synonym-tool/config/route.php` and change the PHP variable `$dbName` to a desired database name. Example: `synonym_db_test`.
 
 In this file change the PHP variable `$absoluteUrl` to `http://localhost/symcom-synonym-tool`. Here `symcom-synonym-tool` is the root directory of the cloned project.
 
-Navigate to `symcom-synonym-tool/symcom/api` and copy all contents of `.env.example` file to a new `.env` file. Change the `DB_DATABASE` value to the new database name defined. Example: `new_database_synonym_test`.
+Navigate to `symcom-synonym-tool/symcom/api` and copy all contents of `.env.example` file to a new `.env` file. Change the `DB_DATABASE` value to the new database name defined. Example: `synonym_db_test`.
 
 Navigate to `symcom-synonym-tool/symcom/api/config/constants.php` and make sure the PHP value for `$configArray2 ['api_base_path']` is set to `http://localhost/symcom-synonym-tool/symcom/api/public/`.
 
@@ -62,7 +62,7 @@ Navigate to `symcom-synonym-tool/symcom/api/config/constants.php` and make sure 
 #### Running the program
 Open XAMPP control panel `xampp installtion directory/xampp-control.exe` and start `Apache` and `MySQL` services.
 
-Create a new database with name defined in the project files mentioned above. Example: `new_database_synonym_test`. Can be done with `phpmyadmin` by going to `http://localhost/phpmyadmin/` site in the browser or any other database management tools.
+Create a new database with name defined in the project files mentioned above. Example: `synonym_db_test`. Can be done with `phpmyadmin` by going to `http://localhost/phpmyadmin/` site in the browser or any other database management tools.
 
 Import the given database to this newly created database. Once database import is complete, the project can be opened at `http://localhost/symcom-synonym-tool/` URL in the browser.
 

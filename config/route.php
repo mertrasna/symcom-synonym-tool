@@ -51,7 +51,7 @@ $baseApiURL = $absoluteUrl.'symcom/api/public/v1/';
 $dbHost = 'localhost';
 $dbUsername = 'root';
 $dbPassword = '';
-$dbName = 'new_database_synonym_test';
+$dbName = 'synonym_db_test';
 
 //Create connection and select DB
 $db = new mysqli($dbHost, $dbUsername, $dbPassword, $dbName);
