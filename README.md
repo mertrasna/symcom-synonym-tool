@@ -21,6 +21,11 @@ Navigate to `htdocs` directory inside `XAMPP installtion directory` and clone Gi
 
 The whole project will now contain under `symcom-synonym-tool` folder which is the root directory of the cloned project.
 
+Make sure PHP version 7.1.33 is installed and working in the system.
+```
+php --version
+```
+
 Copy `composer.phar` to the cloned directory (root).
 Install dependencies using the below commands in terminal.
 ```
