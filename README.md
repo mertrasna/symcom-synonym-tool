@@ -17,7 +17,7 @@ C:\xampp\php to Path in environment variables if not already done.
 `https://getcomposer.org/download/1.6.3/composer.phar`
 
 Navigate to `htdocs` directory inside `XAMPP installtion directory` and clone Git repo: 
-`Link`
+`https://github.com/crklinkenberg/symcom-synonym-tool.git`
 
 The whole project will now contain under `symcom-synonym-tool` folder which is the root directory of the cloned project.
 
