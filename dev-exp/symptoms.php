@@ -1,7 +1,7 @@
 <?php
 	include '../config/route.php';
 	include 'sub-section-config.php';
-	include '../api/mainCall.php';
+	// include '../api/mainCall.php';
 ?>
 <?php
 	$masterId = (isset($_GET['mid']) AND $_GET['mid'] != "") ? $_GET['mid'] : ""; 
@@ -1898,12 +1898,6 @@ $_SESSION['current_page'] = $actual_link;
 <!-- DataTables -->
 <script src="<?php echo $absoluteUrl;?>plugins/datatables.net/js/jquery.dataTables.min.js"></script>
 <script src="<?php echo $absoluteUrl;?>plugins/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
-<?php if(isset($_SESSION['user_type']) && $_SESSION['user_type'] == 3 ) { ?>
-<script src="<?php echo $absoluteUrl;?>assets/js/dataTablesConfigPublic.js"></script>
-<?php  } ?>
-<?php if(isset($_SESSION['user_type']) && ($_SESSION['user_type'] == 1 || $_SESSION['user_type'] == 2 )) { ?>
-<script src="<?php echo $absoluteUrl;?>assets/js/dataTablesConfig.js"></script>
-<?php  } ?>
 <!-- sweet alert 2 -->
 <script src="<?php echo $absoluteUrl;?>plugins/sweetalert2/sweetalert2.min.js"></script>
 <!-- Select2 -->
