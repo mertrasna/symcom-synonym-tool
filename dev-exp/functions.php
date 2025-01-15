@@ -1382,53 +1382,55 @@
 			// Because rference data has comma in it's self, so bracking it or exploding with the comma will not be able to detect reference. That is why before decting the associated data by comma expolded string, we are finding if the associated references is there in the full baracketd string using strpos() function.
 			// i.e. Chr. Fr. Langhammer, in einem Aufsatze
 			$referenceResult = mysqli_query($db,"SELECT reference.full_reference, reference.autor, reference.reference FROM symptom_reference JOIN reference ON symptom_reference.reference_id = reference.reference_id WHERE symptom_reference.symptom_id = '".$symptomId."'");
-            while($referenceRow = mysqli_fetch_array($referenceResult)){
-            	// if (mb_strpos(str_replace('{@#@}', ',', $modified_bracketedString_de), trim($referenceRow['full_reference'])) !== false){
-            	// 	array_push($bracketedString_not_part_of_symptom_de_temp_array, trim($referenceRow['full_reference']));
-            	// }
-            	// if(mb_strpos(str_replace('{@#@}', ',', $modified_bracketedString_en), trim($referenceRow['full_reference'])) !== false){
-            	// 	array_push($bracketedString_not_part_of_symptom_en_temp_array, trim($referenceRow['full_reference']));
-            	// }	
+            if($referenceResult){
+				while($referenceRow = mysqli_fetch_array($referenceResult)){
+					// if (mb_strpos(str_replace('{@#@}', ',', $modified_bracketedString_de), trim($referenceRow['full_reference'])) !== false){
+					// 	array_push($bracketedString_not_part_of_symptom_de_temp_array, trim($referenceRow['full_reference']));
+					// }
+					// if(mb_strpos(str_replace('{@#@}', ',', $modified_bracketedString_en), trim($referenceRow['full_reference'])) !== false){
+					// 	array_push($bracketedString_not_part_of_symptom_en_temp_array, trim($referenceRow['full_reference']));
+					// }	
 
-            	$lookupRefBracketedStringDeArr = explode(',', $modified_bracketedString_de);
-            	foreach ($lookupRefBracketedStringDeArr as $bKey => $bVal) {
-            		$bVal = str_replace('{@#@}', ',', $bVal);
-            		if (mb_strpos($bVal, trim($referenceRow['full_reference'])) !== false){
-	            		array_push($bracketedString_not_part_of_symptom_de_temp_array, trim($referenceRow['full_reference']));
-	            		array_push($bracketedString_not_part_of_symptom_de_temp_array, trim($bVal));
-	            	}
-            		$lookupRefStringDeArr = explode(',', $bVal);
-            		$lookupRefDeString = (isset($lookupRefStringDeArr[0]) AND $lookupRefStringDeArr[0] != "") ? $lookupRefStringDeArr[0] : "";
-            		if($lookupRefDeString != "" AND $referenceRow['autor'] != ""){
-            			if(mb_strpos($referenceRow['autor'], $lookupRefDeString) !== false){
-		            		array_push($bracketedString_not_part_of_symptom_de_temp_array, trim($referenceRow['autor']));
-		            		array_push($bracketedString_not_part_of_symptom_de_temp_array, trim($referenceRow['full_reference']));
-		            		array_push($bracketedString_not_part_of_symptom_de_temp_array, trim($lookupRefDeString));
-		            		array_push($bracketedString_not_part_of_symptom_de_temp_array, trim($bVal));
-		            	}
-            		}
-            	}
+					$lookupRefBracketedStringDeArr = explode(',', $modified_bracketedString_de);
+					foreach ($lookupRefBracketedStringDeArr as $bKey => $bVal) {
+						$bVal = str_replace('{@#@}', ',', $bVal);
+						if (mb_strpos($bVal, trim($referenceRow['full_reference'])) !== false){
+							array_push($bracketedString_not_part_of_symptom_de_temp_array, trim($referenceRow['full_reference']));
+							array_push($bracketedString_not_part_of_symptom_de_temp_array, trim($bVal));
+						}
+						$lookupRefStringDeArr = explode(',', $bVal);
+						$lookupRefDeString = (isset($lookupRefStringDeArr[0]) AND $lookupRefStringDeArr[0] != "") ? $lookupRefStringDeArr[0] : "";
+						if($lookupRefDeString != "" AND $referenceRow['autor'] != ""){
+							if(mb_strpos($referenceRow['autor'], $lookupRefDeString) !== false){
+								array_push($bracketedString_not_part_of_symptom_de_temp_array, trim($referenceRow['autor']));
+								array_push($bracketedString_not_part_of_symptom_de_temp_array, trim($referenceRow['full_reference']));
+								array_push($bracketedString_not_part_of_symptom_de_temp_array, trim($lookupRefDeString));
+								array_push($bracketedString_not_part_of_symptom_de_temp_array, trim($bVal));
+							}
+						}
+					}
 
-            	$lookupRefBracketedStringEnArr = explode(',', $modified_bracketedString_en);
-            	foreach ($lookupRefBracketedStringEnArr as $bKey => $bVal) {
-            		$bVal = str_replace('{@#@}', ',', $bVal);
-            		if(mb_strpos($bVal, trim($referenceRow['full_reference'])) !== false){
-            			array_push($bracketedString_not_part_of_symptom_en_temp_array, trim($referenceRow['full_reference']));
-            			array_push($bracketedString_not_part_of_symptom_de_temp_array, trim($bVal));
-            		}
+					$lookupRefBracketedStringEnArr = explode(',', $modified_bracketedString_en);
+					foreach ($lookupRefBracketedStringEnArr as $bKey => $bVal) {
+						$bVal = str_replace('{@#@}', ',', $bVal);
+						if(mb_strpos($bVal, trim($referenceRow['full_reference'])) !== false){
+							array_push($bracketedString_not_part_of_symptom_en_temp_array, trim($referenceRow['full_reference']));
+							array_push($bracketedString_not_part_of_symptom_de_temp_array, trim($bVal));
+						}
 
-            		$lookupRefStringEnArr = explode(',', $bVal);
-            		$lookupRefEnString = (isset($lookupRefStringEnArr[0]) AND $lookupRefStringEnArr[0] != "") ? $lookupRefStringEnArr[0] : "";
-            		if($lookupRefEnString != "" AND $referenceRow['autor'] != ""){
-            			if(mb_strpos($referenceRow['autor'], $lookupRefEnString) !== false) {
-		            		array_push($bracketedString_not_part_of_symptom_en_temp_array, trim($referenceRow['autor']));
-		            		array_push($bracketedString_not_part_of_symptom_en_temp_array, trim($referenceRow['full_reference']));
-		            		array_push($bracketedString_not_part_of_symptom_de_temp_array, trim($lookupRefEnString));
-		            		array_push($bracketedString_not_part_of_symptom_de_temp_array, trim($bVal));
-		            	}
-            		}
-            	}
-            }
+						$lookupRefStringEnArr = explode(',', $bVal);
+						$lookupRefEnString = (isset($lookupRefStringEnArr[0]) AND $lookupRefStringEnArr[0] != "") ? $lookupRefStringEnArr[0] : "";
+						if($lookupRefEnString != "" AND $referenceRow['autor'] != ""){
+							if(mb_strpos($referenceRow['autor'], $lookupRefEnString) !== false) {
+								array_push($bracketedString_not_part_of_symptom_en_temp_array, trim($referenceRow['autor']));
+								array_push($bracketedString_not_part_of_symptom_en_temp_array, trim($referenceRow['full_reference']));
+								array_push($bracketedString_not_part_of_symptom_de_temp_array, trim($lookupRefEnString));
+								array_push($bracketedString_not_part_of_symptom_de_temp_array, trim($bVal));
+							}
+						}
+					}
+				}
+			}
 			$bracketedString_de_array = ($modified_bracketedString_de != "") ? explode(",", $modified_bracketedString_de) : array();
 			$bracketedString_en_array = ($modified_bracketedString_en != "") ? explode(",", $modified_bracketedString_en) : array();
 			$bracketedString_de_temp_array = array();
@@ -1763,7 +1765,7 @@
 			$globalGradingSignArr = array();
 			$globalSettingResult = mysqli_query($db, "SELECT GSV.format_grade, GSV.format_custom_tag, GSV.format_custom_signs FROM global_grading_set_values AS GSV JOIN global_grading_sets AS GS ON GSV.global_grading_sets_id = GS.global_grading_sets_id WHERE GS.active = 1");
 			// if (!$dbc || mysqli_num_rows($dbc) == 0)
-			if(mysqli_num_rows($globalSettingResult) > 0){
+			if($globalSettingResult && mysqli_num_rows($globalSettingResult) > 0){
 				while($globalGradingSettings = mysqli_fetch_array($globalSettingResult)){
 					$formatGrade = (isset($globalGradingSettings['format_grade']) AND $globalGradingSettings['format_grade'] != "") ? "'".$globalGradingSettings['format_grade']."'" : "";
 					$formatCustomTag = (isset($globalGradingSettings['format_custom_tag']) AND $globalGradingSettings['format_custom_tag'] != "") ? $globalGradingSettings['format_custom_tag'] : "";
@@ -1778,7 +1780,7 @@
 			}
 
 			$sourceSettingResult = mysqli_query($db, "SELECT normal, normal_within_parentheses, normal_end_with_t, normal_end_with_tt, normal_begin_with_degree, normal_end_with_degree, normal_begin_with_asterisk, normal_begin_with_asterisk_end_with_t, normal_begin_with_asterisk_end_with_tt, normal_begin_with_asterisk_end_with_degree, sperrschrift, sperrschrift_begin_with_degree, sperrschrift_begin_with_asterisk, sperrschrift_bold, sperrschrift_bold_begin_with_degree, sperrschrift_bold_begin_with_asterisk, kursiv, kursiv_end_with_t, kursiv_end_with_tt, kursiv_begin_with_degree, kursiv_end_with_degree, kursiv_begin_with_asterisk, kursiv_begin_with_asterisk_end_with_t, kursiv_begin_with_asterisk_end_with_tt, kursiv_begin_with_asterisk_end_with_degree, kursiv_bold, kursiv_bold_begin_with_asterisk_end_with_t, kursiv_bold_begin_with_asterisk_end_with_tt, kursiv_bold_begin_with_degree, kursiv_bold_begin_with_asterisk, kursiv_bold_begin_with_asterisk_end_with_degree, fett, fett_end_with_t, fett_end_with_tt, fett_begin_with_degree, fett_end_with_degree, fett_begin_with_asterisk, fett_begin_with_asterisk_end_with_t, fett_begin_with_asterisk_end_with_tt, fett_begin_with_asterisk_end_with_degree, fett_converted_spaced, fett_converted_spaced_degree_at_beginning, fett_converted_spaced_asterisk_at_beginning, gross, gross_begin_with_degree, gross_begin_with_asterisk, gross_bold, gross_bold_begin_with_degree, gross_bold_begin_with_asterisk, pi_sign, one_bar, two_bar, three_bar, three_and_half_bar, four_bar, four_and_half_bar, five_bar FROM quelle_grading_settings WHERE quelle_id = '".$originalQuelleId."'");
-			if(mysqli_num_rows($sourceSettingResult) > 0){
+			if($sourceSettingResult && mysqli_num_rows($sourceSettingResult) > 0){
 				$sourceSettingData = mysqli_fetch_assoc($sourceSettingResult);
 			}
 			// If this symptom has it own specific garading settings then the will get apply
@@ -1790,7 +1792,7 @@
 			}
 
 			$symptomSettingResult = mysqli_query($db, "SELECT normal, normal_within_parentheses, normal_end_with_t, normal_end_with_tt, normal_begin_with_degree, normal_end_with_degree, normal_begin_with_asterisk, normal_begin_with_asterisk_end_with_t, normal_begin_with_asterisk_end_with_tt, normal_begin_with_asterisk_end_with_degree, sperrschrift, sperrschrift_begin_with_degree, sperrschrift_begin_with_asterisk, sperrschrift_bold, sperrschrift_bold_begin_with_degree, sperrschrift_bold_begin_with_asterisk, kursiv, kursiv_end_with_t, kursiv_end_with_tt, kursiv_begin_with_degree, kursiv_end_with_degree, kursiv_begin_with_asterisk, kursiv_begin_with_asterisk_end_with_t, kursiv_begin_with_asterisk_end_with_tt, kursiv_begin_with_asterisk_end_with_degree, kursiv_bold, kursiv_bold_begin_with_asterisk_end_with_t, kursiv_bold_begin_with_asterisk_end_with_tt, kursiv_bold_begin_with_degree, kursiv_bold_begin_with_asterisk, kursiv_bold_begin_with_asterisk_end_with_degree, fett, fett_end_with_t, fett_end_with_tt, fett_begin_with_degree, fett_end_with_degree, fett_begin_with_asterisk, fett_begin_with_asterisk_end_with_t, fett_begin_with_asterisk_end_with_tt, fett_begin_with_asterisk_end_with_degree, fett_converted_spaced, fett_converted_spaced_degree_at_beginning, fett_converted_spaced_asterisk_at_beginning, gross, gross_begin_with_degree, gross_begin_with_asterisk, gross_bold, gross_bold_begin_with_degree, gross_bold_begin_with_asterisk, pi_sign, one_bar, two_bar, three_bar, three_and_half_bar, four_bar, four_and_half_bar, five_bar FROM symptom_grading_settings WHERE symptom_id = '".$symptomId."' AND active = 1 ORDER BY symptom_grading_settings_id DESC LIMIT 1");
-			if(mysqli_num_rows($symptomSettingResult) > 0){
+			if($symptomSettingResult && mysqli_num_rows($symptomSettingResult) > 0){
 				$sourceSettingData = mysqli_fetch_assoc($symptomSettingResult);
 			}
 
@@ -27028,7 +27030,7 @@
         global $db;
         $symptomType = "";
         $querySympTypeInfo = mysqli_query($db,"SELECT * FROM quelle_symptom_settings WHERE quelle_id =$original_quelle_id");
-        if(mysqli_num_rows($querySympTypeInfo) > 0){
+        if($querySympTypeInfo && mysqli_num_rows($querySympTypeInfo) > 0){
             $rowSympTypeInfo = mysqli_fetch_assoc($querySympTypeInfo);
 			if(!empty($extractedSymptomPartsArrBasedOnCustomTags)){
 				if(!empty($extractedSymptomPartsArrBasedOnCustomTags['asterisk_parts']) || !empty($extractedSymptomPartsArrBasedOnCustomTags['non_asterisk_parts'])){
@@ -27051,12 +27053,12 @@
         }
         //checking if symptom has prover with it
         $symptomHavingProverResult = mysqli_query($db, "SELECT symptom_id FROM symptom_pruefer WHERE symptom_id = ".$symptom_id."");
-        if(mysqli_num_rows($symptomHavingProverResult) > 0){
+        if($symptomHavingProverResult && mysqli_num_rows($symptomHavingProverResult) > 0){
             $symptomType = (isset($rowSympTypeInfo['symptoms_with_provers']) AND $rowSympTypeInfo['symptoms_with_provers'] != "") ? $rowSympTypeInfo['symptoms_with_provers'] : $symptomType;
         }
         //checking if symptom has reference linked with it
         $symptomHavingReferenceResult = mysqli_query($db, "SELECT symptom_id, reference_id FROM symptom_reference WHERE symptom_id = '".$symptom_id."'");
-        if(mysqli_num_rows($symptomHavingReferenceResult) > 0){
+        if($symptomHavingReferenceResult && mysqli_num_rows($symptomHavingReferenceResult) > 0){
             $symptomHavingReferenceRow = mysqli_fetch_assoc($symptomHavingReferenceResult);
             $referenceIDOfSymptom = $symptomHavingReferenceRow['reference_id'];
             $symptomType = (isset($rowSympTypeInfo['symptoms_with_reference']) AND $rowSympTypeInfo['symptoms_with_reference'] != "") ? $rowSympTypeInfo['symptoms_with_reference'] : $symptomType;
@@ -27071,7 +27073,7 @@
 
 		//symptom type specificallly for a symptom
         $symptomTypeResult = mysqli_query($db, "SELECT symptom_type FROM symptom_type_setting WHERE symptom_id = '".$symptom_id."'");
-        if(mysqli_num_rows($symptomTypeResult) > 0){
+        if($symptomTypeResult && mysqli_num_rows($symptomTypeResult) > 0){
             $symptomTypeRow = mysqli_fetch_assoc($symptomTypeResult);
             $symptomType = (isset($symptomTypeRow['symptom_type']) and $symptomTypeRow['symptom_type'] != "") ? $symptomTypeRow['symptom_type'] : $symptomType;
         }

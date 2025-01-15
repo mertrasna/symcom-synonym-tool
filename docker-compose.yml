@@ -1,0 +1,30 @@
+services:
+  php-apache:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: php-apache
+    volumes:
+      - .:/var/www/html
+    ports:
+      - "8080:80"
+    working_dir: /var/www/html
+    tty: true
+    stdin_open: true
+    depends_on:
+      - mysql
+    # environment:
+    #   - APACHE_DOCUMENT_ROOT=/var/www/html/symcom-synonym-tool
+  mysql:
+    image: mysql:5.7
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: symcom_minified_db
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+
+volumes:
+  db_data:

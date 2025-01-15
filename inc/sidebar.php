@@ -46,9 +46,8 @@
                </span>
              </a>
              <ul class="treeview-menu">
-               <li class="<?php if (preg_match("/synonym-de/i", $actual_link)) echo 'active'; ?>"><a href="<?php echo $absoluteUrl; ?>stammdaten/synonym-de"><i class="far fa-circle fa-xs"></i> Synonym DE</a></li>
-               <li class="<?php if (preg_match("/synonym-en/i", $actual_link)) echo 'active'; ?>"><a href="<?php echo $absoluteUrl; ?>stammdaten/synonym-en"><i class="far fa-circle fa-xs"></i> Synonym EN</a></li>
-               <li class="<?php if (preg_match("/synonym-reference/", $actual_link)) echo 'active'; ?>"><a href="<?php echo $absoluteUrl; ?>stammdaten/synonym-reference"><i class="far fa-circle fa-xs"></i> Synonym Reference</a></li>
+               <li class="<?php if (preg_match("/synonym-de/i", $actual_link)) echo 'active'; ?>"><a href="<?php echo $absoluteUrl; ?>dev-exp/synonym-de.php"><i class="far fa-circle fa-xs"></i> Synonym DE</a></li>
+               <li class="<?php if (preg_match("/synonym-en/i", $actual_link)) echo 'active'; ?>"><a href="<?php echo $absoluteUrl; ?>dev-exp/synonym-en.php"><i class="far fa-circle fa-xs"></i> Synonym EN</a></li>
              </ul>
            </li>
          </ul>

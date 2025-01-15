@@ -79,21 +79,6 @@ $_SESSION['current_page'] = $actual_link;
             <li><a href="#search" class="cd-search-trigger">Erweiterte Suche</a></li>
         </ul>
       </div> -->
-      <div class="navbar-custom-menu">
-        <ul class="nav navbar-nav reset-datatable-state">
-          <!-- User Account: style can be found in dropdown.less -->
-          <li class="last-login"><a><?php if(isset($_SESSION['last_login_at']) && (!empty($_SESSION['last_login_at']))) echo 'Last login '.$_SESSION['last_login_at'];?></a></li>
-          <li class="dropdown">
-            <a class="dropdown-toggle" href="#" id="kuntoDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <?php if(isset($_SESSION['username']) && (!empty($_SESSION['username']))) echo ucfirst($_SESSION['username']); else 'Not available';?>. &nbsp;<i class="fa fa-caret-down"></i>
-            </a>
-            <ul class="dropdown-menu kuntoDropdown" aria-labelledby="kuntoDropdown">
-                <li><a class="dropdown-item" href="<?php echo $absoluteUrl;?>profil"><i class="fa fa-user"></i> Profil</a></li>
-                <li><a class="dropdown-item" href="<?php echo $absoluteUrl;?>api/logout.php"><i class="fas fa-sign-out-alt"></i> Abmelden</a></li>
-            </ul>
-        </li>
-        </ul>
-      </div>
     </nav>
     <div id="search" class="cd-main-search">
       <form>
