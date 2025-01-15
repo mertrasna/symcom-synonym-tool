@@ -41,17 +41,17 @@ $actual_link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https"
     . (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '/');
 
 // Site domain
-$absoluteUrl = "http://localhost/symcom-synonym-tool/";
+$absoluteUrl = "http://localhost:8080/";
 
 // api base url
 $baseApiURL = $absoluteUrl.'symcom/api/public/v1/';
 // $baseApiURL = 'http://dev.reference-repertory.com/symcom/api/public/v1/';
 
 // DB Config details
-$dbHost = 'localhost';
+$dbHost = 'mysql';
 $dbUsername = 'root';
-$dbPassword = '';
-$dbName = 'synonym_db_test';
+$dbPassword = 'root';
+$dbName = 'symcom_minified_db';
 
 //Create connection and select DB
 $db = new mysqli($dbHost, $dbUsername, $dbPassword, $dbName);

@@ -355,13 +355,15 @@ $_SESSION['current_page'] = $actual_link;
                                             <?php
                                                 $pruStr = "";
                                                 $prueferResult = mysqli_query($db,"SELECT pruefer.pruefer_id, pruefer.suchname, pruefer.vorname, pruefer.nachname FROM symptom_pruefer JOIN pruefer ON symptom_pruefer.pruefer_id	= pruefer.pruefer_id WHERE symptom_pruefer.symptom_id = '".$row['id']."'");
-                                                while($prueferRow = mysqli_fetch_array($prueferResult)){
-                                                    // if($prueferRow['suchname'] != "")
-                                                    //     $pruStr .= $prueferRow['suchname'].", ";
-                                                    if($prueferRow['vorname'] != "")
-                                                        $pruStr .= $prueferRow['vorname']." ";
-                                                    if($prueferRow['nachname'] != "")
-                                                        $pruStr .= $prueferRow['nachname'].", ";
+                                                if($prueferResult){
+                                                    while($prueferRow = mysqli_fetch_array($prueferResult)){
+                                                        // if($prueferRow['suchname'] != "")
+                                                        //     $pruStr .= $prueferRow['suchname'].", ";
+                                                        if($prueferRow['vorname'] != "")
+                                                            $pruStr .= $prueferRow['vorname']." ";
+                                                        if($prueferRow['nachname'] != "")
+                                                            $pruStr .= $prueferRow['nachname'].", ";
+                                                    }
                                                 }
                                                 $pruStr =rtrim($pruStr, ", ");
                                                 echo $pruStr;
@@ -370,9 +372,11 @@ $_SESSION['current_page'] = $actual_link;
                                         <td><?php 
                                                 $referenceStr = "";
                                                 $refResult = mysqli_query($db,"SELECT reference.reference_id, reference.full_reference FROM symptom_reference JOIN reference ON symptom_reference.reference_id	= reference.reference_id WHERE symptom_reference.symptom_id = '".$row['id']."'");
-                                                while($refRow = mysqli_fetch_array($refResult)){
-                                                    if($refRow['full_reference'] != "")
-                                                        $referenceStr .= ucfirst($refRow['full_reference']);
+                                                if($refResult){
+                                                    while($refRow = mysqli_fetch_array($refResult)){
+                                                        if($refRow['full_reference'] != "")
+                                                            $referenceStr .= ucfirst($refRow['full_reference']);
+                                                    }
                                                 }
                                                 $referenceStr =rtrim($referenceStr, ", ");
                                                 echo $referenceStr;
@@ -383,9 +387,11 @@ $_SESSION['current_page'] = $actual_link;
                                         	<?php
                                         		$rmdStr = "";
                                                 $remedyResult = mysqli_query($db,"SELECT arznei.titel FROM symptom_remedy JOIN arznei ON symptom_remedy.remedy_id = arznei.arznei_id WHERE symptom_remedy.symptom_id = '".$row['id']."'");
-                                                while($remedyRow = mysqli_fetch_array($remedyResult)){
-                                                    if($remedyRow['titel'] != "")
-                                                        $rmdStr .= $remedyRow['titel'].", ";
+                                                if($remedyResult){
+                                                    while($remedyRow = mysqli_fetch_array($remedyResult)){
+                                                        if($remedyRow['titel'] != "")
+                                                            $rmdStr .= $remedyRow['titel'].", ";
+                                                    }
                                                 }
                                                 $rmdStr =rtrim($rmdStr, ", ");
                                                 echo $rmdStr;
