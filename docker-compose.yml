@@ -16,15 +16,17 @@ services:
     # environment:
     #   - APACHE_DOCUMENT_ROOT=/var/www/html/symcom-synonym-tool
   mysql:
-    image: mysql:5.7
+    image: mysql:8.0
     container_name: mysql
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: symcom_minified_db
+      MYSQL_AUTHENTICATION_PLUGIN: mysql_native_password
     ports:
       - "3306:3306"
     volumes:
       - db_data:/var/lib/mysql
+      - ./my.cnf:/etc/my.cnf
 
 volumes:
   db_data:
