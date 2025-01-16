@@ -41,7 +41,7 @@ docker exec -it mysql mysql -u root -proot symcom_minified_db
 show tables;
 ```
 
-9. If in any case, the database and apache configurations are chaneged, make edits in `config/routes.php`.
+9. (Optional) If in any case, the database and apache configurations are changed, make edits in `config/routes.php`.
 ```
 Change PHP variable $absoluteUrl.
 Change $dbHost, $dbUsername, $dbPassword, $dbName.
