@@ -7,7 +7,6 @@ In order to get the program running, the repo along with database is needed.
 2. Check Docker.
 ```
 docker --version
-docker-compose --version
 ```
 3. Change the ownership of the cloned directory.
 ```
@@ -15,8 +14,8 @@ sudo chown -R $USER:$USER location-directory-location/symcom-synonym-tool
 ```
 4. Build Docker Images and Run.
 ```
-sudo docker-compose build
-sudo docker-compose up -d
+sudo docker compose build
+sudo docker compose up -d
 ```
 5. Check if contianers are running. If errors are encountered for already used ports. Deactivate the ports.
 ```
@@ -33,37 +32,16 @@ composer install
 ```
 8. Database import.
 ```
-# Go the mySQL container:
-sudo docker exec -it mysql bash
-
-# Login using password defined in yml file:
-mysql -u root -p
-
-# Check Databases:
-show databases;
-
-# If database mentioned in yml file is not creaated, create the database:
-create database symcom_minified_db;
-
-# Exit the mysql bash and container:
-exit
-
-# Import the SQL provided in the repo root to Docker temp.
-sudo docker cp /location-of-cloned-root-folder/new_database_synonym_test.sql mysql:/tmp/
-
-# Access mySQL container again:
-sudo docker exec -it mysql bash
-
-# Import the SQL to newly created database symcom_minified_db:
-mysql -u root -p symcom_minified_db < /tmp/new_database_synonym_test.sql
-
-# Check to verify the tables inside the database going to mySQL bash
-mysql -u root -p
-use database symcom_minified_db;
-show all tables;
-
+cat new_database_synonym_test.sql | docker exec -i mysql mysql -u root -proot symcom_minified_db
 ```
-9. If in any case, the database and apache configurations are chaneged, make edits in `config/routes.php`.
+
+Afterwards, check to verify the tables inside the database going to MySQL bash
+```
+docker exec -it mysql mysql -u root -proot symcom_minified_db
+show tables;
+```
+
+9. (Optional) If in any case, the database and apache configurations are changed, make edits in `config/routes.php`.
 ```
 Change PHP variable $absoluteUrl.
 Change $dbHost, $dbUsername, $dbPassword, $dbName.
