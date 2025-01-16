@@ -7,7 +7,6 @@ In order to get the program running, the repo along with database is needed.
 2. Check Docker.
 ```
 docker --version
-docker-compose --version
 ```
 3. Change the ownership of the cloned directory.
 ```
@@ -15,8 +14,8 @@ sudo chown -R $USER:$USER location-directory-location/symcom-synonym-tool
 ```
 4. Build Docker Images and Run.
 ```
-sudo docker-compose build
-sudo docker-compose up -d
+sudo docker compose build
+sudo docker compose up -d
 ```
 5. Check if contianers are running. If errors are encountered for already used ports. Deactivate the ports.
 ```
