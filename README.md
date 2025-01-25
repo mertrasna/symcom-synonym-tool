@@ -49,7 +49,8 @@ Change $dbHost, $dbUsername, $dbPassword, $dbName.
 
 The project should be runnign live at `http://localhost:8080/`.
 
-
+# Developer Guidelines
+[Synonym Tool Implementation Guidelines](developer-guidelines.md)
 
 
 
