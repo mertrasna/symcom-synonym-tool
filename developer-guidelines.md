@@ -31,7 +31,7 @@ Once all the docker containers are running, try the below command to update the 
 cat update_tables.sql | docker exec -i mysql mysql -u root -proot symcom_minified_db
 ```
 
-Relace `symcom_minified_db` with your database name if it has changed.
+Replace `symcom_minified_db` with your database name if it has changed.
 
 SQL tables related to Synonyms:
 ```
