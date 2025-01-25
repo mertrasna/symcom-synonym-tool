@@ -1476,35 +1476,41 @@
 		if($string != ""){
 			$returnString = $string;
 			$remedyResult = mysqli_query($db,"SELECT arznei.titel, arznei.kuerzel FROM symptom_remedy JOIN arznei ON symptom_remedy.remedy_id = arznei.arznei_id WHERE symptom_remedy.symptom_id = '".$symptomId."'");
-            while($remedyRow = mysqli_fetch_array($remedyResult)){
-            	$kuerzelArr = explode("|", $remedyRow['kuerzel']); 
-				$trimmedKuerzelArr=array_map('trim',$kuerzelArr);
-				$trimmedKuerzelArr=array_map('strtolower',$trimmedKuerzelArr);
-				$anotherPossibleStringForRemedy = $string.".";
-				if(in_array(strtolower($string), $trimmedKuerzelArr) OR in_array(strtolower($anotherPossibleStringForRemedy), $trimmedKuerzelArr) OR strtolower(trim($remedyRow['titel'])) == strtolower($string) ){
-					$returnString = "";
-					return $returnString;
+            if($remedyResult){
+				while($remedyRow = mysqli_fetch_array($remedyResult)){
+					$kuerzelArr = explode("|", $remedyRow['kuerzel']); 
+					$trimmedKuerzelArr=array_map('trim',$kuerzelArr);
+					$trimmedKuerzelArr=array_map('strtolower',$trimmedKuerzelArr);
+					$anotherPossibleStringForRemedy = $string.".";
+					if(in_array(strtolower($string), $trimmedKuerzelArr) OR in_array(strtolower($anotherPossibleStringForRemedy), $trimmedKuerzelArr) OR strtolower(trim($remedyRow['titel'])) == strtolower($string) ){
+						$returnString = "";
+						return $returnString;
+					}
 				}
-            }
+			}
+			
 			$prueferResult = mysqli_query($db,"SELECT pruefer.pruefer_id, pruefer.kuerzel, pruefer.suchname FROM symptom_pruefer JOIN pruefer ON symptom_pruefer.pruefer_id	= pruefer.pruefer_id WHERE symptom_pruefer.symptom_id = '".$symptomId."'");
-            while($prueferRow = mysqli_fetch_array($prueferResult)){
-            	$kuerzelArr = explode("|", $prueferRow['kuerzel']);
-				$trimmedKuerzelArr=array_map('trim',$kuerzelArr);
-				$trimmedKuerzelArr=array_map('strtolower',$trimmedKuerzelArr);
-				$anotherPossibleString = $string.".";
-				if(in_array(strtolower($string), $trimmedKuerzelArr) OR in_array(strtolower($anotherPossibleString), $trimmedKuerzelArr) OR strtolower(trim($prueferRow['suchname'])) == strtolower($string) ){
-					$returnString = "";
-					return $returnString;
+            if($prueferResult){
+				while($prueferRow = mysqli_fetch_array($prueferResult)){
+					$kuerzelArr = explode("|", $prueferRow['kuerzel']);
+					$trimmedKuerzelArr=array_map('trim',$kuerzelArr);
+					$trimmedKuerzelArr=array_map('strtolower',$trimmedKuerzelArr);
+					$anotherPossibleString = $string.".";
+					if(in_array(strtolower($string), $trimmedKuerzelArr) OR in_array(strtolower($anotherPossibleString), $trimmedKuerzelArr) OR strtolower(trim($prueferRow['suchname'])) == strtolower($string) ){
+						$returnString = "";
+						return $returnString;
+					}
 				}
-            }
-
+			}
             $referenceResult = mysqli_query($db,"SELECT reference.full_reference, reference.autor, reference.reference FROM symptom_reference JOIN reference ON symptom_reference.reference_id = reference.reference_id WHERE symptom_reference.symptom_id = '".$symptomId."'");
-            while($referenceRow = mysqli_fetch_array($referenceResult)){
-            	if($referenceRow['full_reference'] == $string){
-            		$returnString = "";
-					return $returnString;
-            	}
-            }
+            if($referenceResult){
+				while($referenceRow = mysqli_fetch_array($referenceResult)){
+					if($referenceRow['full_reference'] == $string){
+						$returnString = "";
+						return $returnString;
+					}
+				}
+			}
 		}
 		return $returnString;
 	}
@@ -25577,6 +25583,10 @@
 	function displayFormateOfSynonym($unSerializeString = null){
 		$returnData = "";
 		if($unSerializeString != ""){
+			$isSerialized = @unserialize($unSerializeString);
+			if ($isSerialized === false && $unSerializeString !== serialize(false)) {
+				return $returnData;
+			}
 			$synonymArray = unserialize($unSerializeString);
 			$tempString = "";
 			foreach ($synonymArray as $key => $value) {
