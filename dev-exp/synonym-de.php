@@ -57,12 +57,11 @@
                 <table class="table table-bordered table-sticky-head table-hover">
                     <thead>
                         <tr>
-                            <th style="width:5%;">Wort</th>
-                            <th style="width:5%;">Striktes Synonym</th>
+                            <th style="width:5%;">Word</th>
+                            <th style="width:5%;">Synonym</th>
                             <th style="width: 5%;">Cross Reference</th>
-                            <th style="width: 5%;">HyperLink</th>
-                            <th style="width: 5%;">Hyperonym (Oberbegriff)</th>
-                            <th style="width: 5%;">Hyponym (Unterbegriff)</th>
+                            <th style="width: 5%;">Generic Term</th>
+                            <th style="width: 5%;">Sub Term</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -74,7 +73,6 @@
                                     <td><?php echo $row['word']; ?></td>
                                     <td><?php echo $row['strict_synonym']; ?></td>
                                     <td><?php echo $row['synonym_partial_1']; ?></td>
-                                    <td><?php echo $row['synonym_partial_2']; ?></td>
                                     <td><?php echo $row['synonym_general']; ?></td>
                                     <td><?php echo $row['synonym_minor']; ?></td>
                                 </tr>
