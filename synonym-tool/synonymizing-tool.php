@@ -1,23 +1,14 @@
 <?php
-// Include necessary files
 include '../config/route.php';
-include 'sub-section-config.php';
-
-// Set page title
 $pageTitle = "Synonymizing Tool";
-
-// Include header and sidebar
 include '../inc/header.php';
 include '../inc/sidebar.php';
-
-// Check if "mid" (master ID) is provided in the URL
 $masterId = isset($_GET['mid']) ? intval($_GET['mid']) : 0;
 
-// If masterId is missing, try to fetch a valid one
 if ($masterId == 0) {
     $midResult = mysqli_query($db, "SELECT DISTINCT master_id FROM quelle_import_test ORDER BY master_id ASC LIMIT 1");
     $row = mysqli_fetch_assoc($midResult);
-    
+
     if ($row) {
         $firstValidMid = $row['master_id'];
         header("Location: " . $_SERVER['PHP_SELF'] . "?mid=" . $firstValidMid);
@@ -27,19 +18,18 @@ if ($masterId == 0) {
     }
 }
 
-// Check database connection
 if (!$db) {
     die("<p style='color:red;'>Database connection failed: " . mysqli_connect_error() . "</p>");
 }
 
-// Fetch stop words from the database
+// fetching words from database 
 $stopwords = [];
-$stopwordsResult = mysqli_query($db, "SELECT name FROM stop_words WHERE language = 'english' AND active = 1");
+$stopwordsResult = mysqli_query($db, "SELECT name FROM stop_words WHERE active = 1");
 while ($row = mysqli_fetch_assoc($stopwordsResult)) {
     $stopwords[] = strtolower($row['name']); // Store stop words in lowercase for easy comparison
 }
 
-// Fetch original symptoms from `quelle_import_test`
+// fetching the original symptoms from quelle_import_test table 
 $symptoms = [];
 $query = "
     SELECT 
@@ -64,23 +54,27 @@ while ($row = mysqli_fetch_assoc($symptomResult)) {
     ];
 }
 
-// Function to process text: Gray out stop words, highlight non-stop words
+// step 1 Exclude all filler words
 function processText($text, $stopwords)
 {
     if (empty($text)) {
         return "<span style='color: red;'>[No symptom text found]</span>";
     }
 
+    $text = preg_replace('/<[^>]+>/', '', $text);
+    $text = html_entity_decode($text, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+    $text = trim(preg_replace('/\s+/', ' ', $text));
+
     $words = explode(" ", $text);
     $processedText = "";
 
     foreach ($words as $word) {
-        $cleanedWord = strtolower(trim($word, ".,()")); // Remove punctuation for matching
+        $cleanedWord = strtolower(trim($word, ".,()")); 
         if (in_array($cleanedWord, $stopwords)) {
-            // Gray out stop words (non-editable)
+            // Graying out stop words
             $processedText .= "<span class='stopword'>$word</span> ";
         } else {
-            // Highlight and make non-stop words clickable for synonym classification
+            // Highlighting the non-stop words clickable for synonym classification
             $processedText .= "<span class='synonym-word' data-word='$word'>$word</span> ";
         }
     }
@@ -89,7 +83,7 @@ function processText($text, $stopwords)
 }
 ?>
 
-<!-- Page content -->
+
 <div class="content-wrapper">
     <section class="content-header">
         <h1>Original Symptoms</h1>
@@ -122,9 +116,9 @@ function processText($text, $stopwords)
                                 <?php foreach ($symptoms as $entry) : ?>
                                     <tr class="symptom-item"
                                         data-symptom-id="<?php echo $entry['id']; ?>"
-                                        data-original-symptom="<?php echo htmlspecialchars($entry['original_symptom']); ?>">
+                                        data-original-symptom="<?php echo htmlspecialchars(strip_tags($entry['original_symptom'])); ?>">
                                         <td><?php echo $entry['id']; ?></td>
-                                        <td><?php echo !empty($entry['original_symptom']) ? htmlspecialchars($entry['original_symptom']) : "<span style='color: gray;'>[No original symptom]</span>"; ?></td>
+                                        <td><?php echo htmlspecialchars(strip_tags($entry['original_symptom'])); ?></td> <!-- Removes unwanted tags -->
                                         <td><?php echo processText($entry['original_symptom'], $stopwords); ?></td>
                                     </tr>
                                 <?php endforeach; ?>
@@ -138,11 +132,11 @@ function processText($text, $stopwords)
 </div>
 
 <?php
-// Include footer
+
 include '../inc/footer.php';
 ?>
 
-<!-- Custom Styles -->
+
 <style>
     .stopword {
         color: gray;
@@ -161,11 +155,9 @@ include '../inc/footer.php';
         var symptomId = $(this).attr("data-symptom-id");
         var originalSymptom = $(this).attr("data-original-symptom");
 
-        // Debugging Output (Check values in Console)
         console.log("Symptom ID:", symptomId);
         console.log("Original Symptom:", originalSymptom);
 
-        // Example: Use these values in an AJAX request
         $.ajax({
             url: "fetch_symptom_details.php",
             type: "POST",
@@ -189,7 +181,6 @@ include '../inc/footer.php';
         alert("You clicked on: " + word + "\nImplement synonym classification here.");
     });
 
-    // Reload Symptoms with AJAX
     $("#reloadSymptoms").click(function() {
         let masterId = "<?php echo $masterId; ?>";
         $.ajax({

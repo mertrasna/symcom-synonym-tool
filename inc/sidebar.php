@@ -53,7 +53,7 @@
       
       <!-- Synonymizing Tool -->
       <li class="<?php if(preg_match("/synonymizing-tool/i", $actual_link)) echo 'active'; ?>">
-        <a href="<?php echo $absoluteUrl;?>dev-exp/synonymizing-tool.php">
+        <a href="<?php echo $absoluteUrl;?>synonym-tool/synonymizing-tool.php">
           <i class="fa fa-font"></i> <!-- Alphabet Tool Symbol -->
           <span>Synonymizing Tool</span>
         </a>
