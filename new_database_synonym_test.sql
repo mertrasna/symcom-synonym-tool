@@ -2102,15 +2102,15 @@ INSERT INTO `stop_words` (`id`, `name`, `active`, `language`) VALUES
 
 CREATE TABLE `synonym_de` (
   `synonym_id` int(11) UNSIGNED NOT NULL,
-  `word` varchar(150) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `strict_synonym` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
-  `synonym_partial_1` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'It is now considered as cross reference',
+  `word` varchar(150) COLLATE utf8mb4_unicode_ci DEFAULT NULL, //root word
+  `strict_synonym` varchar(255) CHARACTER SET utf8 DEFAULT NULL, // synonym
+  `synonym_partial_1` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'It is now considered as cross reference', //cross-reference
   `synonym_partial_2` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'It is now considered as hyperlink',
-  `synonym_general` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `synonym_minor` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `synonym_general` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL, //generic term
+  `synonym_minor` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL, //sub-term
   `synonym_nn` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `synonym_comment` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `synonym_ns` enum('0','1') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '0',
+  `synonym_comment` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL, //comment
+  `synonym_ns` enum('0','1') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '0', //non-secure flag
   `source_reference_ns` enum('0','1') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '0',
   `active` tinyint(1) NOT NULL DEFAULT 1 COMMENT '1=Active, 0=Inactive',
   `ip_address` varchar(15) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
