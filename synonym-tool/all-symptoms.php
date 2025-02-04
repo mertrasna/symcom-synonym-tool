@@ -55,7 +55,7 @@ while ($row = mysqli_fetch_assoc($symptomResult)) {
 }
 
 // step 1 Exclude all filler words
-function processText($text, $stopwords)
+function processText($text, $stopwords, $synonyms = [])
 {
     if (empty($text)) {
         return "<span style='color: red;'>[No symptom text found]</span>";
@@ -70,12 +70,19 @@ function processText($text, $stopwords)
 
     foreach ($words as $word) {
         $cleanedWord = strtolower(trim($word, ".,()")); 
+        $wordClass = "synonym-word";
+
         if (in_array($cleanedWord, $stopwords)) {
             // Graying out stop words
             $processedText .= "<span class='stopword'>$word</span> ";
         } else {
+            // Check if the word exists in the synonyms array
+            if (in_array($cleanedWord, $synonyms)) {
+                $wordClass = "synonym-word green"; // Add the green class
+            }
+
             // Highlighting the non-stop words clickable for synonym classification
-            $processedText .= "<span class='synonym-word' data-word='$word'>$word</span> ";
+             $processedText .= "<span class='$wordClass' data-word='$cleanedWord'>$word</span> ";
         }
     }
 
@@ -157,43 +164,67 @@ include '../inc/footer.php';
 
         console.log("Symptom ID:", symptomId);
         console.log("Original Symptom:", originalSymptom);
-
-        $.ajax({
-            url: "fetch_symptom_details.php",
-            type: "POST",
-            data: { symptom_id: symptomId, original_symptom: originalSymptom },
-            success: function(response) {
-                console.log("Response from Server:", response);
-                $("#symptom-details").html(response);
-            },
-            error: function(xhr, status, error) {
-                console.error("AJAX Error:", error);
-            }
-        });
     });
 
     $(window).on("load", function() {
         console.log('Original Symptoms displayed successfully.');
     });
 
-    $(".synonym-word").click(function() {
-        let word = $(this).attr("data-word");
-        alert("You clicked on: " + word + "\nImplement synonym classification here.");
-    });
+   // Track words that have been marked as synonyms (green)
+let greenWords = [];
 
-    $("#reloadSymptoms").click(function() {
-        let masterId = "<?php echo $masterId; ?>";
-        $.ajax({
-            url: "fetch_symptoms.php",
-            type: "GET",
-            data: { mid: masterId },
-            success: function(response) {
-                console.log("Reloaded Symptoms:", response);
-                $("#symptom-container").html(response);
-            },
-            error: function(xhr, status, error) {
-                console.error("Reload Error:", error);
+$(document).on("click", ".synonym-word", function() {
+    let word = $(this).attr("data-word");
+
+    console.log("Searching for word:", word); // Check if the word is correctly captured
+
+    // AJAX request to search for the word in the synonym_en table
+    $.ajax({
+        url: "search_synonym.php",  // The PHP script that will handle the search
+        type: "POST",
+        data: { word: word },
+        success: function(response) {
+            console.log("Response from server:", response); // Log the response
+
+            var res = JSON.parse(response);
+            if (res.success) {
+                // Extract synonyms from the response
+                let synonyms = res.synonyms.map(function(synonym) {
+                    return synonym.word.toLowerCase();
+                });
+
+                // Store the synonyms in the greenWords list (persistent across searches)
+                greenWords = [...new Set(greenWords.concat(synonyms))];
+
+                // After the search, loop through each word and check if it is a synonym
+                $(".synonym-word").each(function() {
+                    let wordText = $(this).attr("data-word").toLowerCase();
+                    if (greenWords.includes(wordText)) {
+                        $(this).css("color", "green");  
+                    } else {
+                        $(this).css("color", "blue");  
+                    }
+                });
+
+                
+                let synonymList = "<ul>";
+                res.synonyms.forEach(function(synonym) {
+                    synonymList += "<li>Synonym ID: " + synonym.synonym_id + "<br>Word: " + synonym.word + "</li>";
+                });
+                synonymList += "</ul>";
+                $("#synonym-search-results").html(synonymList); // Make sure the element exists
+            } else {
+                alert("No synonym found: " + res.message);
             }
-        });
+        },
+        error: function(xhr, status, error) {
+            console.error("AJAX Error:", error);
+            alert("An error occurred while searching for the synonym.");
+        }
     });
+});
+
 </script>
+
+
+
