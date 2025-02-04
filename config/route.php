@@ -41,7 +41,7 @@ $actual_link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https"
     . (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '/');
 
 // Site domain
-$absoluteUrl = "http://localhost:8080/";
+$absoluteUrl = "http://188.245.171.92:8080/";
 
 // api base url
 $baseApiURL = $absoluteUrl.'symcom/api/public/v1/';
