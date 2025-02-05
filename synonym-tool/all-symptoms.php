@@ -132,6 +132,34 @@ function processText($text, $stopwords) {
 
 
 <style>
+    .synonym-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    }
+
+    .synonym-table th, .synonym-table td {
+    padding: 8px;
+    border: 1px solid #ddd;
+    text-align: center;
+    }
+
+    .synonym-table th {
+    background-color: #f4f4f4;
+    }
+
+    .synonym-table input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    margin: 5px;
+    }
+
+    .synonym-explanation {
+    margin-top: 10px;
+    font-size: 14px;
+    color: #555;
+    }
+
     .stopword {
         color: gray;
         font-style: italic;
@@ -188,60 +216,155 @@ function processText($text, $stopwords) {
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     $(document).ready(function() {
-        let isCollapsed = false;
-        let greenWords = new Set(); 
-
-        
-        $("#toggleView").click(function() {
-            if ($(".left-pane").is(":visible")) {
-                $(".left-pane").hide();
-                $(".right-pane").css("width", "100%");
-                $(this).text("⇨");
-            } else {
-                $(".left-pane").show();
-                $(".right-pane").css("width", "70%");
-                $(this).text("⇦");
-            }
-        });
-
-        
         $(".symptom-item").click(function() {
-            let symptomText = $(this).html();
-            $("#symptom-details").html(symptomText);
-        });
+        $(".symptom-item").removeClass("selected");
+        $(this).addClass("selected");
+    
+        let symptomText = $(this).html();
+        $("#symptom-details").html(symptomText);
 
-        
-        $(document).on("click", ".synonym-word", function() {
-            let word = $(this).attr("data-word");
+        let firstBlueWord = $(this).find(".synonym-word").first();
+        if (firstBlueWord.length) {
+        firstBlueWord.trigger("click");
+        }
+    });
 
-            console.log("Searching for word:", word); 
-
-            
-            $.ajax({
-                url: "search_synonym.php",  
-                type: "POST",
-                data: { word: word },
-                success: function(response) {
-                    console.log("Response from server:", response); 
-
-                    var res = JSON.parse(response);
-                    if (res.success) {
-                        
-                        let synonyms = res.synonyms.map(synonym => synonym.word.toLowerCase());
-                        greenWords = new Set([...greenWords, ...synonyms]);
-
-                        
-                        $(".synonym-word").each(function() {
-                            let wordText = $(this).attr("data-word").toLowerCase();
-                            if (greenWords.has(wordText)) {
-                                $(this).addClass("green");
-                            }
-                        });
-                    } else {
-                        alert("No synonym found: " + res.message);
-                    }
+        $(document).ready(function() {
+            $("#toggleView").click(function() {
+                if ($(".left-pane").is(":visible")) {
+                    $(".left-pane").hide();
+                    $(".right-pane").css("width", "100%");
+                    $(this).text("⇨");
+                } else {
+                    $(".left-pane").show();
+                    $(".right-pane").css("width", "70%");
+                    $(this).text("⇦");
                 }
             });
         });
+
+        $(document).on("click", ".synonym-word", function() {
+            let word = $(this).attr("data-word");
+
+            console.log("Searching synonyms for:", word); // debugging log to see it's working
+
+            $.ajax({
+                url: "search_synonym.php",
+                type: "POST",
+                data: { word: word },
+                success: function(response) {
+                    console.log("Server Response:", response); // debug
+                    let res = JSON.parse(response);
+                     if (res.success) {
+                         displaySynonyms(word, res.synonyms);
+                    } else {
+                          alert("No synonym found.");
+                     }
+                 }
+            });
+        });
+
+        // function to display synonyms in the right side (added explanation for S, Q, O, U)
+        function displaySynonyms(word, synonyms) {
+    let html = `
+        <div class="pane-header">
+            <button id="toggleView" class="toggle-btn">⇦</button>
+            <h3>Worksheet</h3>
+        </div>
+        <h3>Term: ${word}</h3>
+        <table class="synonym-table">
+            <thead>
+                <tr>
+                    <th>S</th>
+                    <th>Q</th>
+                    <th>O</th>
+                    <th>U</th>
+                    <th>Synonym</th>
+                </tr>
+            </thead>
+            <tbody>
+    `;
+
+    synonyms.forEach(syn => {
+        let synonymList = [
+            syn.strict_synonym,
+            syn.synonym_partial_1,
+            syn.synonym_general,
+            syn.synonym_minor
+        ].filter(s => s !== null && s !== ""); // Remove null values
+
+        synonymList.forEach(synonym => {
+            html += `
+                <tr>
+                    <td><input type="checkbox" class="synonym-checkbox" data-type="S" value="${synonym}"></td>
+                    <td><input type="checkbox" class="synonym-checkbox" data-type="Q" value="${synonym}"></td>
+                    <td><input type="checkbox" class="synonym-checkbox" data-type="O" value="${synonym}"></td>
+                    <td><input type="checkbox" class="synonym-checkbox" data-type="U" value="${synonym}"></td>
+                    <td>${synonym}</td>
+                </tr>
+            `;
+        });
+    });
+
+    html += `
+            </tbody>
+        </table>
+        <p class="synonym-explanation">
+            <strong>S</strong> = Synonym, <strong>Q</strong> = Cross-reference, 
+            <strong>O</strong> = Generic-term, <strong>U</strong> = Sub-term
+        </p>
+        <button id="submitSynonyms">Submit</button>
+    `;
+
+    $("#worksheet-container").html(html);
+}
+
+    $(document).on("click", "#submitSynonyms", function(event) {
+        event.preventDefault(); // this will be changed looks like not working
+
+        let selectedSynonyms = [];
+
+        let word = $("#symptom-details").find(".synonym-word").first().text().trim(); // gets the first blue word
+
+        $(".synonym-checkbox:checked").each(function() {
+            let synonym = $(this).val();
+            let type = $(this).attr("data-type");
+
+            if (!word || !synonym || !type) {
+            console.error("⚠️ Missing Data:", { word, synonym, type });
+            return;
+            }
+
+            let synonymData = { word: word, synonym: synonym, type: type };
+            selectedSynonyms.push(synonymData);
+        });
+
+        if (selectedSynonyms.length === 0) {
+            alert("⚠️ No synonyms selected.");
+            return;
+        }
+
+        console.log("Sending to server:", selectedSynonyms); // debug
+
+    $.ajax({
+        url: "save_synonym.php",
+        type: "POST",
+        dataType: "json", // response parsed as json
+        data: { synonyms: JSON.stringify(selectedSynonyms) },
+        success: function(response) {
+            console.log("server Response:", response);
+            if (response.success) {
+                alert("synonyms saved successfully.");
+            } else {
+                alert("failed to save synonym: " + response.message);
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error("AJAX Error:", error, xhr.responseText);
+            alert("Error saving synonyms.");
+        }
+    });
+});
+
     });
 </script>
