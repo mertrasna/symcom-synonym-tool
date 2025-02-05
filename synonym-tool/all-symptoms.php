@@ -132,6 +132,8 @@ function processText($text, $stopwords) {
 
 
 <style>
+
+    /* CSS for styling */
     .synonym-table {
     width: 100%;
     border-collapse: collapse;
@@ -215,6 +217,8 @@ function processText($text, $stopwords) {
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
+
+    // function for finding the first blue word and clicking it
     $(document).ready(function() {
         $(".symptom-item").click(function() {
         $(".symptom-item").removeClass("selected");
@@ -229,6 +233,7 @@ function processText($text, $stopwords) {
         }
     });
 
+            // function for toggling the left panel
         $(document).ready(function() {
             $("#toggleView").click(function() {
                 if ($(".left-pane").is(":visible")) {
@@ -291,7 +296,7 @@ function processText($text, $stopwords) {
             syn.synonym_partial_1,
             syn.synonym_general,
             syn.synonym_minor
-        ].filter(s => s !== null && s !== ""); // Remove null values
+        ].filter(s => s !== null && s !== ""); // remove null values
 
         synonymList.forEach(synonym => {
             html += `
@@ -331,7 +336,7 @@ function processText($text, $stopwords) {
             let type = $(this).attr("data-type");
 
             if (!word || !synonym || !type) {
-            console.error("⚠️ Missing Data:", { word, synonym, type });
+            console.error("Missing Data:", { word, synonym, type });
             return;
             }
 
@@ -340,7 +345,7 @@ function processText($text, $stopwords) {
         });
 
         if (selectedSynonyms.length === 0) {
-            alert("⚠️ No synonyms selected.");
+            alert("synonyms selected."); // this will be changed
             return;
         }
 
