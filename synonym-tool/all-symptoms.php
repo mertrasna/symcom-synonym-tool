@@ -30,6 +30,8 @@ while ($row = mysqli_fetch_assoc($stopwordsResult)) {
     $stopwords[] = strtolower($row['name']); 
 }
 
+$limit = 100; // Step 4 requirement to show 100 symptoms at a time
+$offset = 0;
 
 $symptoms = [];
 $query = "
@@ -37,6 +39,7 @@ $query = "
     FROM quelle_import_test
     WHERE master_id = '$masterId'
     ORDER BY id ASC
+    LIMIT $limit OFFSET $offset
 ";
 $symptomResult = mysqli_query($db, $query);
 if (!$symptomResult) {
@@ -152,7 +155,7 @@ function processText($text, $stopwords) {
     .toggle-btn {
         margin-right: 15px;
         padding: 8px 12px;
-        background: #007bff;
+        background: #28a745; /* Green */
         color: white;
         font-size: 16px;
         border: none;
@@ -160,9 +163,8 @@ function processText($text, $stopwords) {
         cursor: pointer;
         transition: all 0.3s ease;
     }
-
     .toggle-btn:hover {
-        background: #0056b3;
+        background:  #218838;
     }
 
     
