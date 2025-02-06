@@ -30,7 +30,7 @@ while ($row = mysqli_fetch_assoc($stopwordsResult)) {
     $stopwords[] = strtolower($row['name']); 
 }
 
-$limit = 100; // Step 4 requirement to show 100 symptoms at a time
+$limit = 2000; // Step 4 requirement to show 100 symptoms at a time
 $offset = 0; // Step 4 requirement to show 100 symptoms at a time
 
 $symptoms = [];
