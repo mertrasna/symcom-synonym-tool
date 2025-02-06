@@ -31,7 +31,7 @@ while ($row = mysqli_fetch_assoc($stopwordsResult)) {
 }
 
 $limit = 100; // Step 4 requirement to show 100 symptoms at a time
-$offset = 0;
+$offset = 0; // Step 4 requirement to show 100 symptoms at a time
 
 $symptoms = [];
 $query = "
@@ -248,6 +248,7 @@ function processText($text, $stopwords) {
             });
         });
 
+        // function to search synonyms for a word
         $(document).on("click", ".synonym-word", function() {
             let word = $(this).attr("data-word");
 
@@ -298,6 +299,7 @@ function processText($text, $stopwords) {
             syn.synonym_minor
         ].filter(s => s !== null && s !== ""); // remove null values
 
+        // add each synonym to the table
         synonymList.forEach(synonym => {
             html += `
                 <tr>
@@ -324,52 +326,60 @@ function processText($text, $stopwords) {
     $("#worksheet-container").html(html);
 }
 
-    $(document).on("click", "#submitSynonyms", function(event) {
-        event.preventDefault(); // this will be changed looks like not working
+// function to submit the selected synonyms and save them in synonym_de table
+$(document).on("click", "#submitSynonyms", function(event) {
+    event.preventDefault();
 
-        let selectedSynonyms = [];
+    let selectedSynonyms = [];
+    let word = $(".synonym-word").first().text().trim();
 
-        let word = $("#symptom-details").find(".synonym-word").first().text().trim(); // gets the first blue word
+    if (!word) {
+        alert("Error: No word found.");
+        console.error("Error: No word detected in worksheet.");
+        return;
+    }
 
-        $(".synonym-checkbox:checked").each(function() {
-            let synonym = $(this).val();
-            let type = $(this).attr("data-type");
+    $(".synonym-checkbox:checked").each(function() {
+        let synonym = $(this).val();
+        let type = $(this).attr("data-type");
 
-            if (!word || !synonym || !type) {
+        if (!synonym || !type) {
             console.error("Missing Data:", { word, synonym, type });
-            return;
-            }
-
-            let synonymData = { word: word, synonym: synonym, type: type };
-            selectedSynonyms.push(synonymData);
-        });
-
-        if (selectedSynonyms.length === 0) {
-            alert("synonyms selected."); // this will be changed
             return;
         }
 
-        console.log("Sending to server:", selectedSynonyms); // debug
+        selectedSynonyms.push({ word, synonym, type });
+    });
 
+    if (selectedSynonyms.length === 0) {
+        alert("Please select at least one synonym.");
+        return;
+    }
+
+    console.log("Sending to server:", selectedSynonyms);
+
+    // AJAX request to save the selected synonyms with save_synonym.php file
     $.ajax({
         url: "save_synonym.php",
         type: "POST",
-        dataType: "json", // response parsed as json
-        data: { synonyms: JSON.stringify(selectedSynonyms) },
+        contentType: "application/json",
+        data: JSON.stringify({ synonyms: selectedSynonyms }),
         success: function(response) {
-            console.log("server Response:", response);
+            console.log("Server Response:", response);
             if (response.success) {
-                alert("synonyms saved successfully.");
+                alert("Synonyms saved successfully.");
             } else {
-                alert("failed to save synonym: " + response.message);
+                alert("Failed to save synonyms: " + response.message);
             }
         },
         error: function(xhr, status, error) {
-            console.error("AJAX Error:", error, xhr.responseText);
+            console.error("AJAX Error:", error, xhr.responseText); // debug
             alert("Error saving synonyms.");
         }
     });
 });
+
+
 
     });
 </script>
