@@ -3,60 +3,59 @@ include '../config/route.php';
 $pageTitle = "Synonymizing Tool";
 include '../inc/header.php';
 include '../inc/sidebar.php';
+
+
 $masterId = isset($_GET['mid']) ? intval($_GET['mid']) : 0;
 
 if ($masterId == 0) {
     $midResult = mysqli_query($db, "SELECT DISTINCT master_id FROM quelle_import_test ORDER BY master_id ASC LIMIT 1");
     $row = mysqli_fetch_assoc($midResult);
-
     if ($row) {
-        $firstValidMid = $row['master_id'];
-        header("Location: " . $_SERVER['PHP_SELF'] . "?mid=" . $firstValidMid);
+        header("Location: " . $_SERVER['PHP_SELF'] . "?mid=" . $row['master_id']);
         exit;
     } else {
-        die("<p style='color:red;'>Error: No valid master ID (mid) found in database.</p>");
+        die("<p style='color:red;'>Error: No valid master ID found in database.</p>");
     }
 }
+
 
 if (!$db) {
     die("<p style='color:red;'>Database connection failed: " . mysqli_connect_error() . "</p>");
 }
 
-// fetching words from database 
+
 $stopwords = [];
 $stopwordsResult = mysqli_query($db, "SELECT name FROM stop_words WHERE active = 1");
 while ($row = mysqli_fetch_assoc($stopwordsResult)) {
-    $stopwords[] = strtolower($row['name']); // Store stop words in lowercase for easy comparison
+    $stopwords[] = strtolower($row['name']); 
 }
 
-// fetching the original symptoms from quelle_import_test table 
+$limit = 100; // Step 4 requirement to show 100 symptoms at a time
+$offset = 0; // Step 4 requirement to show 100 symptoms at a time
+
 $symptoms = [];
 $query = "
-    SELECT 
-        id, BeschreibungOriginal_en, BeschreibungOriginal_de
+    SELECT id, BeschreibungOriginal_en, BeschreibungOriginal_de
     FROM quelle_import_test
     WHERE master_id = '$masterId'
     ORDER BY id ASC
+    LIMIT $limit OFFSET $offset
 ";
-
 $symptomResult = mysqli_query($db, $query);
-
 if (!$symptomResult) {
     die("<p style='color:red;'>SQL Error: " . mysqli_error($db) . "</p>");
 }
 
 while ($row = mysqli_fetch_assoc($symptomResult)) {
     $originalSymptom = !empty($row['BeschreibungOriginal_en']) ? $row['BeschreibungOriginal_en'] : $row['BeschreibungOriginal_de'];
-
     $symptoms[] = [
         "id" => $row['id'],
         "original_symptom" => $originalSymptom
     ];
 }
 
-// step 1 Exclude all filler words
-function processText($text, $stopwords, $synonyms = [])
-{
+
+function processText($text, $stopwords) {
     if (empty($text)) {
         return "<span style='color: red;'>[No symptom text found]</span>";
     }
@@ -69,20 +68,11 @@ function processText($text, $stopwords, $synonyms = [])
     $processedText = "";
 
     foreach ($words as $word) {
-        $cleanedWord = strtolower(trim($word, ".,()")); 
-        $wordClass = "synonym-word";
-
+        $cleanedWord = strtolower(trim($word, ".,()"));
         if (in_array($cleanedWord, $stopwords)) {
-            // Graying out stop words
             $processedText .= "<span class='stopword'>$word</span> ";
         } else {
-            // Check if the word exists in the synonyms array
-            if (in_array($cleanedWord, $synonyms)) {
-                $wordClass = "synonym-word green"; // Add the green class
-            }
-
-            // Highlighting the non-stop words clickable for synonym classification
-             $processedText .= "<span class='$wordClass' data-word='$cleanedWord'>$word</span> ";
+            $processedText .= "<span class='synonym-word' data-word='$word'>$word</span> ";
         }
     }
 
@@ -93,7 +83,7 @@ function processText($text, $stopwords, $synonyms = [])
 
 <div class="content-wrapper">
     <section class="content-header">
-        <h1>Original Symptoms</h1>
+        <h1>Synonymizing Tool</h1>
         <ol class="breadcrumb">
             <li><a href="<?php echo $_SERVER['PHP_SELF']; ?>?mid=<?php echo $masterId; ?>"><i class="fa fa-dashboard"></i> Home</a></li>
             <li class="active">Original Symptoms</li>
@@ -101,50 +91,77 @@ function processText($text, $stopwords, $synonyms = [])
     </section>
 
     <section class="content">
-        <div class="box box-primary">
-            <div class="box-header with-border">
-                <h3 class="box-title">Original Symptoms</h3>
-                <button id="reloadSymptoms" class="btn btn-primary" style="float:right;">Reload Symptoms</button>
-            </div>
-            <div class="box-body">
-                <div id="symptom-container">
+        <div class="split-container">
+            
+            <div id="symptom-list-container" class="left-pane">
+                <div class="pane-header">
+                    <h3>Symptoms</h3>
+                </div>
+                <div class="symptom-list">
                     <?php if (empty($symptoms)) : ?>
-                        <p style="color: red;">No original symptoms found for master ID: <?php echo $masterId; ?></p>
+                        <p style="color: red;">No symptoms found for master ID: <?php echo $masterId; ?></p>
                     <?php else : ?>
-                        <table class="table table-bordered table-hover">
-                            <thead>
-                                <tr>
-                                    <th>Symptom ID</th>
-                                    <th>Original Symptom</th>
-                                    <th>Processed Symptom (Stop Words Grayed Out)</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php foreach ($symptoms as $entry) : ?>
-                                    <tr class="symptom-item"
-                                        data-symptom-id="<?php echo $entry['id']; ?>"
-                                        data-original-symptom="<?php echo htmlspecialchars(strip_tags($entry['original_symptom'])); ?>">
-                                        <td><?php echo $entry['id']; ?></td>
-                                        <td><?php echo htmlspecialchars(strip_tags($entry['original_symptom'])); ?></td> <!-- Removes unwanted tags -->
-                                        <td><?php echo processText($entry['original_symptom'], $stopwords); ?></td>
-                                    </tr>
-                                <?php endforeach; ?>
-                            </tbody>
-                        </table>
+                        <ul>
+                            <?php foreach ($symptoms as $entry) : ?>
+                                <li class="symptom-item"
+                                    data-symptom-id="<?php echo $entry['id']; ?>"
+                                    data-original-symptom="<?php echo htmlspecialchars(strip_tags($entry['original_symptom'])); ?>">
+                                    <span><?php echo processText($entry['original_symptom'], $stopwords); ?></span>
+                                </li>
+                            <?php endforeach; ?>
+                        </ul>
                     <?php endif; ?>
+                </div>
+            </div>
+
+            
+            <div id="worksheet-container" class="right-pane">
+                <div class="pane-header">
+                    <button id="toggleView" class="toggle-btn">⇦</button>
+                    <h3>Worksheet</h3>
+                </div>
+                <div id="symptom-details">
+                    <p>Select a symptom from the left list to start working on it.</p>
                 </div>
             </div>
         </div>
     </section>
 </div>
 
-<?php
-
-include '../inc/footer.php';
-?>
+<?php include '../inc/footer.php'; ?>
 
 
 <style>
+
+    /* CSS for styling */
+    .synonym-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    }
+
+    .synonym-table th, .synonym-table td {
+    padding: 8px;
+    border: 1px solid #ddd;
+    text-align: center;
+    }
+
+    .synonym-table th {
+    background-color: #f4f4f4;
+    }
+
+    .synonym-table input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    margin: 5px;
+    }
+
+    .synonym-explanation {
+    margin-top: 10px;
+    font-size: 14px;
+    color: #555;
+    }
+
     .stopword {
         color: gray;
         font-style: italic;
@@ -154,77 +171,215 @@ include '../inc/footer.php';
         cursor: pointer;
         text-decoration: underline;
     }
+    .synonym-word.green {
+        color: green !important;
+    }
+
+    
+    .split-container {
+        display: flex;
+        height: calc(100vh - 100px);
+    }
+
+    
+    .toggle-btn {
+        margin-right: 15px;
+        padding: 8px 12px;
+        background: #28a745; /* Green */
+        color: white;
+        font-size: 16px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    .toggle-btn:hover {
+        background:  #218838;
+    }
+
+    
+    .left-pane {
+        width: 30%;
+        background: #f8f9fa;
+        border-right: 2px solid #ddd;
+        overflow-y: auto;
+        transition: width 0.3s ease;
+    }
+
+    
+    .right-pane {
+        width: 70%;
+        padding: 20px;
+        transition: width 0.3s ease;
+    }
 </style>
 
-<script src="assets/js/common.js"></script>
-<script type="text/javascript">
-    $(document).on("click", ".symptom-item", function() {
-        var symptomId = $(this).attr("data-symptom-id");
-        var originalSymptom = $(this).attr("data-original-symptom");
 
-        console.log("Symptom ID:", symptomId);
-        console.log("Original Symptom:", originalSymptom);
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+
+    // function for finding the first blue word and clicking it
+    $(document).ready(function() {
+        $(".symptom-item").click(function() {
+        $(".symptom-item").removeClass("selected");
+        $(this).addClass("selected");
+    
+        let symptomText = $(this).html();
+        $("#symptom-details").html(symptomText);
+
+        let firstBlueWord = $(this).find(".synonym-word").first();
+        if (firstBlueWord.length) {
+        firstBlueWord.trigger("click");
+        }
     });
 
-    $(window).on("load", function() {
-        console.log('Original Symptoms displayed successfully.');
-    });
+            // function for toggling the left panel
+        $(document).ready(function() {
+            $("#toggleView").click(function() {
+                if ($(".left-pane").is(":visible")) {
+                    $(".left-pane").hide();
+                    $(".right-pane").css("width", "100%");
+                    $(this).text("⇨");
+                } else {
+                    $(".left-pane").show();
+                    $(".right-pane").css("width", "70%");
+                    $(this).text("⇦");
+                }
+            });
+        });
 
-   // Track words that have been marked as synonyms (green)
-let greenWords = [];
+        // function to search synonyms for a word
+        $(document).on("click", ".synonym-word", function() {
+            let word = $(this).attr("data-word");
 
-$(document).on("click", ".synonym-word", function() {
-    let word = $(this).attr("data-word");
+            console.log("Searching synonyms for:", word); // debugging log to see it's working
 
-    console.log("Searching for word:", word); // Check if the word is correctly captured
-
-    // AJAX request to search for the word in the synonym_en table
-    $.ajax({
-        url: "search_synonym.php",  // The PHP script that will handle the search
-        type: "POST",
-        data: { word: word },
-        success: function(response) {
-            console.log("Response from server:", response); // Log the response
-
-            var res = JSON.parse(response);
-            if (res.success) {
-                // Extract synonyms from the response
-                let synonyms = res.synonyms.map(function(synonym) {
-                    return synonym.word.toLowerCase();
-                });
-
-                // Store the synonyms in the greenWords list (persistent across searches)
-                greenWords = [...new Set(greenWords.concat(synonyms))];
-
-                // After the search, loop through each word and check if it is a synonym
-                $(".synonym-word").each(function() {
-                    let wordText = $(this).attr("data-word").toLowerCase();
-                    if (greenWords.includes(wordText)) {
-                        $(this).css("color", "green");  
+            $.ajax({
+                url: "search_synonym.php",
+                type: "POST",
+                data: { word: word },
+                success: function(response) {
+                    console.log("Server Response:", response); // debug
+                    let res = JSON.parse(response);
+                     if (res.success) {
+                         displaySynonyms(word, res.synonyms);
                     } else {
-                        $(this).css("color", "blue");  
-                    }
-                });
+                          alert("No synonym found.");
+                     }
+                 }
+            });
+        });
 
-                
-                let synonymList = "<ul>";
-                res.synonyms.forEach(function(synonym) {
-                    synonymList += "<li>Synonym ID: " + synonym.synonym_id + "<br>Word: " + synonym.word + "</li>";
-                });
-                synonymList += "</ul>";
-                $("#synonym-search-results").html(synonymList); // Make sure the element exists
+        // function to display synonyms in the right side (added explanation for S, Q, O, U)
+        function displaySynonyms(word, synonyms) {
+    let html = `
+        <div class="pane-header">
+            <button id="toggleView" class="toggle-btn">⇦</button>
+            <h3>Worksheet</h3>
+        </div>
+        <h3>Term: ${word}</h3>
+        <table class="synonym-table">
+            <thead>
+                <tr>
+                    <th>S</th>
+                    <th>Q</th>
+                    <th>O</th>
+                    <th>U</th>
+                    <th>Synonym</th>
+                </tr>
+            </thead>
+            <tbody>
+    `;
+
+    synonyms.forEach(syn => {
+        let synonymList = [
+            syn.strict_synonym,
+            syn.synonym_partial_1,
+            syn.synonym_general,
+            syn.synonym_minor
+        ].filter(s => s !== null && s !== ""); // remove null values
+
+        // add each synonym to the table
+        synonymList.forEach(synonym => {
+            html += `
+                <tr>
+                    <td><input type="checkbox" class="synonym-checkbox" data-type="S" value="${synonym}"></td>
+                    <td><input type="checkbox" class="synonym-checkbox" data-type="Q" value="${synonym}"></td>
+                    <td><input type="checkbox" class="synonym-checkbox" data-type="O" value="${synonym}"></td>
+                    <td><input type="checkbox" class="synonym-checkbox" data-type="U" value="${synonym}"></td>
+                    <td>${synonym}</td>
+                </tr>
+            `;
+        });
+    });
+
+    html += `
+            </tbody>
+        </table>
+        <p class="synonym-explanation">
+            <strong>S</strong> = Synonym, <strong>Q</strong> = Cross-reference, 
+            <strong>O</strong> = Generic-term, <strong>U</strong> = Sub-term
+        </p>
+        <button id="submitSynonyms">Submit</button>
+    `;
+
+    $("#worksheet-container").html(html);
+}
+
+// function to submit the selected synonyms and save them in synonym_de table
+$(document).on("click", "#submitSynonyms", function(event) {
+    event.preventDefault();
+
+    let selectedSynonyms = [];
+    let word = $(".synonym-word").first().text().trim();
+
+    if (!word) {
+        alert("Error: No word found.");
+        console.error("Error: No word detected in worksheet.");
+        return;
+    }
+
+    $(".synonym-checkbox:checked").each(function() {
+        let synonym = $(this).val();
+        let type = $(this).attr("data-type");
+
+        if (!synonym || !type) {
+            console.error("Missing Data:", { word, synonym, type });
+            return;
+        }
+
+        selectedSynonyms.push({ word, synonym, type });
+    });
+
+    if (selectedSynonyms.length === 0) {
+        alert("Please select at least one synonym.");
+        return;
+    }
+
+    console.log("Sending to server:", selectedSynonyms);
+
+    // AJAX request to save the selected synonyms with save_synonym.php file
+    $.ajax({
+        url: "save_synonym.php",
+        type: "POST",
+        contentType: "application/json",
+        data: JSON.stringify({ synonyms: selectedSynonyms }),
+        success: function(response) {
+            console.log("Server Response:", response);
+            if (response.success) {
+                alert("Synonyms saved successfully.");
             } else {
-                alert("No synonym found: " + res.message);
+                alert("Failed to save synonyms: " + response.message);
             }
         },
         error: function(xhr, status, error) {
-            console.error("AJAX Error:", error);
-            alert("An error occurred while searching for the synonym.");
+            console.error("AJAX Error:", error, xhr.responseText); // debug
+            alert("Error saving synonyms.");
         }
     });
 });
 
+
+
+    });
 </script>
-
-
-

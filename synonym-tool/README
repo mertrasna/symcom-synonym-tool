@@ -1,0 +1,73 @@
+# Local Setup with Docker
+
+1. Open downloaded "Develop" folder in terminal (or clone it via git clone git@github.com:mertrasna/symcom-synonym-tool.git and git checkout develop & git pull origin develop)
+2. Check Docker
+
+```
+docker --version
+```
+
+3. Move to symcom-synonym-tool
+
+```
+cd symcom-synonym-tool/
+```
+
+4. Change the ownership of the cloned directory.
+
+```
+sudo chown -R $USER:$USER location-directory-location/symcom-synonym-tool
+```
+
+5. Build Docker Images and Run
+
+```
+sudo docker compose build
+sudo docker compose up -d
+```
+
+6. Go to the PHP container
+
+```
+docker exec -it php-apache bash
+```
+
+7. Check composer and install dependencies and exit.
+
+```
+composer --version
+composer install
+exit
+```
+
+8. Database import
+
+```
+cat new_database_synonym_test.sql | docker exec -i mysql mysql -u root -proot symcom_minified_db
+```
+
+9. New test symptoms provided
+
+```
+cd synonym-tool/test-symptoms/
+cat update_tables.sql | docker exec -i mysql mysql -u root -proot symcom_minified_db
+```
+
+10. Check config/route.php line 44 for the correct $absoluteURL
+    In order to run it on local machine keep it as it is ("http://localhost:8080/")
+    In order to test it on server change it to "188.245.171.92:8080"
+
+11. Navigating to Synonymizing Tool Page
+    Open any web browser and navigate to http://localhost:8080/ by entering the URL in the address bar and pressing Enter. Navigate to Materia Medica Page and click search button in order to see the details under (please make sure "Arznei" is selected as "All") and click the icon under Synonym Classification.
+
+12. Manually add synonyms for word "ungereimtes" to check the table
+    First check in worksheet page by clicking "ungereimtes" if table is not showing up on right hand side use following instructions
+
+```
+docker exec -it mysql mysql -u root -proot symcom_minified_db
+INSERT INTO synonym_de
+(word, strict_synonym, synonym_partial_1, synonym_partial_2, synonym_general, synonym_minor, source_reference_ns)
+VALUES
+('ungereimtes', 'unsammenhängendes', 'unsinniges', NULL, 'unlogisches', 'verworrenes', 'Manual Entry');
+exit
+```
