@@ -1,0 +1,123 @@
+/* General Styling */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f4f4f4;
+}
+
+/* Wrapper Layout */
+.content-wrapper {
+  padding: 20px;
+}
+
+/* Synonym Colors */
+.gray {
+  color: gray;
+  font-style: italic;
+}
+
+.blue {
+  color: blue;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.green {
+  color: green;
+  font-weight: bold;
+}
+
+/* Split Screen Layout */
+.split-container {
+  display: flex;
+  height: calc(100vh - 100px);
+}
+
+/* Left Panel */
+.left-pane {
+  width: 30%;
+  background: #fff;
+  border-right: 2px solid #ddd;
+  overflow-y: auto;
+  transition: width 0.3s ease;
+  padding: 15px;
+}
+
+/* Right Panel */
+.right-pane {
+  width: 70%;
+  padding: 20px;
+  transition: width 0.3s ease;
+}
+
+/* Toggle Button */
+.toggle-btn {
+  margin-right: 15px;
+  padding: 8px 12px;
+  background: #007bff;
+  color: white;
+  font-size: 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.toggle-btn:hover {
+  background: #0056b3;
+}
+
+/* Synonym List */
+.synonym-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.synonym-table th,
+.synonym-table td {
+  padding: 8px;
+  border: 1px solid #ddd;
+  text-align: center;
+}
+
+.synonym-table th {
+  background-color: #f4f4f4;
+}
+
+.synonym-table input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  margin: 5px;
+}
+
+/* Instructions */
+.synonym-explanation {
+  margin-top: 10px;
+  font-size: 14px;
+  color: #555;
+}
+
+/* Selected Symptom */
+.symptom-item.selected {
+  background-color: #e0f7fa;
+  font-weight: bold;
+}
+
+/* Symptom List */
+.symptom-list {
+  list-style-type: none;
+  padding: 0;
+}
+
+.symptom-list li {
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.symptom-list li:hover {
+  background: #f1f1f1;
+}

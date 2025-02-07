@@ -221,7 +221,7 @@
                                                                         ?>
                                                                     </td>
                                                                     <td style="width: 10%;" class="text-center">
-																		<a id="" title="Synonyms classification" class="text-primary" href="../synonym-tool/all-symptoms.php?mid=<?php echo $row['id']; ?>"><i class="fa fa-list-ol"></i></a> 
+                                                                    <a id="" title="Synonyms classification" class="text-primary" href="../synonym-tool/worksheet.php?mid=<?php echo $row['id']; ?>"><i class="fa fa-list-ol"></i></a> 
                                                                     </td>
                                                                     <td style="width: 11%;">
 																		<?php 
