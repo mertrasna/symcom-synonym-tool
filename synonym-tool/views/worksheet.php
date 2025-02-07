@@ -1,11 +1,11 @@
 <?php
-include_once __DIR__ . '/../../config/route.php'; // Correct path
-include_once __DIR__ . '/../../inc/header.php';  // Correct path
-include_once __DIR__ . '/../../inc/sidebar.php'; // Correct path
+include_once __DIR__ . '/../../config/route.php'; 
+include_once __DIR__ . '/../../inc/header.php';  
+include_once __DIR__ . '/../../inc/sidebar.php'; 
 
 $pageTitle = "Synonymizing Tool";
 
-// Get master ID from query parameter
+// gets the master ID from the URL, its 5072
 $masterId = isset($_GET['mid']) ? intval($_GET['mid']) : 0;
 
 if ($masterId == 0) {
@@ -19,19 +19,19 @@ if ($masterId == 0) {
     }
 }
 
-// Ensure database connection
+// checking database connection
 if (!$db) {
     die("<p style='color:red;'>Database connection failed: " . mysqli_connect_error() . "</p>");
 }
 
-// Load stop words from `stop_words` table
+// Load stop words from "stop words" table 
 $stopwords = [];
 $stopwordsResult = mysqli_query($db, "SELECT name FROM stop_words WHERE active = 1");
 while ($row = mysqli_fetch_assoc($stopwordsResult)) {
     $stopwords[] = strtolower($row['name']); 
 }
 
-// Fetch German symptoms only
+// fetching german symptoms from the database
 $symptoms = [];
 $query = "
     SELECT id, BeschreibungOriginal_de
@@ -54,12 +54,13 @@ while ($row = mysqli_fetch_assoc($symptomResult)) {
 }
 
 // Function to process symptoms: highlight stop words & synonyms
+// this will be moved to backend in the future
 function processText($text, $stopwords) {
     if (empty($text)) {
         return "<span style='color: red;'>[No symptom text found]</span>";
     }
 
-    // Remove HTML tags & decode entities
+    // remove html tags, decode html entities, and trim whitespace
     $text = preg_replace('/<[^>]+>/', '', $text);
     $text = html_entity_decode($text, ENT_QUOTES | ENT_HTML5, 'UTF-8');
     $text = trim(preg_replace('/\s+/', ' ', $text));

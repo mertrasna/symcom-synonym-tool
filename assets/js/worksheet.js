@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", function () {
   console.log("Worksheet.js loaded!"); // Debugging to ensure the script loads
 
-  // ✅ Function to display full symptom when clicked
+  // function to fetch synonyms for a symptom
   document.querySelectorAll(".symptom-item").forEach((item) => {
     item.addEventListener("click", function () {
       let symptomText = this.getAttribute("data-original-symptom").trim();
@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 
-  // ✅ Function to color-code words based on their type (Stopword, Synonym, Normal)
+  // function to colorize text based on word status
   function colorizeText() {
     document.querySelectorAll(".synonym-word").forEach((item) => {
       let word = item.innerText.trim();
@@ -37,10 +37,10 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  // ✅ Run colorizeText() on page load
+  // colorize text on page load
   colorizeText();
 
-  // ✅ Click event for selecting a word & fetching synonyms
+  // fetch synonyms for a word when clicked
   document.querySelectorAll(".synonym-word").forEach((item) => {
     item.addEventListener("click", function () {
       let word = this.innerText.trim();
@@ -69,7 +69,6 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 
-  // ✅ Fix for Toggle Button (Expanding/Collapsing the left pane)
   const toggleButton = document.getElementById("toggleView");
   const leftPane = document.querySelector(".left-pane");
   const rightPane = document.querySelector(".right-pane");

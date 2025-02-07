@@ -1,17 +1,18 @@
 <?php
-include_once __DIR__ . '/../config/route.php'; // Use existing $db connection
+include_once __DIR__ . '/../config/route.php'; 
 
 class Synonym {
     private $db;
 
+    // global $db from route.php
     public function __construct() {
-        global $db; // Use existing database connection from route.php
+        global $db; 
         $this->db = $db;
     }
 
+    // Search synonyms in synonym_de table
     public function getSymptoms($masterId) {
-        global $db; // Use database connection from route.php
-    
+        global $db; 
         if ($masterId <= 0) {
             echo "<pre>DEBUG: Invalid masterId ($masterId)</pre>";
             return [];
@@ -28,7 +29,6 @@ class Synonym {
         $stmt->bind_param("i", $masterId);
         $stmt->execute();
     
-        // Replace get_result() with fetch_assoc()
         $stmt->store_result();
         $stmt->bind_result($id, $beschreibung);
     
