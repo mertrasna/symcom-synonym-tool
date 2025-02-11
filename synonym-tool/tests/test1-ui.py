@@ -16,7 +16,7 @@ class SynonymizingToolTests(unittest.TestCase):
 
     def setUp(self):
         """ Runs Before Each Test Case (No Refresh) """
-        pass  # Removed refresh to keep the test smooth
+        pass 
 
     def test_navigation_ui_interactions(self):
         """  Test 1: Navigation and UI Interactions """
@@ -95,7 +95,7 @@ class SynonymizingToolTests(unittest.TestCase):
         print("TEST 4: Symptom Selection & Verification")
         print("="*50)
 
-        #  Click a symptom
+        #  click a symptom
         symptom = WebDriverWait(self.driver, 10).until(
             EC.element_to_be_clickable((By.XPATH, "(//li[contains(@class, 'symptom-item')])[1]"))
         )
@@ -109,7 +109,7 @@ class SynonymizingToolTests(unittest.TestCase):
         self.assertIn(symptom_text, worksheet_entry.text, "Symptom did not appear in the worksheet!")
         print(" Verified Symptom in Worksheet")
 
-        #  Find all synonyms (blue words) and print them
+        #  find all synonyms (blue words) and print them
         synonym_words = worksheet_entry.find_elements(By.XPATH, ".//span[contains(@class, 'synonym-word')]")
 
         if synonym_words:
@@ -119,24 +119,24 @@ class SynonymizingToolTests(unittest.TestCase):
         else:
             print("❌ No Synonyms Found")
 
-        #  Click on one synonym to verify clickability
+        #  click on one synonym to verify clickability
         if synonym_words:
             synonym_words[0].click()
             print(" Synonym Clicked")
 
         print("="*50 + "\n")
 
-        # Step 5: Repeat for Random Symptom after Step 4
+        # step 5: Repeat for Random Symptom after Step 4
         print("\n" + "="*50)
         print("TEST 5: Repeat for Random Symptom after Step 4")
         print("="*50)
 
-        # Get all symptoms (excluding the one already clicked)
+        # get all symptoms (excluding the one already clicked)
         symptoms = WebDriverWait(self.driver, 10).until(
             EC.presence_of_all_elements_located((By.XPATH, "//li[contains(@class, 'symptom-item')]"))
         )
         
-        # Exclude the already clicked symptom
+        # exclude the already clicked symptom
         random_symptom = random.choice(symptoms[1:])  # Skip the first symptom already clicked
         random_symptom_text = random_symptom.text
         random_symptom.click()
@@ -148,7 +148,7 @@ class SynonymizingToolTests(unittest.TestCase):
         self.assertIn(random_symptom_text, worksheet_entry.text, "Symptom did not appear in the worksheet!")
         print(" Verified Random Symptom in Worksheet")
 
-        # Repeat Step 3: Check Stop Words
+        # repeat Step 3: Check Stop Words
         stop_words = random_symptom.find_elements(By.XPATH, ".//span[contains(@class, 'stopword')]")
         if stop_words:
             print(" Stop Words Found:")
@@ -157,7 +157,7 @@ class SynonymizingToolTests(unittest.TestCase):
         else:
             print("❌ No Stop Words Found in this Symptom")
 
-        # Repeat Step 4: Find and click Synonyms
+        # repeat Step 4: Find and click Synonyms
         synonym_words = worksheet_entry.find_elements(By.XPATH, ".//span[contains(@class, 'synonym-word')]")
         if synonym_words:
             print(" Synonyms Found:")
@@ -171,7 +171,7 @@ class SynonymizingToolTests(unittest.TestCase):
     @classmethod
     def tearDownClass(cls):
         """ Close WebDriver (Runs Once After All Tests) """
-        time.sleep(3)  # Wait before closing
+        time.sleep(2)  
         cls.driver.quit()
 
 

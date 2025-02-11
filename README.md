@@ -47,6 +47,24 @@ Change PHP variable $absoluteUrl.
 Change $dbHost, $dbUsername, $dbPassword, $dbName.
 ```
 
+## 10. Running Selenium Tests
+
+This project includes Selenium-based UI tests. Follow the steps below to install the dependencies, download the required drivers, and run the tests.
+
+
+Ensure you have Python installed. Then, install the required packages using pip:
+
+```bash
+pip install selenium webdriver-manager pytest unittest
+```
+redirect to this path : /symcom-synonym-tool/synonym-tool/tests
+use the following command lines below to run tests:
+```bash
+python test1-search.py
+python test2-doubleclick.py
+python -m unittest test1-ui.py
+```
+
 The project should be runnign live at `http://localhost:8080/`.
 
 # Developer Guidelines
