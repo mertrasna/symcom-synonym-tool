@@ -20,13 +20,11 @@ $(document).ready(function () {
     $("#symptom-details").html(symptomText);
   });
 
-  let selectedWord = ""; // Store the selected word globally
-
+  // Handle clicking on synonym words
   // Handle clicking on synonym words
   $(document).on("click", ".synonym-word", function () {
     let word = $(this).attr("data-word");
-    selectedWord = word; // Store the word globally
-
+    selectedWord = word; // Store globally
     console.log("Searching for word:", word);
 
     $.ajax({
@@ -35,7 +33,7 @@ $(document).ready(function () {
       data: { word: word },
       success: function (response) {
         console.log("Response from server:", response);
-        var res = JSON.parse(response);
+        let res = JSON.parse(response);
 
         if (res.success) {
           let synonymsList = [];
@@ -52,7 +50,7 @@ $(document).ready(function () {
               synonymsList.push({ type: "U", word: syn.synonym_minor });
           });
 
-          // Process comma-separated values
+          // Flatten comma-separated values
           let finalSynonyms = [];
           synonymsList.forEach((item) => {
             item.word.split(",").forEach((syn) => {
@@ -60,11 +58,17 @@ $(document).ready(function () {
             });
           });
 
-          // Generate synonym selection table
+          // Store words that should be green
+          greenWords = new Set([
+            ...greenWords,
+            ...finalSynonyms.map((syn) => syn.word.toLowerCase()),
+          ]);
+
+          // Generate the table
           let tableHTML = `
                     <p><b>Selected Word:</b> <span id="selected-word">${word}</span></p>
                     <form id="synonymForm">
-                        <table id="synonymTable" border="1">
+                        <table id="synonymTable" class="styled-table">
                             <thead>
                                 <tr>
                                     <th>S</th><th>Q</th><th>O</th><th>U</th><th>Synonym</th>
@@ -73,6 +77,10 @@ $(document).ready(function () {
                             <tbody>`;
 
           finalSynonyms.forEach((syn) => {
+            let highlightClass = greenWords.has(syn.word.toLowerCase())
+              ? "green-text"
+              : "blue-text";
+
             tableHTML += `
                         <tr>
                             <td><input type="checkbox" name="S" value="${
@@ -87,7 +95,7 @@ $(document).ready(function () {
                             <td><input type="checkbox" name="U" value="${
                               syn.word
                             }" ${syn.type === "U" ? "checked" : ""}></td>
-                            <td>${syn.word}</td>
+                            <td class="${highlightClass}">${syn.word}</td>
                         </tr>`;
           });
 
@@ -97,13 +105,43 @@ $(document).ready(function () {
                         <button type="submit" id="submitSynonyms">Submit</button>
                     </form>`;
 
+          // Replace the contents of #symptom-details to ensure visibility
           $("#symptom-details").html(tableHTML);
 
-          // ✅ Turn synonyms green in the UI
-          let greenSynonyms = res.synonyms.map((synonym) =>
+          // Apply green highlight to already stored synonyms in the main text as well
+          $(".synonym-word").each(function () {
+            let wordText = $(this).attr("data-word").toLowerCase();
+            if (greenWords.has(wordText)) {
+              $(this).addClass("green-text").removeClass("blue-text");
+            }
+          });
+        } else {
+          $("#symptom-details").html(
+            `<p style='color:red;'>No synonyms found for ${word}.</p>`
+          );
+        }
+      },
+    });
+  });
+
+  $(document).on("click", ".synonym-word", function () {
+    let word = $(this).attr("data-word");
+
+    console.log("Searching for word:", word);
+
+    $.ajax({
+      url: "search_synonym.php",
+      type: "POST",
+      data: { word: word },
+      success: function (response) {
+        console.log("Response from server:", response);
+
+        var res = JSON.parse(response);
+        if (res.success) {
+          let synonyms = res.synonyms.map((synonym) =>
             synonym.word.toLowerCase()
           );
-          greenWords = new Set([...greenWords, ...greenSynonyms]);
+          greenWords = new Set([...greenWords, ...synonyms]);
 
           $(".synonym-word").each(function () {
             let wordText = $(this).attr("data-word").toLowerCase();
@@ -112,9 +150,7 @@ $(document).ready(function () {
             }
           });
         } else {
-          $("#symptom-details").html(
-            `<p style='color:red;'>No synonyms found for ${word}.</p>`
-          );
+          console.log("No synonym found: " + res.message);
         }
       },
     });

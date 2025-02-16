@@ -116,6 +116,21 @@ function processText($text, $stopwords) {
     </div>
     <div id="symptom-details">
         <p>Select a word to see its synonym.</p>
+
+        <!-- Synonym Table -->
+        <form id="synonymForm">
+            <table id="synonymTable" border="1">
+                <thead>
+                    <tr>
+                        <th>S</th><th>Q</th><th>O</th><th>U</th><th>Synonym</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Synonyms will be dynamically inserted here -->
+                </tbody>
+            </table>
+            <button type="submit" id="submitSynonyms">Submit</button>
+        </form>
     </div>
 </div>
 
