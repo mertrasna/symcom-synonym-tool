@@ -11,7 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             WHERE 
                 word LIKE '%$word%' OR
                 strict_synonym LIKE '%$word%' OR
-                synonym_partial_1 LIKE '%$word%' OR
+                synonym_partial_1 LIKE '%$word%' OR 
                 synonym_partial_2 LIKE '%$word%' OR
                 synonym_general LIKE '%$word%' OR
                 synonym_minor LIKE '%$word%' OR
