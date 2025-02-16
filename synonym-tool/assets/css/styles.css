@@ -65,7 +65,7 @@
 
 .styled-table th,
 .styled-table td {
-  border: 1px solid #b52424;
+  border: 1px solid #050404;
   padding: 8px;
   text-align: left;
 }
@@ -88,4 +88,22 @@
 
 #submitSynonyms:hover {
   background-color: darkgreen;
+}
+
+.korrekturen-button {
+    display: block;
+    width: 100%;
+    background-color: orange;
+    color: white;
+    padding: 10px;
+    font-size: 16px;
+    text-align: center;
+    font-weight: bold;
+    border-radius: 5px;
+    text-decoration: none;
+    margin: 10px 0;
+}
+
+.korrekturen-button:hover {
+    background-color: darkorange;
 }

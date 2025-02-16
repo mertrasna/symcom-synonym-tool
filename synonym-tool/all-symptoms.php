@@ -114,16 +114,17 @@ function processText($text, $stopwords) {
                     <button id="toggleView" class="toggle-btn">⇦</button>
                     <h3>Worksheet</h3>
                 </div>
+                
                 <div id="symptom-details">
                     <p>Select a word to see its synonym.</p>
-
-                    <!-- Synonym Table -->
-                    
                 </div>
-                <div id="symptom-details2">
-                   
 
-                    <!-- Synonym Table -->
+                <!-- 🔥 Dynamic Check Korrekturen Button -->
+                <div id="korrekturen-container">
+                    <a id="korrekturen-btn" href="#" target="_blank" class="korrekturen-button">🔎 Check korrekturen for ""</a>
+                </div>
+
+                <div id="symptom-details2">
                     <form id="synonymForm">
                         <table id="synonymTable" class="styled-table">
                             <thead>
