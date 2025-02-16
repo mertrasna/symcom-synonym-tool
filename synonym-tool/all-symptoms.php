@@ -110,15 +110,15 @@ function processText($text, $stopwords) {
             </div>
 
             <div id="worksheet-container" class="right-pane">
-                <div class="pane-header">
-                    <button id="toggleView" class="toggle-btn">⇦</button>
-                    <h3>Worksheet</h3>
-                </div>
-                <div id="symptom-details">
-                    <p>Select a symptom from the left list to start working on it.</p>
-                </div>
-            </div>
-        </div>
+    <div class="pane-header">
+        <button id="toggleView" class="toggle-btn">⇦</button>
+        <h3>Worksheet</h3>
+    </div>
+    <div id="symptom-details">
+        <p>Select a word to see its synonym.</p>
+    </div>
+</div>
+
     </section>
 </div>
 
