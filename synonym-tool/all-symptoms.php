@@ -110,30 +110,36 @@ function processText($text, $stopwords) {
             </div>
 
             <div id="worksheet-container" class="right-pane">
-    <div class="pane-header">
-        <button id="toggleView" class="toggle-btn">⇦</button>
-        <h3>Worksheet</h3>
-    </div>
-    <div id="symptom-details">
-        <p>Select a word to see its synonym.</p>
+                <div class="pane-header">
+                    <button id="toggleView" class="toggle-btn">⇦</button>
+                    <h3>Worksheet</h3>
+                </div>
+                <div id="symptom-details">
+                    <p>Select a word to see its synonym.</p>
 
-        <!-- Synonym Table -->
-        <form id="synonymForm">
-            <table id="synonymTable" border="1">
-                <thead>
-                    <tr>
-                        <th>S</th><th>Q</th><th>O</th><th>U</th><th>Synonym</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- Synonyms will be dynamically inserted here -->
-                </tbody>
-            </table>
-            <button type="submit" id="submitSynonyms">Submit</button>
-        </form>
-    </div>
-</div>
+                    <!-- Synonym Table -->
+                    
+                </div>
+                <div id="symptom-details2">
+                   
 
+                    <!-- Synonym Table -->
+                    <form id="synonymForm">
+                        <table id="synonymTable" class="styled-table">
+                            <thead>
+                                <tr>
+                                    <th>S</th><th>Q</th><th>O</th><th>U</th><th>Synonym</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Synonyms will be dynamically inserted here -->
+                            </tbody>
+                        </table>
+                        <button type="submit" id="submitSynonyms">Submit</button>
+                    </form>
+                </div>
+            </div>
+        </div>
     </section>
 </div>
 
@@ -144,4 +150,3 @@ function processText($text, $stopwords) {
 <script src="assets/js/scripts.js"></script>
 
 <?php include '../inc/footer.php'; ?>
-
