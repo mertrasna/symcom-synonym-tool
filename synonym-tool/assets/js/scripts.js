@@ -158,22 +158,20 @@ $(document).ready(function () {
         let word = $(this).attr("data-word");
         let isStopword = $(this).hasClass("stopword");
         let url = isStopword ? "remove_filler_word.php" : "add_filler_word.php";
-
+        let newClass = isStopword ? "synonym-word" : "stopword";
+    
         $.ajax({
-            url: url,
-            type: "POST",
-            data: { word: word },
-            dataType: "json",
-            success: function (res) {
-                if (res.success) {
-                    $(this).toggleClass("synonym-word stopword");
-                }
-            },
-            error: function (xhr, status, error) {
-                console.error("AJAX Error (stopword toggle):", status, error);
+          url: url,
+          type: "POST",
+          data: { word: word },
+          success: function (response) {
+            let res = JSON.parse(response);
+            if (res.success) {
+              $(this).toggleClass("synonym-word stopword");
             }
+          }.bind(this),
         });
-    });
+      });
 
     function linkSelectedWords() {
         let selection = window.getSelection();
