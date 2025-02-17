@@ -52,11 +52,12 @@ while ($row = mysqli_fetch_assoc($symptomResult)) {
     ];
 }
 
-function processText($text, $stopwords) {
+function processText($text, $stopwords, $db) {
     if (empty($text)) {
         return "<span style='color: red;'>[No symptom text found]</span>";
     }
 
+    // Remove any HTML tags and decode entities
     $text = preg_replace('/<[^>]+>/', '', $text);
     $text = html_entity_decode($text, ENT_QUOTES | ENT_HTML5, 'UTF-8');
     $text = trim(preg_replace('/\s+/', ' ', $text));
@@ -65,11 +66,27 @@ function processText($text, $stopwords) {
     $processedText = "";
 
     foreach ($words as $word) {
+        // Clean the word for database lookup
         $cleanedWord = strtolower(trim($word, ".,()"));
+        
+        // Check if it's a stopword
         if (in_array($cleanedWord, $stopwords)) {
             $processedText .= "<span class='stopword' data-word='$word'>$word</span> ";
         } else {
-            $processedText .= "<span class='synonym-word' data-word='$word'>$word</span> ";
+            // Query to check if the word is marked as green
+            $checkQuery = "SELECT isgreen FROM synonym_de WHERE word LIKE '%" . mysqli_real_escape_string($db, $cleanedWord) . "%' LIMIT 1";
+            $checkResult = mysqli_query($db, $checkQuery);
+            $isGreen = false;
+            if ($checkResult) {
+                $checkRow = mysqli_fetch_assoc($checkResult);
+                if ($checkRow && isset($checkRow['isgreen']) && $checkRow['isgreen'] == 1) {
+                    $isGreen = true;
+                }
+            }
+            
+            // Add extra class if the word is green
+            $class = $isGreen ? 'synonym-word green' : 'synonym-word';
+            $processedText .= "<span class='$class' data-word='$word'>$word</span> ";
         }
     }
 
@@ -101,7 +118,7 @@ function processText($text, $stopwords) {
                                 <li class="symptom-item"
                                     data-symptom-id="<?php echo $entry['id']; ?>"
                                     data-original-symptom="<?php echo htmlspecialchars(strip_tags($entry['original_symptom'])); ?>">
-                                    <span><?php echo processText($entry['original_symptom'], $stopwords); ?></span>
+                                    <span><?php echo processText($entry['original_symptom'], $stopwords ,$db); ?></span>
                                 </li>
                             <?php endforeach; ?>
                         </ul>
