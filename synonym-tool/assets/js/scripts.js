@@ -14,16 +14,25 @@ $(document).ready(function () {
 
     let selectedWord = "";
 
-    // Handle clicking on synonym words
-    $(document).on("click", ".synonym-word", function () {
+    // Handle clicking on synonym words and stopwords
+    $(document).on("click", ".synonym-word, .stopword", function () {
         selectedWord = $(this).attr("data-word").trim();
         console.log("Selected Word:", selectedWord);
+
+        if (selectedWord) {
+            // Correct URL format to open direkt search page
+            let korrekturenURL = `https://www.korrekturen.de/synonyme/${encodeURIComponent(selectedWord)}/`;
+
+            // Update the button text and link dynamically
+            $("#korrekturen-btn").attr("href", korrekturenURL);
+            $("#korrekturen-btn").text(`🔎 Check korrekturen for "${selectedWord}"`);
+        }
 
         $.ajax({
             url: "search_synonym.php",
             type: "POST",
             data: { word: selectedWord },
-            dataType: "json", 
+            dataType: "json",
             success: function (res) {
                 console.log("search_synonym.php Response:", res);
 
@@ -48,13 +57,10 @@ $(document).ready(function () {
                         success: function (rootRes) {
                             console.log("fetch_root_word.php Response:", rootRes);
 
-                            let rootWordHTML = "";
-                            if (rootRes.success && rootRes.word) {
-                                rootWordHTML = `<span id="root-word">${rootRes.word}</span>`;
-                            } else {
-                                rootWordHTML = `<input type="text" id="root-word" value="${selectedWord}" 
-                                placeholder="Enter root word..." style="padding: 5px; border: 1px solid #ccc; border-radius: 5px; width: 200px;">`;
-                            }
+                            let rootWordHTML = rootRes.success && rootRes.word
+                                ? `<span id="root-word">${rootRes.word}</span>`
+                                : `<input type="text" id="root-word" value="${selectedWord}" 
+                                  placeholder="Enter root word..." style="padding: 5px; border: 1px solid #ccc; border-radius: 5px; width: 200px;">`;
 
                             let tableHTML = `
                             <div style="display: flex; align-items: center; justify-content: space-between; width: 100%; margin-bottom: 10px;">
@@ -109,10 +115,6 @@ $(document).ready(function () {
                 console.error("AJAX Error (search_synonym.php):", status, error);
             }
         });
-
-        let korrekturenURL = `https://www.korrekturen.de/synonyme/${encodeURIComponent(selectedWord)}/`;
-        $("#korrekturen-btn").attr("href", korrekturenURL);
-        $("#korrekturen-btn").text(`🔎 Check korrekturen for "${selectedWord}"`);
     });
 
     // Handle form submission
@@ -120,7 +122,7 @@ $(document).ready(function () {
         event.preventDefault();
         if (!selectedWord.trim()) return alert("Error: Selected word is empty.");
 
-        let rootWord = $("#root-word").val() || $("#root-word").text().trim(); 
+        let rootWord = $("#root-word").val() || $("#root-word").text().trim();
         console.log("Submitting Root Word:", rootWord);
 
         let synonyms = { S: [], Q: [], O: [], U: [] };
@@ -139,7 +141,7 @@ $(document).ready(function () {
             type: "POST",
             data: {
                 word: selectedWord,
-                root_word: rootWord, 
+                root_word: rootWord,
                 synonyms: JSON.stringify(synonyms)
             },
             dataType: "json",
@@ -158,20 +160,22 @@ $(document).ready(function () {
         let word = $(this).attr("data-word");
         let isStopword = $(this).hasClass("stopword");
         let url = isStopword ? "remove_filler_word.php" : "add_filler_word.php";
-        let newClass = isStopword ? "synonym-word" : "stopword";
-    
+
         $.ajax({
-          url: url,
-          type: "POST",
-          data: { word: word },
-          success: function (response) {
-            let res = JSON.parse(response);
-            if (res.success) {
-              $(this).toggleClass("synonym-word stopword");
+            url: url,
+            type: "POST",
+            data: { word: word },
+            dataType: "json",
+            success: function (res) {
+                if (res.success) {
+                    $(this).toggleClass("synonym-word stopword");
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error("AJAX Error (stopword toggle):", status, error);
             }
-          }.bind(this),
         });
-      });
+    });
 
     function linkSelectedWords() {
         let selection = window.getSelection();
@@ -196,4 +200,5 @@ $(document).ready(function () {
         event.preventDefault();
         linkSelectedWords();
     });
+
 });
