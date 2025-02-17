@@ -14,19 +14,22 @@ $(document).ready(function () {
 
     let selectedWord = "";
 
-    // Handle clicking on synonym words and stopwords
+    // Handle clicking on synonym words & stopwords (Added function for korrekturen search)
     $(document).on("click", ".synonym-word, .stopword", function () {
         selectedWord = $(this).attr("data-word").trim();
         console.log("Selected Word:", selectedWord);
 
         if (selectedWord) {
-            // Correct URL format to open direkt search page
             let korrekturenURL = `https://www.korrekturen.de/synonyme/${encodeURIComponent(selectedWord)}/`;
-
-            // Update the button text and link dynamically
             $("#korrekturen-btn").attr("href", korrekturenURL);
             $("#korrekturen-btn").text(`🔎 Check korrekturen for "${selectedWord}"`);
         }
+    });
+
+    // Handle clicking to fetch synonyms
+    $(document).on("click", ".synonym-word", function () {
+        selectedWord = $(this).attr("data-word").trim();
+        console.log("Selected Word:", selectedWord);
 
         $.ajax({
             url: "search_synonym.php",
@@ -160,22 +163,20 @@ $(document).ready(function () {
         let word = $(this).attr("data-word");
         let isStopword = $(this).hasClass("stopword");
         let url = isStopword ? "remove_filler_word.php" : "add_filler_word.php";
-
+        let newClass = isStopword ? "synonym-word" : "stopword";
+    
         $.ajax({
-            url: url,
-            type: "POST",
-            data: { word: word },
-            dataType: "json",
-            success: function (res) {
-                if (res.success) {
-                    $(this).toggleClass("synonym-word stopword");
-                }
-            },
-            error: function (xhr, status, error) {
-                console.error("AJAX Error (stopword toggle):", status, error);
+          url: url,
+          type: "POST",
+          data: { word: word },
+          success: function (response) {
+            let res = JSON.parse(response);
+            if (res.success) {
+              $(this).toggleClass("synonym-word stopword");
             }
+          }.bind(this),
         });
-    });
+      });
 
     function linkSelectedWords() {
         let selection = window.getSelection();
