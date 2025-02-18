@@ -247,7 +247,4 @@ $(document).on("click", "#saveComment", function() {
 });
 
 
-
-
-
 });

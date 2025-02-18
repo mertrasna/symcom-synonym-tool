@@ -180,7 +180,14 @@ function processText($text, $stopwords, $db) {
 <!-- Load jQuery -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-<!-- Load external JavaScript file -->
-<script src="assets/js/scripts.js"></script>
+
+<!-- Load external JavaScript files -->
+<script src="assets/js/ui.js"></script>
+<script src="assets/js/eventListeners.js"></script>
+<script src="assets/js/ajaxHandlers.js"></script>
+<script src="assets/js/helpers.js"></script>
+<script src="assets/js/modal.js"></script>
+
+
 
 <?php include '../inc/footer.php'; ?>
