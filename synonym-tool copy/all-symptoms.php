@@ -154,27 +154,17 @@ function processText($text, $stopwords, $db) {
                             </tbody>
                         </table>
                         <div>
-                            <input type="checkbox" id="notSureCheckbox"> Not Sure
-                            <!-- The comment section is now removed from here -->
-                        </div>
+        <input type="checkbox" id="notSureCheckbox"> Not Sure
+        <div id="commentSection" style="display: none;">
+            <textarea id="commentText" placeholder="Enter reason for uncertainty..." rows="3" cols="30"></textarea>
+        </div>
+    </div>
                         <button type="submit" id="submitSynonyms">Submit</button>
                     </form>
                 </div>
             </div>
         </div>
     </section>
-</div>
-
-<!-- Comment Box Modal -->
-<div id="commentModal" class="modal" style="display:none;">
-    <div class="modal-content" style="position: relative; margin: 10% auto; padding: 20px; border: 1px solid #888; width: 300px; background: #fff;">
-        <span class="close-modal" style="position: absolute; right: 10px; top: 5px; cursor: pointer; font-size: 20px;">&times;</span>
-        <h3>Enter your comment</h3>
-        <textarea id="commentText" placeholder="Enter reason for uncertainty..." rows="3" cols="30"></textarea>
-        <br>
-        <button id="saveComment">Save</button>
-        <button id="closeComment">Close</button>
-    </div>
 </div>
 
 <!-- Load jQuery -->

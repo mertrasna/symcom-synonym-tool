@@ -51,6 +51,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $hypernyms = !empty($selectedSynonyms['O']) ? implode(", ", array_column($selectedSynonyms['O'], 'word')) : $fetchResult['synonym_general'];
     $hyponyms = !empty($selectedSynonyms['U']) ? implode(", ", array_column($selectedSynonyms['U'], 'word')) : $fetchResult['synonym_minor'];
 
+    // Update the database with new synonyms and root word
     // Update the database with new synonyms, root word, and comment
     $updateStmt = $db->prepare("UPDATE synonym_de SET root_word = ?, strict_synonym = ?, synonym_partial_1 = ?, synonym_general = ?, synonym_minor = ?, synonym_comment = ? WHERE LOWER(word) = LOWER(?)");
     $updateStmt->bind_param("sssssss", $rootWord, $strictSynonyms, $crossReferences, $hypernyms, $hyponyms, $comment, $word);
