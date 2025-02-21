@@ -41,6 +41,10 @@ $(document).ready(function () {
     selectedWord = $(this).attr("data-word").trim();
     console.log("Selected Word:", selectedWord);
 
+    // Fetch synonyms from OpenAI
+    fetchChatGPTSynonyms(selectedWord);
+
+    // Existing AJAX call to fetch synonyms
     $.ajax({
       url: "search_synonym.php",
       type: "POST",
@@ -145,7 +149,71 @@ $(document).ready(function () {
     });
   });
 
-  // Handle form submission
+  function fetchChatGPTSynonyms(selectedWord) {
+    const apiKey = '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'; // Replace with your actual OpenAI API key
+
+    const requestBody = {
+        model: 'gpt-4', // Or gpt-3.5-turbo, depending on what you want to use
+        messages: [
+            { role: 'system', content: 'You are a helpful assistant.' },
+            { role: 'user', content: `Give me a list of 5 german synonyms for the word "${selectedWord}"` }
+        ],
+        max_tokens: 50, // Adjust based on your needs
+        temperature: 0.7
+    };
+
+    fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${apiKey}`, // Bearer authentication
+        },
+        body: JSON.stringify(requestBody),
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log("OpenAI Response:", data);
+        // Assuming the synonyms are in the 'choices' array, under the 'text' or 'message' field
+    const chatGptResponse = data.choices[0].message || data.choices[0].text;  // Adjust based on the exact structure
+    console.log("Synonyms:", chatGptResponse);
+
+        // Check if the response has choices and message content
+        if (data.choices && data.choices[0] && data.choices[0].message) {
+            const text = data.choices[0].message.content.trim();
+            const synonyms = text.split(',').map(syn => syn.trim());
+
+            // Update the synonym table with OpenAI's synonyms
+            let tableHTML = `
+                <div style="display: flex; align-items: center; justify-content: space-between; width: 100%; margin-bottom: 10px;">
+                    <p><b>Selected Word:</b> <span id="selected-word">${selectedWord}</span></p>
+                    <p><b>Root Word:</b> <input type="text" id="root-word" value="${selectedWord}" 
+                                      placeholder="Enter root word..." style="padding: 5px; border: 1px solid #ccc; border-radius: 5px; width: 200px;"></p>
+                </div>
+                <table id="synonymTable" class="styled-table">
+                  <thead>
+                    <tr>
+                      <th>Synonym</th>
+                    </tr>
+                  </thead>
+                  <tbody>`;
+
+            synonyms.forEach(syn => {
+                tableHTML += `
+                  <tr>
+                    <td>${syn}</td>
+                  </tr>`;
+            });
+
+            tableHTML += `</tbody></table>`;
+            $("#synonymTableContainer").html(tableHTML);
+        }
+    })
+    .catch(error => {
+        console.error("OpenAI API Error:", error);
+    });
+}
+
+
   // Handle form submission
   $(document).on("submit", "#synonymForm", function (event) {
     event.preventDefault();
