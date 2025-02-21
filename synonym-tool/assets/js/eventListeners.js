@@ -150,7 +150,7 @@ $(document).ready(function () {
   });
 
   function fetchChatGPTSynonyms(selectedWord) {
-    const apiKey = ''; // Replace with your actual OpenAI API key
+   
 
     const requestBody = {
         model: 'gpt-4', // Or gpt-3.5-turbo, depending on what you want to use
