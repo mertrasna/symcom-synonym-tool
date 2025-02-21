@@ -150,7 +150,7 @@ $(document).ready(function () {
   });
 
   function fetchChatGPTSynonyms(selectedWord) {
-    const apiKey = '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'; // Replace with your actual OpenAI API key
+    const apiKey = ''; // Replace with your actual OpenAI API key
 
     const requestBody = {
         model: 'gpt-4', // Or gpt-3.5-turbo, depending on what you want to use
