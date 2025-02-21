@@ -166,7 +166,7 @@ $(document).ready(function () {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${apiKey}`, // Bearer authentication
+             // Bearer authentication
         },
         body: JSON.stringify(requestBody),
     })
