@@ -5,7 +5,5 @@ $(document).ready(function () {
         $(this).text($(".left-pane").is(":visible") ? "⇦" : "⇨");
     });
 
-    $(".symptom-item").click(function () {
-        $("#symptom-details").html($(this).html());
-    });
+   
 });
