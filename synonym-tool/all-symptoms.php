@@ -136,7 +136,7 @@ function processText($text, $stopwords, $db) {
                     <p>Select a word to see its synonym.</p>
                 </div>
 
-                <!-- 🔥 Dynamic Check Korrekturen Button -->
+                <!-- Dynamic Check Korrekturen Button -->
                 <div id="korrekturen-container">
                     <a id="korrekturen-btn" href="#" target="_blank" class="korrekturen-button">🔎 Check korrekturen for ""</a>
                 </div>
@@ -187,7 +187,7 @@ function processText($text, $stopwords, $db) {
 <script src="assets/js/ajaxHandlers.js"></script>
 <script src="assets/js/helpers.js"></script>
 <script src="assets/js/modal.js"></script>
-<script src="assets/js/hover.js"></script>
+
 
 
 
