@@ -133,6 +133,9 @@ $(document).ready(function () {
 
               // Update the table dynamically without refreshing
               $("#synonymTableContainer").html(tableHTML);
+
+              // call the OpenThesaurus API to fetch synonyms after gpt-4
+              fetchSynonymsFromOpenThesaraus(selectedWord);
             },
             error: function (xhr, status, error) {
               console.error("AJAX Error (fetch_root_word.php):", status, error);
@@ -152,63 +155,145 @@ $(document).ready(function () {
 
   // Fetch synonyms from ChatGPT
   function fetchChatGPTSynonyms(selectedWord) {
-    const apiKey = 'putapikeyhere';
+    const apiKey =
+      "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";
     const requestBody = {
-      model: 'gpt-4',
+      model: "gpt-4",
       messages: [
-        { role: 'system', content: 'You are a helpful assistant.' },
-        { role: 'user', content: `Give me a list of 5 german synonyms for the word "${selectedWord}"` }
+        { role: "system", content: "You are a helpful assistant." },
+        {
+          role: "user",
+          content: `Give me a list of 5 german synonyms for the word "${selectedWord}"`,
+        },
       ],
       max_tokens: 50,
-      temperature: 0.7
+      temperature: 0.7,
     };
 
-    fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
+    fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${apiKey}`,
       },
       body: JSON.stringify(requestBody),
     })
-    .then(response => response.json())
-    .then(data => {
-      console.log("OpenAI Response:", data);
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("OpenAI Response:", data);
 
-      const chatGptResponse = data.choices[0].message.content.trim();
-      const synonyms = chatGptResponse.split(',').map(syn => syn.trim());
+        const chatGptResponse = data.choices[0].message.content.trim();
+        const synonyms = chatGptResponse.split(",").map((syn) => syn.trim());
 
-      const strictSynonym = synonyms.join(',');
+        const strictSynonym = synonyms.join(",");
 
-      const synonymData = {
-        word: selectedWord,
-        strict_synonym: strictSynonym,
-        synonym_partial_1: "",
-        synonym_partial_2: "",
-        synonym_general: "",
-        synonym_minor: "",
-        synonym_nn: "",
-        synonym_comment: "",
-        synonym_ns: "1",
-        source_reference_ns: "1",
-        active: 1,
-      };
+        const synonymData = {
+          word: selectedWord,
+          strict_synonym: strictSynonym,
+          synonym_partial_1: "",
+          synonym_partial_2: "",
+          synonym_general: "",
+          synonym_minor: "",
+          synonym_nn: "",
+          synonym_comment: "",
+          synonym_ns: "1",
+          source_reference_ns: "1",
+          active: 1,
+        };
 
-      // Insert synonym data into the database
-      $.ajax({
-        url: "insert_synonym.php",
-        type: "POST",
-        data: synonymData,
-        success: function (response) {
-          console.log("Insert Synonym Response:", response);
-        },
-        error: function (xhr, status, error) {
-          console.error("AJAX Error (insert_synonym.php):", status, error);
-        }
+        // Insert synonym data into the database
+        $.ajax({
+          url: "insert_synonym.php",
+          type: "POST",
+          data: synonymData,
+          success: function (response) {
+            console.log("Insert Synonym Response:", response);
+          },
+          error: function (xhr, status, error) {
+            console.error("AJAX Error (insert_synonym.php):", status, error);
+          },
+        });
+      })
+      .catch((error) => {
+        console.error("OpenAI API Error:", error);
       });
-    })
-    .catch(error => {
-      console.error("OpenAI API Error:", error);
+  }
+
+  // Function to fetch Synonyms from OpenThesaurus.de
+  function fetchSynonymsFromOpenThesaraus(selectedWord) {
+    const apiUrl = `https://www.openthesaurus.de/synonyme/search?q=${encodeURIComponent(
+      selectedWord
+    )}&format=application/json`;
+
+    console.log(`Fetching synonyms from OpenThesaurus.de for: ${selectedWord}`); // Added log
+
+    $.ajax({
+      url: apiUrl,
+      type: "GET",
+      dataType: "json",
+      success: function (response) {
+        console.log("OpenThesaurus.de Response:", response); // Added detailed log
+
+        let thesaurusSynonyms = [];
+
+        if (response.synsets && response.synsets.length > 0) {
+          response.synsets.forEach((set) => {
+            if (set.category !== "Assoziationen" && !set.meaning) {
+              set.terms.forEach((term) => {
+                const cleanedWord = term.term.replace(/\([^)]*\)/g, "").trim();
+                if (cleanedWord && !thesaurusSynonyms.includes(cleanedWord)) {
+                  thesaurusSynonyms.push(cleanedWord);
+                }
+              });
+            }
+          });
+        }
+
+        console.log(
+          `Synonyms fetched from OpenThesaurus.de for '${selectedWord}':`,
+          thesaurusSynonyms
+        ); // Added log
+
+        // Remove duplicates by comparing with existing synonyms
+        let existingSynonyms = new Set();
+        $("#synonymTable tbody tr").each(function () {
+          const word = $(this).find("td:last").text().trim().toLowerCase();
+          existingSynonyms.add(word);
+        });
+
+        let newSynonyms = thesaurusSynonyms.filter(
+          (syn) => !existingSynonyms.has(syn.toLowerCase())
+        );
+
+        console.log(
+          `Filtered new synonyms from OpenThesaurus.de (no duplicates):`,
+          newSynonyms
+        ); // Added log
+
+        newSynonyms.forEach((syn) => {
+          const newRow = `
+          <tr>
+            <td><input type="checkbox" name="S" value="${syn}"></td>
+            <td><input type="checkbox" name="Q" value="${syn}"></td>
+            <td><input type="checkbox" name="O" value="${syn}"></td>
+            <td><input type="checkbox" name="U" value="${syn}"></td>
+            <td>${syn}</td>
+          </tr>`;
+          $("#synonymTable tbody").append(newRow);
+        });
+
+        if (newSynonyms.length > 0) {
+          console.log("Insert Synonym from OpenThesaurus:", newSynonyms); // Added log
+          submitSynonymsToPHP(selectedWord, newSynonyms);
+        } else {
+          console.log(
+            `No new synonyms to insert from OpenThesaurus.de for '${selectedWord}'.`
+          );
+        }
+      },
+      error: function (xhr, status, error) {
+        console.error("AJAX Error (OpenThesaurus.de):", status, error);
+      },
     });
   }
 
@@ -312,4 +397,3 @@ $(document).ready(function () {
     });
   });
 });
-
