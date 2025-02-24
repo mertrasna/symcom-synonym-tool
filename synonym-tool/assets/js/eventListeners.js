@@ -153,7 +153,7 @@ $(document).ready(function () {
 
   // Fetch synonyms from ChatGPT
   function fetchChatGPTSynonyms(selectedWord) {
-    const apiKey = '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';
+    const apiKey = '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';
     const requestBody = {
       model: 'gpt-4',
       messages: [

@@ -190,5 +190,4 @@ function processText($text, $stopwords, $db) {
 
 
 
-
 <?php include '../inc/footer.php'; ?>
