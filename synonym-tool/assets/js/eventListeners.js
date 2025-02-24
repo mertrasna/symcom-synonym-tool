@@ -155,8 +155,7 @@ $(document).ready(function () {
 
   // Fetch synonyms from ChatGPT
   function fetchChatGPTSynonyms(selectedWord) {
-    const apiKey =
-      "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";
+    const apiKey = "";
     const requestBody = {
       model: "gpt-4",
       messages: [
