@@ -155,7 +155,7 @@ $(document).ready(function () {
 
   // Fetch synonyms from ChatGPT
   function fetchChatGPTSynonyms(selectedWord) {
-    const apiKey = "";
+    const apiKey = "putapikeyhere"; // Add your OpenAI API key here
     const requestBody = {
       model: "gpt-4",
       messages: [
