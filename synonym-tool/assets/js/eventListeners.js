@@ -156,7 +156,7 @@ $(document).ready(function () {
 
   // Fetch synonyms from ChatGPT
   function fetchChatGPTSynonyms(selectedWord) {
-    const apiKey = 'putkey';
+    const apiKey = '';
     const requestBody = {
       model: "gpt-4",
       messages: [
