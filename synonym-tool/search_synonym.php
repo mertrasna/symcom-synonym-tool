@@ -1,67 +1,25 @@
 <?php
 include '../config/route.php';
+include './repositories/SynonymRepository.php';
+include './services/SynonymService.php';
+
+// Dependency Injection
+$synonymRepo = new SynonymRepository($db);
+$synonymService = new SynonymService($synonymRepo);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['word']) && !empty($_POST['word'])) {
-        $word = mysqli_real_escape_string($db, $_POST['word']);
-        
-        // Search in the entire synonym_en table, across relevant columns
-        $query = "
-            SELECT * FROM synonym_de 
-            WHERE 
-                word LIKE '%$word%' OR
-                synonym LIKE '%$word%' OR
-                cross_reference LIKE '%$word%' OR 
-                synonym_partial_2 LIKE '%$word%' OR
-                generic_term LIKE '%$word%' OR
-                sub_term LIKE '%$word%' OR
-                synonym_nn LIKE '%$word%' OR
-                comment LIKE '%$word%'
-        ";
+        $word = $_POST['word'];
 
-        $result = mysqli_query($db, $query);
-        $synonyms = [];
+        // Process synonym search and update
+        $response = $synonymService->processSynonymSearchAndUpdate($word);
 
-        if ($result) {
-            while ($row = mysqli_fetch_assoc($result)) {
-                $synonyms[] = $row;
-            }
-
-            // If synonym exists, update the 'isgreen' column
-            if (!empty($synonyms)) {
-                // Assuming you want to update the 'isgreen' column for the found synonym(s)
-                $update_query = "
-                    UPDATE synonym_de 
-                    SET isgreen = 1
-                    WHERE 
-                        word LIKE '%$word%' OR
-                        synonym LIKE '%$word%' OR
-                        cross_reference LIKE '%$word%' OR
-                        synonym_partial_2 LIKE '%$word%' OR
-                        generic_term LIKE '%$word%' OR
-                        sub_term LIKE '%$word%' OR
-                        synonym_nn LIKE '%$word%' OR
-                        comment LIKE '%$word%'
-                ";
-                
-                $update_result = mysqli_query($db, $update_query);
-
-                if ($update_result) {
-                    echo json_encode(['success' => true, 'synonyms' => $synonyms, 'message' => 'Synonym updated successfully']);
-                } else {
-                    echo json_encode(['success' => false, 'message' => 'Failed to update synonym']);
-                }
-            } else {
-                echo json_encode(['success' => false, 'message' => 'No synonym found']);
-            }
-        } else {
-            echo json_encode(['success' => false, 'message' => 'Error executing query']);
-        }
+        // Send response back to the client
+        echo json_encode($response);
     } else {
         echo json_encode(['success' => false, 'message' => 'No word provided']);
     }
 } else {
     echo json_encode(['success' => false, 'message' => 'Invalid request method']);
 }
-
 ?>

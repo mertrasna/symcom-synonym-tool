@@ -1,17 +1,20 @@
 <?php
 include '../config/route.php';
+include './repositories/SynonymRepository.php';
+include './services/SynonymService.php';
 
-if (isset($_POST['word'])) {
-    $word = mysqli_real_escape_string($db, $_POST['word']);
+// Dependency Injection
+$synonymRepo = new SynonymRepository($db);
+$synonymService = new SynonymService($synonymRepo);
 
-    // Remove the word from the stop_words table
-    $query = "DELETE FROM stop_words WHERE name = '$word' AND active = 1";
+if (isset($_POST['word']) && !empty($_POST['word'])) {
+    $word = $_POST['word'];
 
-    if (mysqli_query($db, $query)) {
-        echo json_encode(["success" => true]);
-    } else {
-        echo json_encode(["success" => false, "message" => "Error: " . mysqli_error($db)]);
-    }
+    // Call the service method to delete the stop word
+    $response = $synonymService->processDeleteStopWord($word);
+
+    // Send response back to the client
+    echo json_encode($response);
 } else {
     echo json_encode(["success" => false, "message" => "No word provided."]);
 }

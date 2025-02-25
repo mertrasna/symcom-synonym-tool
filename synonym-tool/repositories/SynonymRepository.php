@@ -32,5 +32,130 @@ class SynonymRepository implements SynonymRepositoryInterface {
         $stmt->close();
         return $success;
     }
+
+    public function searchSynonym(string $word): array {
+        $word = mysqli_real_escape_string($this->db, $word);
+        $query = "
+            SELECT * FROM synonym_de 
+            WHERE 
+                word LIKE '%$word%' OR
+                synonym LIKE '%$word%' OR
+                cross_reference LIKE '%$word%' OR 
+                synonym_partial_2 LIKE '%$word%' OR
+                generic_term LIKE '%$word%' OR
+                sub_term LIKE '%$word%' OR
+                synonym_nn LIKE '%$word%' OR
+                comment LIKE '%$word%'
+        ";
+
+        $result = mysqli_query($this->db, $query);
+        $synonyms = [];
+
+        if ($result) {
+            while ($row = mysqli_fetch_assoc($result)) {
+                $synonyms[] = $row;
+            }
+        }
+        return $synonyms;
+    }
+
+    public function updateIsGreen(string $word): bool {
+        $word = mysqli_real_escape_string($this->db, $word);
+        $update_query = "
+            UPDATE synonym_de 
+            SET isgreen = 1
+            WHERE 
+                word LIKE '%$word%' OR
+                synonym LIKE '%$word%' OR
+                cross_reference LIKE '%$word%' OR
+                synonym_partial_2 LIKE '%$word%' OR
+                generic_term LIKE '%$word%' OR
+                sub_term LIKE '%$word%' OR
+                synonym_nn LIKE '%$word%' OR
+                comment LIKE '%$word%'
+        ";
+        return mysqli_query($this->db, $update_query);
+    }
+    
+    // Method to scrape synonym data from the website
+    public function scrapeSynonym(string $word): array {
+        $url = 'https://www.korrekturen.de/synonyme/' . urlencode($word) . '/';
+
+        // Initialize cURL
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0'); // Mimic a real browser
+
+        $response = curl_exec($ch);
+        $error = curl_error($ch);
+        curl_close($ch);
+
+        if ($error) {
+            return [
+                "success" => false,
+                "message" => "cURL Error: " . $error
+            ];
+        }
+
+        // If all good, return the HTML inside a response array
+        return [
+            "success" => true,
+            "html" => $response
+        ];
+    }
+
+    public function deleteStopWord(string $word): array {
+        global $db; // Ensure that the database connection is available
+
+        // Sanitize and escape the word for SQL
+        $word = mysqli_real_escape_string($db, $word);
+
+        // Prepare and execute the delete query
+        $query = "DELETE FROM stop_words WHERE name = '$word' AND active = 1";
+
+        if (mysqli_query($db, $query)) {
+            return [
+                "success" => true
+            ];
+        } else {
+            return [
+                "success" => false,
+                "message" => "Error: " . mysqli_error($db)
+            ];
+        }
+    }
+    // Check if the word exists in the stop_words table
+    public function checkIfWordExistsInStopWords(string $word): bool {
+        global $db;
+        $query = "SELECT * FROM stop_words WHERE name = '$word'";
+        $result = mysqli_query($db, $query);
+        return mysqli_num_rows($result) > 0;
+    }
+
+    // Check if the word exists in the synonym_de table
+    public function checkIfWordExistsInSynonymTable(string $word): bool {
+        global $db;
+        $query = "SELECT * FROM synonym_de WHERE word = '$word'";
+        $result = mysqli_query($db, $query);
+        return mysqli_num_rows($result) > 0;
+    }
+
+    // Update the synonym list for an existing word
+    public function updateSynonym(string $word, string $updatedSynonym): bool {
+        global $db;
+        $query = "UPDATE synonym_de SET synonym = '$updatedSynonym' WHERE word = '$word'";
+        return mysqli_query($db, $query);
+    }
+
+    // Insert new synonym data into the synonym_de table
+    public function insertSynonymData(array $data): bool {
+        global $db;
+        $query = "INSERT INTO synonym_de (word, synonym, cross_reference, synonym_partial_2, generic_term, sub_term, synonym_nn, comment, non_secure_flag, source_reference_ns, active)
+                  VALUES ('{$data['word']}', '{$data['synonym']}', '{$data['cross_reference']}', '{$data['synonym_partial_2']}', '{$data['generic_term']}', '{$data['sub_term']}', '{$data['synonym_nn']}', '{$data['comment']}', '{$data['non_secure_flag']}', '{$data['source_reference_ns']}', '{$data['active']}')";
+        return mysqli_query($db, $query);
+    }
+
+    
 }
 ?>
