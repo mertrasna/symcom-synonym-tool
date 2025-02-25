@@ -500,7 +500,9 @@ function removeDuplicateSynonyms(korrekturenSynonyms) {
       },
       error: function (xhr, status, error) {
         console.error("AJAX Error (update_synonym.php):", status, error);
-      },
+        console.error("Server Response:", xhr.responseText); // Log full response
+    },
+    
     });
   });
 
