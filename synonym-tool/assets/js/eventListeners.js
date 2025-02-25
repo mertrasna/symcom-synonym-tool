@@ -581,7 +581,7 @@ $(document).ready(function () {
                   );
 
                   // Show the Wörterbuchnetz button dynamically
-                  let woerterbuchnetzURL = `https://www.woerterbuchnetz.de/?sigle=Lex&mode=Volltextsuche&hitlist=fulltext&pattern=${encodeURIComponent(selectedWord)}`;
+                  let woerterbuchnetzURL = `https://www.woerterbuchnetz.de/}`;
                   
                   $("#woerterbuchnetz-btn").attr("href", woerterbuchnetzURL);
                   $("#woerterbuchnetz-btn").text(`🔎 Search in Wörterbuchnetz.`);
