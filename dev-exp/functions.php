@@ -25138,8 +25138,8 @@
 						}
 						// Word end
 						// Strict synonym start
-						if($synoVal['strict_synonym'] != ""){
-							$wordSynonyms = explode(',', $synoVal['strict_synonym']);
+						if($synoVal['synonym'] != ""){
+							$wordSynonyms = explode(',', $synoVal['synonym']);
 							foreach ($wordSynonyms as $wordVal) {
 								$wordSynonymsExploded = explode(' ', $wordVal);
 								foreach ($wordSynonymsExploded as $explodedVal) {
@@ -25157,8 +25157,8 @@
 						}
 						// Strict synonym end
 						// Partial1 synonym start
-						if($synoVal['synonym_partial_1'] != ""){
-							$wordSynonyms = explode(',', $synoVal['synonym_partial_1']);
+						if($synoVal['cross_reference'] != ""){
+							$wordSynonyms = explode(',', $synoVal['cross_reference']);
 							foreach ($wordSynonyms as $wordVal) {
 								$wordSynonymsExploded = explode(' ', $wordVal);
 								foreach ($wordSynonymsExploded as $explodedVal) {
@@ -25195,8 +25195,8 @@
 						}
 						// Partial2 synonym end
 						// General synonym start
-						if($synoVal['synonym_general'] != ""){
-							$wordSynonyms = explode(',', $synoVal['synonym_general']);
+						if($synoVal['generic_term'] != ""){
+							$wordSynonyms = explode(',', $synoVal['generic_term']);
 							foreach ($wordSynonyms as $wordVal) {
 								$wordSynonymsExploded = explode(' ', $wordVal);
 								foreach ($wordSynonymsExploded as $explodedVal) {
@@ -25214,8 +25214,8 @@
 						}
 						// General synonym end
 						// Minor synonym start
-						if($synoVal['synonym_minor'] != ""){
-							$wordSynonyms = explode(',', $synoVal['synonym_minor']);
+						if($synoVal['sub_term'] != ""){
+							$wordSynonyms = explode(',', $synoVal['sub_term']);
 							foreach ($wordSynonyms as $wordVal) {
 								$wordSynonymsExploded = explode(' ', $wordVal);
 								foreach ($wordSynonymsExploded as $explodedVal) {
@@ -25321,8 +25321,8 @@
 				continue;
 			}
 			// Strict synonym start
-			if($synoVal['strict_synonym'] != ""){
-				$wordSynonyms = explode(',', $synoVal['strict_synonym']);
+			if($synoVal['synonym'] != ""){
+				$wordSynonyms = explode(',', $synoVal['synonym']);
 				foreach ($wordSynonyms as $wordVal) {
 					$comparingWord = trim($wordVal);
 					$comparingWordLen = mb_strlen(trim($wordVal));
@@ -25352,8 +25352,8 @@
 				continue;
 			}
 			// Partial1 synonym start
-			if($synoVal['synonym_partial_1'] != ""){
-				$wordSynonyms = explode(',', $synoVal['synonym_partial_1']);
+			if($synoVal['cross_reference'] != ""){
+				$wordSynonyms = explode(',', $synoVal['cross_reference']);
 				foreach ($wordSynonyms as $wordVal) {
 					$comparingWord = trim($wordVal);
 					$comparingWordLen = mb_strlen(trim($wordVal));
@@ -25414,8 +25414,8 @@
 				continue;
 			}
 			// General synonym start
-			if($synoVal['synonym_general'] != ""){
-				$wordSynonyms = explode(',', $synoVal['synonym_general']);
+			if($synoVal['generic_term'] != ""){
+				$wordSynonyms = explode(',', $synoVal['generic_term']);
 				foreach ($wordSynonyms as $wordVal) {
 					$comparingWord = trim($wordVal);
 					$comparingWordLen = mb_strlen(trim($wordVal));
@@ -25445,8 +25445,8 @@
 				continue;
 			}
 			// Minor synonym start
-			if($synoVal['synonym_minor'] != ""){
-				$wordSynonyms = explode(',', $synoVal['synonym_minor']);
+			if($synoVal['sub_term'] != ""){
+				$wordSynonyms = explode(',', $synoVal['sub_term']);
 				foreach ($wordSynonyms as $wordVal) {
 					$comparingWord = trim($wordVal);
 					$comparingWordLen = mb_strlen(trim($wordVal));
@@ -25514,18 +25514,18 @@
 		$finalMatched = array(
 			// 'matched_word' => $matchedWords, 
 			'synonym_word' => $synonymArray['word'], 
-			'strict_synonym' => $synonymArray['strict_synonym'], 
-			'synonym_partial_1' => $synonymArray['synonym_partial_1'], 
+			'synonym' => $synonymArray['synonym'], 
+			'cross_reference' => $synonymArray['cross_reference'], 
 			'synonym_partial_2' => $synonymArray['synonym_partial_2'], 
-			'synonym_general' => $synonymArray['synonym_general'], 
-			'synonym_minor' => $synonymArray['synonym_minor'], 
+			'generic_term' => $synonymArray['generic_term'], 
+			'sub_term' => $synonymArray['sub_term'], 
 			'synonym_nn' => $synonymArray['synonym_nn']
 		);
 		return $finalMatched;
 	}
 
 	function arrangeSynonymDataToStore($matchedSynonymArr){
-		$returnArr = array('synonym_word' => array(), 'strict_synonym' => array(), 'synonym_partial_1' => array(), 'synonym_partial_2' => array(), 'synonym_general' => array(), 'synonym_minor' => array(), 'synonym_nn' => array());
+		$returnArr = array('synonym_word' => array(), 'synonym' => array(), 'cross_reference' => array(), 'synonym_partial_2' => array(), 'generic_term' => array(), 'sub_term' => array(), 'synonym_nn' => array());
 		if(!empty($matchedSynonymArr)){
 			$synonymWordArr = array();
 			$synonymStrictArr = array();
@@ -25537,20 +25537,20 @@
 			foreach ($matchedSynonymArr as $wordKey => $wordVal) {
 				if($wordVal['synonym_word'] != "")
 					$synonymWordArr[$wordKey] = $wordVal['synonym_word'];
-				if($wordVal['strict_synonym'] != "")
-					$synonymStrictArr[$wordKey] = $wordVal['strict_synonym'];
-				if($wordVal['synonym_partial_1'] != "")
-					$synonymPartial1Arr[$wordKey] = $wordVal['synonym_partial_1'];
+				if($wordVal['synonym'] != "")
+					$synonymStrictArr[$wordKey] = $wordVal['synonym'];
+				if($wordVal['cross_reference'] != "")
+					$synonymPartial1Arr[$wordKey] = $wordVal['cross_reference'];
 				if($wordVal['synonym_partial_2'] != "")
 					$synonymPartial2Arr[$wordKey] = $wordVal['synonym_partial_2'];
-				if($wordVal['synonym_general'] != "")
-					$synonymGeneralArr[$wordKey] = $wordVal['synonym_general'];
-				if($wordVal['synonym_minor'] != "")
-					$synonymMinorArr[$wordKey] = $wordVal['synonym_minor'];
+				if($wordVal['generic_term'] != "")
+					$synonymGeneralArr[$wordKey] = $wordVal['generic_term'];
+				if($wordVal['sub_term'] != "")
+					$synonymMinorArr[$wordKey] = $wordVal['sub_term'];
 				if($wordVal['synonym_nn'] != "")
 					$synonymNNArr[$wordKey] = $wordVal['synonym_nn'];
 			}
-			$returnArr = array('synonym_word' => $synonymWordArr, 'strict_synonym' => $synonymStrictArr, 'synonym_partial_1' => $synonymPartial1Arr, 'synonym_partial_2' => $synonymPartial2Arr, 'synonym_general' => $synonymGeneralArr, 'synonym_minor' => $synonymMinorArr, 'synonym_nn' => $synonymNNArr);
+			$returnArr = array('synonym_word' => $synonymWordArr, 'synonym' => $synonymStrictArr, 'cross_reference' => $synonymPartial1Arr, 'synonym_partial_2' => $synonymPartial2Arr, 'generic_term' => $synonymGeneralArr, 'sub_term' => $synonymMinorArr, 'synonym_nn' => $synonymNNArr);
 		}
 		return $returnArr;
 	}
@@ -25615,32 +25615,32 @@
 					$availableEnSynonyms = array();
 					$availableDeSynonyms = array();
 					$globalStopWords = getStopWords();
-					$synonymEnResult = mysqli_query($db, "SELECT synonym_id, word, strict_synonym, synonym_partial_1, synonym_partial_2, synonym_general, synonym_minor, synonym_nn FROM synonym_en");
+					$synonymEnResult = mysqli_query($db, "SELECT synonym_id, word, synonym, cross_reference, synonym_partial_2, generic_term, sub_term, synonym_nn FROM synonym_en");
 					if(mysqli_num_rows($synonymEnResult) > 0){
 						while($synonymEnRow = mysqli_fetch_array($synonymEnResult)){
 							$synonymData = array();
 							$synonymData['synonym_id'] = $synonymEnRow['synonym_id'];
 							$synonymData['word'] = mb_strtolower($synonymEnRow['word']);
-							$synonymData['strict_synonym'] = mb_strtolower($synonymEnRow['strict_synonym']);
-							$synonymData['synonym_partial_1'] = mb_strtolower($synonymEnRow['synonym_partial_1']);
+							$synonymData['synonym'] = mb_strtolower($synonymEnRow['synonym']);
+							$synonymData['cross_reference'] = mb_strtolower($synonymEnRow['cross_reference']);
 							$synonymData['synonym_partial_2'] = mb_strtolower($synonymEnRow['synonym_partial_2']);
-							$synonymData['synonym_general'] = mb_strtolower($synonymEnRow['synonym_general']);
-							$synonymData['synonym_minor'] = mb_strtolower($synonymEnRow['synonym_minor']);
+							$synonymData['generic_term'] = mb_strtolower($synonymEnRow['generic_term']);
+							$synonymData['sub_term'] = mb_strtolower($synonymEnRow['sub_term']);
 							$synonymData['synonym_nn'] = mb_strtolower($synonymEnRow['synonym_nn']);
 							$availableEnSynonyms[] = $synonymData;
 						}
 					}
-					$synonymDeResult = mysqli_query($db, "SELECT synonym_id, word, strict_synonym, synonym_partial_1, synonym_partial_2, synonym_general, synonym_minor, synonym_nn FROM synonym_de");
+					$synonymDeResult = mysqli_query($db, "SELECT synonym_id, word, synonym, cross_reference, synonym_partial_2, generic_term, sub_term, synonym_nn FROM synonym_de");
 					if(mysqli_num_rows($synonymDeResult) > 0){
 						while($synonymDeRow = mysqli_fetch_array($synonymDeResult)){
 							$synonymData = array();
 							$synonymData['synonym_id'] = $synonymDeRow['synonym_id'];
 							$synonymData['word'] = mb_strtolower($synonymDeRow['word']);
-							$synonymData['strict_synonym'] = mb_strtolower($synonymDeRow['strict_synonym']);
-							$synonymData['synonym_partial_1'] = mb_strtolower($synonymDeRow['synonym_partial_1']);
+							$synonymData['synonym'] = mb_strtolower($synonymDeRow['synonym']);
+							$synonymData['cross_reference'] = mb_strtolower($synonymDeRow['cross_reference']);
 							$synonymData['synonym_partial_2'] = mb_strtolower($synonymDeRow['synonym_partial_2']);
-							$synonymData['synonym_general'] = mb_strtolower($synonymDeRow['synonym_general']);
-							$synonymData['synonym_minor'] = mb_strtolower($synonymDeRow['synonym_minor']);
+							$synonymData['generic_term'] = mb_strtolower($synonymDeRow['generic_term']);
+							$synonymData['sub_term'] = mb_strtolower($synonymDeRow['sub_term']);
 							$synonymData['synonym_nn'] = mb_strtolower($synonymDeRow['synonym_nn']);
 							$availableDeSynonyms[] = $synonymData;
 						}
@@ -25666,15 +25666,15 @@
 										}
 										$data = array();
 										$data['synonym_word'] = (isset($arrangedSynonymData['synonym_word']) AND !empty($arrangedSynonymData['synonym_word'])) ? mysqli_real_escape_string($db, serialize($arrangedSynonymData['synonym_word'])) : "";
-										$data['strict_synonym'] = (isset($arrangedSynonymData['strict_synonym']) AND !empty($arrangedSynonymData['strict_synonym'])) ? mysqli_real_escape_string($db, serialize($arrangedSynonymData['strict_synonym'])) : "";
-										$data['synonym_partial_1'] = (isset($arrangedSynonymData['synonym_partial_1']) AND !empty($arrangedSynonymData['synonym_partial_1'])) ? mysqli_real_escape_string($db, serialize($arrangedSynonymData['synonym_partial_1'])) : "";
+										$data['synonym'] = (isset($arrangedSynonymData['synonym']) AND !empty($arrangedSynonymData['synonym'])) ? mysqli_real_escape_string($db, serialize($arrangedSynonymData['synonym'])) : "";
+										$data['cross_reference'] = (isset($arrangedSynonymData['cross_reference']) AND !empty($arrangedSynonymData['cross_reference'])) ? mysqli_real_escape_string($db, serialize($arrangedSynonymData['cross_reference'])) : "";
 										$data['synonym_partial_2'] = (isset($arrangedSynonymData['synonym_partial_2']) AND !empty($arrangedSynonymData['synonym_partial_2'])) ? mysqli_real_escape_string($db, serialize($arrangedSynonymData['synonym_partial_2'])) : "";
-										$data['synonym_general'] = (isset($arrangedSynonymData['synonym_general']) AND !empty($arrangedSynonymData['synonym_general'])) ? mysqli_real_escape_string($db, serialize($arrangedSynonymData['synonym_general'])) : "";
-										$data['synonym_minor'] = (isset($arrangedSynonymData['synonym_minor']) AND !empty($arrangedSynonymData['synonym_minor'])) ? mysqli_real_escape_string($db, serialize($arrangedSynonymData['synonym_minor'])) : "";
+										$data['generic_term'] = (isset($arrangedSynonymData['generic_term']) AND !empty($arrangedSynonymData['generic_term'])) ? mysqli_real_escape_string($db, serialize($arrangedSynonymData['generic_term'])) : "";
+										$data['sub_term'] = (isset($arrangedSynonymData['sub_term']) AND !empty($arrangedSynonymData['sub_term'])) ? mysqli_real_escape_string($db, serialize($arrangedSynonymData['sub_term'])) : "";
 										$data['synonym_nn'] = (isset($arrangedSynonymData['synonym_nn']) AND !empty($arrangedSynonymData['synonym_nn'])) ? mysqli_real_escape_string($db, serialize($arrangedSynonymData['synonym_nn'])) : "";
 										// Finding match synonyms END
 
-										$updSymptom = "UPDATE ".$comMasterTableData['table_name']." SET synonym_word = '".$data['synonym_word']."', strict_synonym = '".$data['strict_synonym']."', synonym_partial_1 = '".$data['synonym_partial_1']."', synonym_partial_2 = '".$data['synonym_partial_2']."', synonym_general = '".$data['synonym_general']."', synonym_minor = '".$data['synonym_minor']."', synonym_nn = '".$data['synonym_nn']."' WHERE symptom_id = ".$symRow['symptom_id'];
+										$updSymptom = "UPDATE ".$comMasterTableData['table_name']." SET synonym_word = '".$data['synonym_word']."', synonym = '".$data['synonym']."', cross_reference = '".$data['cross_reference']."', synonym_partial_2 = '".$data['synonym_partial_2']."', generic_term = '".$data['generic_term']."', sub_term = '".$data['sub_term']."', synonym_nn = '".$data['synonym_nn']."' WHERE symptom_id = ".$symRow['symptom_id'];
 		        						$db->query($updSymptom);
 									} else if($masterTableData['is_symptoms_available_in_en'] == 1) {
 										// Finding match synonyms START
@@ -25685,15 +25685,15 @@
 										}
 										$data = array();
 										$data['synonym_word'] = (isset($arrangedSynonymData['synonym_word']) AND !empty($arrangedSynonymData['synonym_word'])) ? mysqli_real_escape_string($db, serialize($arrangedSynonymData['synonym_word'])) : "";
-										$data['strict_synonym'] = (isset($arrangedSynonymData['strict_synonym']) AND !empty($arrangedSynonymData['strict_synonym'])) ? mysqli_real_escape_string($db, serialize($arrangedSynonymData['strict_synonym'])) : "";
-										$data['synonym_partial_1'] = (isset($arrangedSynonymData['synonym_partial_1']) AND !empty($arrangedSynonymData['synonym_partial_1'])) ? mysqli_real_escape_string($db, serialize($arrangedSynonymData['synonym_partial_1'])) : "";
+										$data['synonym'] = (isset($arrangedSynonymData['synonym']) AND !empty($arrangedSynonymData['synonym'])) ? mysqli_real_escape_string($db, serialize($arrangedSynonymData['synonym'])) : "";
+										$data['cross_reference'] = (isset($arrangedSynonymData['cross_reference']) AND !empty($arrangedSynonymData['cross_reference'])) ? mysqli_real_escape_string($db, serialize($arrangedSynonymData['cross_reference'])) : "";
 										$data['synonym_partial_2'] = (isset($arrangedSynonymData['synonym_partial_2']) AND !empty($arrangedSynonymData['synonym_partial_2'])) ? mysqli_real_escape_string($db, serialize($arrangedSynonymData['synonym_partial_2'])) : "";
-										$data['synonym_general'] = (isset($arrangedSynonymData['synonym_general']) AND !empty($arrangedSynonymData['synonym_general'])) ? mysqli_real_escape_string($db, serialize($arrangedSynonymData['synonym_general'])) : "";
-										$data['synonym_minor'] = (isset($arrangedSynonymData['synonym_minor']) AND !empty($arrangedSynonymData['synonym_minor'])) ? mysqli_real_escape_string($db, serialize($arrangedSynonymData['synonym_minor'])) : "";
+										$data['generic_term'] = (isset($arrangedSynonymData['generic_term']) AND !empty($arrangedSynonymData['generic_term'])) ? mysqli_real_escape_string($db, serialize($arrangedSynonymData['generic_term'])) : "";
+										$data['sub_term'] = (isset($arrangedSynonymData['sub_term']) AND !empty($arrangedSynonymData['sub_term'])) ? mysqli_real_escape_string($db, serialize($arrangedSynonymData['sub_term'])) : "";
 										$data['synonym_nn'] = (isset($arrangedSynonymData['synonym_nn']) AND !empty($arrangedSynonymData['synonym_nn'])) ? mysqli_real_escape_string($db, serialize($arrangedSynonymData['synonym_nn'])) : "";
 										// Finding match synonyms END
 
-										$updSymptom = "UPDATE ".$comMasterTableData['table_name']." SET synonym_word = '".$data['synonym_word']."', strict_synonym = '".$data['strict_synonym']."', synonym_partial_1 = '".$data['synonym_partial_1']."', synonym_partial_2 = '".$data['synonym_partial_2']."', synonym_general = '".$data['synonym_general']."', synonym_minor = '".$data['synonym_minor']."', synonym_nn = '".$data['synonym_nn']."' WHERE symptom_id = ".$symRow['symptom_id'];
+										$updSymptom = "UPDATE ".$comMasterTableData['table_name']." SET synonym_word = '".$data['synonym_word']."', synonym = '".$data['synonym']."', cross_reference = '".$data['cross_reference']."', synonym_partial_2 = '".$data['synonym_partial_2']."', generic_term = '".$data['generic_term']."', sub_term = '".$data['sub_term']."', synonym_nn = '".$data['synonym_nn']."' WHERE symptom_id = ".$symRow['symptom_id'];
 		        						$db->query($updSymptom);
 									}
 								}
@@ -25713,15 +25713,15 @@
 										}
 										$data = array();
 										$data['synonym_word'] = (isset($arrangedSynonymData['synonym_word']) AND !empty($arrangedSynonymData['synonym_word'])) ? mysqli_real_escape_string($db, serialize($arrangedSynonymData['synonym_word'])) : "";
-										$data['strict_synonym'] = (isset($arrangedSynonymData['strict_synonym']) AND !empty($arrangedSynonymData['strict_synonym'])) ? mysqli_real_escape_string($db, serialize($arrangedSynonymData['strict_synonym'])) : "";
-										$data['synonym_partial_1'] = (isset($arrangedSynonymData['synonym_partial_1']) AND !empty($arrangedSynonymData['synonym_partial_1'])) ? mysqli_real_escape_string($db, serialize($arrangedSynonymData['synonym_partial_1'])) : "";
+										$data['synonym'] = (isset($arrangedSynonymData['synonym']) AND !empty($arrangedSynonymData['synonym'])) ? mysqli_real_escape_string($db, serialize($arrangedSynonymData['synonym'])) : "";
+										$data['cross_reference'] = (isset($arrangedSynonymData['cross_reference']) AND !empty($arrangedSynonymData['cross_reference'])) ? mysqli_real_escape_string($db, serialize($arrangedSynonymData['cross_reference'])) : "";
 										$data['synonym_partial_2'] = (isset($arrangedSynonymData['synonym_partial_2']) AND !empty($arrangedSynonymData['synonym_partial_2'])) ? mysqli_real_escape_string($db, serialize($arrangedSynonymData['synonym_partial_2'])) : "";
-										$data['synonym_general'] = (isset($arrangedSynonymData['synonym_general']) AND !empty($arrangedSynonymData['synonym_general'])) ? mysqli_real_escape_string($db, serialize($arrangedSynonymData['synonym_general'])) : "";
-										$data['synonym_minor'] = (isset($arrangedSynonymData['synonym_minor']) AND !empty($arrangedSynonymData['synonym_minor'])) ? mysqli_real_escape_string($db, serialize($arrangedSynonymData['synonym_minor'])) : "";
+										$data['generic_term'] = (isset($arrangedSynonymData['generic_term']) AND !empty($arrangedSynonymData['generic_term'])) ? mysqli_real_escape_string($db, serialize($arrangedSynonymData['generic_term'])) : "";
+										$data['sub_term'] = (isset($arrangedSynonymData['sub_term']) AND !empty($arrangedSynonymData['sub_term'])) ? mysqli_real_escape_string($db, serialize($arrangedSynonymData['sub_term'])) : "";
 										$data['synonym_nn'] = (isset($arrangedSynonymData['synonym_nn']) AND !empty($arrangedSynonymData['synonym_nn'])) ? mysqli_real_escape_string($db, serialize($arrangedSynonymData['synonym_nn'])) : "";
 										// Finding match synonyms END
 
-										$updSymptom = "UPDATE ".$comMasterTableData['table_name']."_completed SET synonym_word = '".$data['synonym_word']."', strict_synonym = '".$data['strict_synonym']."', synonym_partial_1 = '".$data['synonym_partial_1']."', synonym_partial_2 = '".$data['synonym_partial_2']."', synonym_general = '".$data['synonym_general']."', synonym_minor = '".$data['synonym_minor']."', synonym_nn = '".$data['synonym_nn']."' WHERE symptom_id = ".$symRow['symptom_id'];
+										$updSymptom = "UPDATE ".$comMasterTableData['table_name']."_completed SET synonym_word = '".$data['synonym_word']."', synonym = '".$data['synonym']."', cross_reference = '".$data['cross_reference']."', synonym_partial_2 = '".$data['synonym_partial_2']."', generic_term = '".$data['generic_term']."', sub_term = '".$data['sub_term']."', synonym_nn = '".$data['synonym_nn']."' WHERE symptom_id = ".$symRow['symptom_id'];
 		        						$db->query($updSymptom);
 									} else if($masterTableData['is_symptoms_available_in_en'] == 1) {
 										// Finding match synonyms START
@@ -25732,15 +25732,15 @@
 										}
 										$data = array();
 										$data['synonym_word'] = (isset($arrangedSynonymData['synonym_word']) AND !empty($arrangedSynonymData['synonym_word'])) ? mysqli_real_escape_string($db, serialize($arrangedSynonymData['synonym_word'])) : "";
-										$data['strict_synonym'] = (isset($arrangedSynonymData['strict_synonym']) AND !empty($arrangedSynonymData['strict_synonym'])) ? mysqli_real_escape_string($db, serialize($arrangedSynonymData['strict_synonym'])) : "";
-										$data['synonym_partial_1'] = (isset($arrangedSynonymData['synonym_partial_1']) AND !empty($arrangedSynonymData['synonym_partial_1'])) ? mysqli_real_escape_string($db, serialize($arrangedSynonymData['synonym_partial_1'])) : "";
+										$data['synonym'] = (isset($arrangedSynonymData['synonym']) AND !empty($arrangedSynonymData['synonym'])) ? mysqli_real_escape_string($db, serialize($arrangedSynonymData['synonym'])) : "";
+										$data['cross_reference'] = (isset($arrangedSynonymData['cross_reference']) AND !empty($arrangedSynonymData['cross_reference'])) ? mysqli_real_escape_string($db, serialize($arrangedSynonymData['cross_reference'])) : "";
 										$data['synonym_partial_2'] = (isset($arrangedSynonymData['synonym_partial_2']) AND !empty($arrangedSynonymData['synonym_partial_2'])) ? mysqli_real_escape_string($db, serialize($arrangedSynonymData['synonym_partial_2'])) : "";
-										$data['synonym_general'] = (isset($arrangedSynonymData['synonym_general']) AND !empty($arrangedSynonymData['synonym_general'])) ? mysqli_real_escape_string($db, serialize($arrangedSynonymData['synonym_general'])) : "";
-										$data['synonym_minor'] = (isset($arrangedSynonymData['synonym_minor']) AND !empty($arrangedSynonymData['synonym_minor'])) ? mysqli_real_escape_string($db, serialize($arrangedSynonymData['synonym_minor'])) : "";
+										$data['generic_term'] = (isset($arrangedSynonymData['generic_term']) AND !empty($arrangedSynonymData['generic_term'])) ? mysqli_real_escape_string($db, serialize($arrangedSynonymData['generic_term'])) : "";
+										$data['sub_term'] = (isset($arrangedSynonymData['sub_term']) AND !empty($arrangedSynonymData['sub_term'])) ? mysqli_real_escape_string($db, serialize($arrangedSynonymData['sub_term'])) : "";
 										$data['synonym_nn'] = (isset($arrangedSynonymData['synonym_nn']) AND !empty($arrangedSynonymData['synonym_nn'])) ? mysqli_real_escape_string($db, serialize($arrangedSynonymData['synonym_nn'])) : "";
 										// Finding match synonyms END
 
-										$updSymptom = "UPDATE ".$comMasterTableData['table_name']."_completed SET synonym_word = '".$data['synonym_word']."', strict_synonym = '".$data['strict_synonym']."', synonym_partial_1 = '".$data['synonym_partial_1']."', synonym_partial_2 = '".$data['synonym_partial_2']."', synonym_general = '".$data['synonym_general']."', synonym_minor = '".$data['synonym_minor']."', synonym_nn = '".$data['synonym_nn']."' WHERE symptom_id = ".$symRow['symptom_id'];
+										$updSymptom = "UPDATE ".$comMasterTableData['table_name']."_completed SET synonym_word = '".$data['synonym_word']."', synonym = '".$data['synonym']."', cross_reference = '".$data['cross_reference']."', synonym_partial_2 = '".$data['synonym_partial_2']."', generic_term = '".$data['generic_term']."', sub_term = '".$data['sub_term']."', synonym_nn = '".$data['synonym_nn']."' WHERE symptom_id = ".$symRow['symptom_id'];
 		        						$db->query($updSymptom);
 									}
 								}
@@ -25760,15 +25760,15 @@
 										}
 										$data = array();
 										$data['synonym_word'] = (isset($arrangedSynonymData['synonym_word']) AND !empty($arrangedSynonymData['synonym_word'])) ? mysqli_real_escape_string($db, serialize($arrangedSynonymData['synonym_word'])) : "";
-										$data['strict_synonym'] = (isset($arrangedSynonymData['strict_synonym']) AND !empty($arrangedSynonymData['strict_synonym'])) ? mysqli_real_escape_string($db, serialize($arrangedSynonymData['strict_synonym'])) : "";
-										$data['synonym_partial_1'] = (isset($arrangedSynonymData['synonym_partial_1']) AND !empty($arrangedSynonymData['synonym_partial_1'])) ? mysqli_real_escape_string($db, serialize($arrangedSynonymData['synonym_partial_1'])) : "";
+										$data['synonym'] = (isset($arrangedSynonymData['synonym']) AND !empty($arrangedSynonymData['synonym'])) ? mysqli_real_escape_string($db, serialize($arrangedSynonymData['synonym'])) : "";
+										$data['cross_reference'] = (isset($arrangedSynonymData['cross_reference']) AND !empty($arrangedSynonymData['cross_reference'])) ? mysqli_real_escape_string($db, serialize($arrangedSynonymData['cross_reference'])) : "";
 										$data['synonym_partial_2'] = (isset($arrangedSynonymData['synonym_partial_2']) AND !empty($arrangedSynonymData['synonym_partial_2'])) ? mysqli_real_escape_string($db, serialize($arrangedSynonymData['synonym_partial_2'])) : "";
-										$data['synonym_general'] = (isset($arrangedSynonymData['synonym_general']) AND !empty($arrangedSynonymData['synonym_general'])) ? mysqli_real_escape_string($db, serialize($arrangedSynonymData['synonym_general'])) : "";
-										$data['synonym_minor'] = (isset($arrangedSynonymData['synonym_minor']) AND !empty($arrangedSynonymData['synonym_minor'])) ? mysqli_real_escape_string($db, serialize($arrangedSynonymData['synonym_minor'])) : "";
+										$data['generic_term'] = (isset($arrangedSynonymData['generic_term']) AND !empty($arrangedSynonymData['generic_term'])) ? mysqli_real_escape_string($db, serialize($arrangedSynonymData['generic_term'])) : "";
+										$data['sub_term'] = (isset($arrangedSynonymData['sub_term']) AND !empty($arrangedSynonymData['sub_term'])) ? mysqli_real_escape_string($db, serialize($arrangedSynonymData['sub_term'])) : "";
 										$data['synonym_nn'] = (isset($arrangedSynonymData['synonym_nn']) AND !empty($arrangedSynonymData['synonym_nn'])) ? mysqli_real_escape_string($db, serialize($arrangedSynonymData['synonym_nn'])) : "";
 										// Finding match synonyms END
 
-										$updSymptom = "UPDATE ".$comMasterTableData['table_name']."_highest_matches SET synonym_word = '".$data['synonym_word']."', strict_synonym = '".$data['strict_synonym']."', synonym_partial_1 = '".$data['synonym_partial_1']."', synonym_partial_2 = '".$data['synonym_partial_2']."', synonym_general = '".$data['synonym_general']."', synonym_minor = '".$data['synonym_minor']."', synonym_nn = '".$data['synonym_nn']."' WHERE symptom_id = ".$symRow['symptom_id'];
+										$updSymptom = "UPDATE ".$comMasterTableData['table_name']."_highest_matches SET synonym_word = '".$data['synonym_word']."', synonym = '".$data['synonym']."', cross_reference = '".$data['cross_reference']."', synonym_partial_2 = '".$data['synonym_partial_2']."', generic_term = '".$data['generic_term']."', sub_term = '".$data['sub_term']."', synonym_nn = '".$data['synonym_nn']."' WHERE symptom_id = ".$symRow['symptom_id'];
 		        						$db->query($updSymptom);
 									} else if($masterTableData['is_symptoms_available_in_en'] == 1) {
 										// Finding match synonyms START
@@ -25779,15 +25779,15 @@
 										}
 										$data = array();
 										$data['synonym_word'] = (isset($arrangedSynonymData['synonym_word']) AND !empty($arrangedSynonymData['synonym_word'])) ? mysqli_real_escape_string($db, serialize($arrangedSynonymData['synonym_word'])) : "";
-										$data['strict_synonym'] = (isset($arrangedSynonymData['strict_synonym']) AND !empty($arrangedSynonymData['strict_synonym'])) ? mysqli_real_escape_string($db, serialize($arrangedSynonymData['strict_synonym'])) : "";
-										$data['synonym_partial_1'] = (isset($arrangedSynonymData['synonym_partial_1']) AND !empty($arrangedSynonymData['synonym_partial_1'])) ? mysqli_real_escape_string($db, serialize($arrangedSynonymData['synonym_partial_1'])) : "";
+										$data['synonym'] = (isset($arrangedSynonymData['synonym']) AND !empty($arrangedSynonymData['synonym'])) ? mysqli_real_escape_string($db, serialize($arrangedSynonymData['synonym'])) : "";
+										$data['cross_reference'] = (isset($arrangedSynonymData['cross_reference']) AND !empty($arrangedSynonymData['cross_reference'])) ? mysqli_real_escape_string($db, serialize($arrangedSynonymData['cross_reference'])) : "";
 										$data['synonym_partial_2'] = (isset($arrangedSynonymData['synonym_partial_2']) AND !empty($arrangedSynonymData['synonym_partial_2'])) ? mysqli_real_escape_string($db, serialize($arrangedSynonymData['synonym_partial_2'])) : "";
-										$data['synonym_general'] = (isset($arrangedSynonymData['synonym_general']) AND !empty($arrangedSynonymData['synonym_general'])) ? mysqli_real_escape_string($db, serialize($arrangedSynonymData['synonym_general'])) : "";
-										$data['synonym_minor'] = (isset($arrangedSynonymData['synonym_minor']) AND !empty($arrangedSynonymData['synonym_minor'])) ? mysqli_real_escape_string($db, serialize($arrangedSynonymData['synonym_minor'])) : "";
+										$data['generic_term'] = (isset($arrangedSynonymData['generic_term']) AND !empty($arrangedSynonymData['generic_term'])) ? mysqli_real_escape_string($db, serialize($arrangedSynonymData['generic_term'])) : "";
+										$data['sub_term'] = (isset($arrangedSynonymData['sub_term']) AND !empty($arrangedSynonymData['sub_term'])) ? mysqli_real_escape_string($db, serialize($arrangedSynonymData['sub_term'])) : "";
 										$data['synonym_nn'] = (isset($arrangedSynonymData['synonym_nn']) AND !empty($arrangedSynonymData['synonym_nn'])) ? mysqli_real_escape_string($db, serialize($arrangedSynonymData['synonym_nn'])) : "";
 										// Finding match synonyms END
 
-										$updSymptom = "UPDATE ".$comMasterTableData['table_name']."_highest_matches SET synonym_word = '".$data['synonym_word']."', strict_synonym = '".$data['strict_synonym']."', synonym_partial_1 = '".$data['synonym_partial_1']."', synonym_partial_2 = '".$data['synonym_partial_2']."', synonym_general = '".$data['synonym_general']."', synonym_minor = '".$data['synonym_minor']."', synonym_nn = '".$data['synonym_nn']."' WHERE symptom_id = ".$symRow['symptom_id'];
+										$updSymptom = "UPDATE ".$comMasterTableData['table_name']."_highest_matches SET synonym_word = '".$data['synonym_word']."', synonym = '".$data['synonym']."', cross_reference = '".$data['cross_reference']."', synonym_partial_2 = '".$data['synonym_partial_2']."', generic_term = '".$data['generic_term']."', sub_term = '".$data['sub_term']."', synonym_nn = '".$data['synonym_nn']."' WHERE symptom_id = ".$symRow['symptom_id'];
 		        						$db->query($updSymptom);
 									}
 								}
@@ -25807,15 +25807,15 @@
 									}
 									$data = array();
 									$data['synonym_word'] = (isset($arrangedSynonymData['synonym_word']) AND !empty($arrangedSynonymData['synonym_word'])) ? mysqli_real_escape_string($db, serialize($arrangedSynonymData['synonym_word'])) : "";
-									$data['strict_synonym'] = (isset($arrangedSynonymData['strict_synonym']) AND !empty($arrangedSynonymData['strict_synonym'])) ? mysqli_real_escape_string($db, serialize($arrangedSynonymData['strict_synonym'])) : "";
-									$data['synonym_partial_1'] = (isset($arrangedSynonymData['synonym_partial_1']) AND !empty($arrangedSynonymData['synonym_partial_1'])) ? mysqli_real_escape_string($db, serialize($arrangedSynonymData['synonym_partial_1'])) : "";
+									$data['synonym'] = (isset($arrangedSynonymData['synonym']) AND !empty($arrangedSynonymData['synonym'])) ? mysqli_real_escape_string($db, serialize($arrangedSynonymData['synonym'])) : "";
+									$data['cross_reference'] = (isset($arrangedSynonymData['cross_reference']) AND !empty($arrangedSynonymData['cross_reference'])) ? mysqli_real_escape_string($db, serialize($arrangedSynonymData['cross_reference'])) : "";
 									$data['synonym_partial_2'] = (isset($arrangedSynonymData['synonym_partial_2']) AND !empty($arrangedSynonymData['synonym_partial_2'])) ? mysqli_real_escape_string($db, serialize($arrangedSynonymData['synonym_partial_2'])) : "";
-									$data['synonym_general'] = (isset($arrangedSynonymData['synonym_general']) AND !empty($arrangedSynonymData['synonym_general'])) ? mysqli_real_escape_string($db, serialize($arrangedSynonymData['synonym_general'])) : "";
-									$data['synonym_minor'] = (isset($arrangedSynonymData['synonym_minor']) AND !empty($arrangedSynonymData['synonym_minor'])) ? mysqli_real_escape_string($db, serialize($arrangedSynonymData['synonym_minor'])) : "";
+									$data['generic_term'] = (isset($arrangedSynonymData['generic_term']) AND !empty($arrangedSynonymData['generic_term'])) ? mysqli_real_escape_string($db, serialize($arrangedSynonymData['generic_term'])) : "";
+									$data['sub_term'] = (isset($arrangedSynonymData['sub_term']) AND !empty($arrangedSynonymData['sub_term'])) ? mysqli_real_escape_string($db, serialize($arrangedSynonymData['sub_term'])) : "";
 									$data['synonym_nn'] = (isset($arrangedSynonymData['synonym_nn']) AND !empty($arrangedSynonymData['synonym_nn'])) ? mysqli_real_escape_string($db, serialize($arrangedSynonymData['synonym_nn'])) : "";
 									// Finding match synonyms END
 
-									$updSymptom = "UPDATE quelle_import_test SET synonym_word = '".$data['synonym_word']."', strict_synonym = '".$data['strict_synonym']."', synonym_partial_1 = '".$data['synonym_partial_1']."', synonym_partial_2 = '".$data['synonym_partial_2']."', synonym_general = '".$data['synonym_general']."', synonym_minor = '".$data['synonym_minor']."', synonym_nn = '".$data['synonym_nn']."' WHERE id = ".$symRow['id'];
+									$updSymptom = "UPDATE quelle_import_test SET synonym_word = '".$data['synonym_word']."', synonym = '".$data['synonym']."', cross_reference = '".$data['cross_reference']."', synonym_partial_2 = '".$data['synonym_partial_2']."', generic_term = '".$data['generic_term']."', sub_term = '".$data['sub_term']."', synonym_nn = '".$data['synonym_nn']."' WHERE id = ".$symRow['id'];
 	        						$db->query($updSymptom);
 								} else if($masterTableData['is_symptoms_available_in_en'] == 1) {
 									// Finding match synonyms START
@@ -25826,15 +25826,15 @@
 									}
 									$data = array();
 									$data['synonym_word'] = (isset($arrangedSynonymData['synonym_word']) AND !empty($arrangedSynonymData['synonym_word'])) ? mysqli_real_escape_string($db, serialize($arrangedSynonymData['synonym_word'])) : "";
-									$data['strict_synonym'] = (isset($arrangedSynonymData['strict_synonym']) AND !empty($arrangedSynonymData['strict_synonym'])) ? mysqli_real_escape_string($db, serialize($arrangedSynonymData['strict_synonym'])) : "";
-									$data['synonym_partial_1'] = (isset($arrangedSynonymData['synonym_partial_1']) AND !empty($arrangedSynonymData['synonym_partial_1'])) ? mysqli_real_escape_string($db, serialize($arrangedSynonymData['synonym_partial_1'])) : "";
+									$data['synonym'] = (isset($arrangedSynonymData['synonym']) AND !empty($arrangedSynonymData['synonym'])) ? mysqli_real_escape_string($db, serialize($arrangedSynonymData['synonym'])) : "";
+									$data['cross_reference'] = (isset($arrangedSynonymData['cross_reference']) AND !empty($arrangedSynonymData['cross_reference'])) ? mysqli_real_escape_string($db, serialize($arrangedSynonymData['cross_reference'])) : "";
 									$data['synonym_partial_2'] = (isset($arrangedSynonymData['synonym_partial_2']) AND !empty($arrangedSynonymData['synonym_partial_2'])) ? mysqli_real_escape_string($db, serialize($arrangedSynonymData['synonym_partial_2'])) : "";
-									$data['synonym_general'] = (isset($arrangedSynonymData['synonym_general']) AND !empty($arrangedSynonymData['synonym_general'])) ? mysqli_real_escape_string($db, serialize($arrangedSynonymData['synonym_general'])) : "";
-									$data['synonym_minor'] = (isset($arrangedSynonymData['synonym_minor']) AND !empty($arrangedSynonymData['synonym_minor'])) ? mysqli_real_escape_string($db, serialize($arrangedSynonymData['synonym_minor'])) : "";
+									$data['generic_term'] = (isset($arrangedSynonymData['generic_term']) AND !empty($arrangedSynonymData['generic_term'])) ? mysqli_real_escape_string($db, serialize($arrangedSynonymData['generic_term'])) : "";
+									$data['sub_term'] = (isset($arrangedSynonymData['sub_term']) AND !empty($arrangedSynonymData['sub_term'])) ? mysqli_real_escape_string($db, serialize($arrangedSynonymData['sub_term'])) : "";
 									$data['synonym_nn'] = (isset($arrangedSynonymData['synonym_nn']) AND !empty($arrangedSynonymData['synonym_nn'])) ? mysqli_real_escape_string($db, serialize($arrangedSynonymData['synonym_nn'])) : "";
 									// Finding match synonyms END
 
-									$updSymptom = "UPDATE quelle_import_test SET synonym_word = '".$data['synonym_word']."', strict_synonym = '".$data['strict_synonym']."', synonym_partial_1 = '".$data['synonym_partial_1']."', synonym_partial_2 = '".$data['synonym_partial_2']."', synonym_general = '".$data['synonym_general']."', synonym_minor = '".$data['synonym_minor']."', synonym_nn = '".$data['synonym_nn']."' WHERE id = ".$symRow['id'];
+									$updSymptom = "UPDATE quelle_import_test SET synonym_word = '".$data['synonym_word']."', synonym = '".$data['synonym']."', cross_reference = '".$data['cross_reference']."', synonym_partial_2 = '".$data['synonym_partial_2']."', generic_term = '".$data['generic_term']."', sub_term = '".$data['sub_term']."', synonym_nn = '".$data['synonym_nn']."' WHERE id = ".$symRow['id'];
 	        						$db->query($updSymptom);
 								}
 							}

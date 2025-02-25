@@ -3,7 +3,7 @@ function processSynonymResponse(res, selectedWord) {
     let finalSynonyms = [];
 
     res.synonyms.forEach((syn) => {
-        ["strict_synonym", "synonym_partial_1", "synonym_general", "synonym_minor"].forEach((key, index) => {
+        ["synonym", "cross_reference", "generic_term", "sub_term"].forEach((key, index) => {
             if (syn[key]) {
                 syn[key].split(",").forEach((s) => {
                     finalSynonyms.push({ type: ["S", "Q", "O", "U"][index], word: s.trim() });

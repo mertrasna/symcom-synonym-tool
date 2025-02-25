@@ -106,15 +106,15 @@ if(isset($_GET['synonym_de_id'])) {
 			}
 			$data_array =  array(
 				"Wort"      => $synonymDe['word'],
-				"Striktes Synonym"  => $synonymDe['strict_synonym'],
-				"Partielles Synonym I"  => $synonymDe['synonym_partial_1'],
+				"Striktes Synonym"  => $synonymDe['synonym'],
+				"Partielles Synonym I"  => $synonymDe['cross_reference'],
 				"Partielles Synonym II"  => $synonymDe['synonym_partial_2'],
-				"Hyperonym (Oberbegriff)"  => $synonymDe['synonym_general'],
-				"Hyponym (Unterbegriff)"  => $synonymDe['synonym_minor'],
+				"Hyperonym (Oberbegriff)"  => $synonymDe['generic_term'],
+				"Hyponym (Unterbegriff)"  => $synonymDe['sub_term'],
 				"synonym NN"  => $synonymDe['synonym_nn'],
 				"References"  => $referencesArrayString,
-				"Comments"  => $synonymDe['synonym_comment'],
-				"synonym_ns"  => $synonymDe['synonym_ns'],
+				"Comments"  => $synonymDe['comment'],
+				"non_secure_flag"  => $synonymDe['non_secure_flag'],
 				"source_reference_ns"  => $synonymDe['source_reference_ns'],
 				"synonym_id"  => $synonymDe['synonym_id']
 			);
@@ -163,15 +163,15 @@ if(isset($_GET['synonym_en_id'])) {
 			}
 			$data_array =  array(
 				"Wort"      => $synonymDe['word'],
-				"Striktes Synonym"  => $synonymDe['strict_synonym'],
-				"Partielles Synonym I"  => $synonymDe['synonym_partial_1'],
+				"Striktes Synonym"  => $synonymDe['synonym'],
+				"Partielles Synonym I"  => $synonymDe['cross_reference'],
 				"Partielles Synonym II"  => $synonymDe['synonym_partial_2'],
-				"Hyperonym (Oberbegriff)"  => $synonymDe['synonym_general'],
-				"Hyponym (Unterbegriff)"  => $synonymDe['synonym_minor'],
+				"Hyperonym (Oberbegriff)"  => $synonymDe['generic_term'],
+				"Hyponym (Unterbegriff)"  => $synonymDe['sub_term'],
 				"synonym NN"  => $synonymDe['synonym_nn'],
 				"References"  => $referencesArrayString,
-				"Comments"  => $synonymDe['synonym_comment'],
-				"synonym_ns"  => $synonymDe['synonym_ns'],
+				"Comments"  => $synonymDe['comment'],
+				"non_secure_flag"  => $synonymDe['non_secure_flag'],
 				"source_reference_ns"  => $synonymDe['source_reference_ns'],
 				"synonym_id"  => $synonymDe['synonym_id']
 			);

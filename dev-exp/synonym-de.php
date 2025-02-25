@@ -77,12 +77,12 @@
                             $result = mysqli_query($db,"SELECT * FROM synonym_de ORDER BY synonym_id DESC"); 
                             while($row = mysqli_fetch_array($result)){   
                                 ?>
-                                <tr class="<?php echo ($row['synonym_ns'] == 1) ? 'highlight-row' : ''; ?>">
+                                <tr class="<?php echo ($row['non_secure_flag'] == 1) ? 'highlight-row' : ''; ?>">
                                     <td><?php echo $row['word']; ?></td>
-                                    <td><?php echo $row['strict_synonym']; ?></td>
-                                    <td><?php echo $row['synonym_partial_1']; ?></td>
-                                    <td><?php echo $row['synonym_general']; ?></td>
-                                    <td><?php echo $row['synonym_minor']; ?></td>
+                                    <td><?php echo $row['synonym']; ?></td>
+                                    <td><?php echo $row['cross_reference']; ?></td>
+                                    <td><?php echo $row['generic_term']; ?></td>
+                                    <td><?php echo $row['sub_term']; ?></td>
                                 </tr>
 
                                 <?php

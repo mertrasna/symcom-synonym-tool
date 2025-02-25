@@ -114,7 +114,7 @@ $(document).ready(function () {
             word: {
                 required: true
             },
-            strict_synonym: {
+            synonym: {
                 required: true
             }
         },     
@@ -122,7 +122,7 @@ $(document).ready(function () {
             word: {
                 required: "Wort ist Pflicht"
             },
-            strict_synonym: {
+            synonym: {
                 required: "Striktes Synonym ist obligatorisch"
             }
         }
@@ -136,7 +136,7 @@ $(document).ready(function () {
             word: {
                 required: true
             },
-            strict_synonym: {
+            synonym: {
                 required: true
             }
         },     
@@ -144,7 +144,7 @@ $(document).ready(function () {
             word: {
                 required: "Wort ist Pflicht"
             },
-            strict_synonym: {
+            synonym: {
                 required: "Striktes Synonym ist obligatorisch"
             }
         }

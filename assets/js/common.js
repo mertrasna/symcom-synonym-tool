@@ -139,15 +139,15 @@ $(document).ready(function () {
 	          	responseData = response;
 	      	}
 	      	if (typeof responseData == 'object') {
-				console.log(responseData.synonym_ns);
-				var synonym_ns_check = responseData.synonym_ns;
+				console.log(responseData.non_secure_flag);
+				var non_secure_flag_check = responseData.non_secure_flag;
 				var source_reference_ns_check = responseData.source_reference_ns;
 				var synonym_id = responseData.synonym_id;
 				var ns_title_for_synonym = "";
 				var ns_title_for_synonym_ref = "";
 				var ns_class_for_synonym = "";
 				var ns_class_for_synonym_ref = "";
-				if(synonym_ns_check == "1"){
+				if(non_secure_flag_check == "1"){
 					//ns_title_for_synonym = "Clear";
 					ns_class_for_synonym = "ns_bg_color";
 				}
@@ -156,7 +156,7 @@ $(document).ready(function () {
 					ns_class_for_synonym_ref = "ns_bg_color";
 				}
 		      	for(let key in responseData) { 
-					if(key != "synonym_ns" && key != "source_reference_ns" && key != "synonym_id"){
+					if(key != "non_secure_flag" && key != "source_reference_ns" && key != "synonym_id"){
 						if(key == "Wort"){
 							modalContents += `<div class="row">
 								<div class="col-xs-4"><label>${key}:</label></div>
@@ -193,11 +193,11 @@ $(document).ready(function () {
 	});
 
 	//check uncheck doubtful synonyms
-	$('body').on("click", "#synonym_ns_check", function (x){
+	$('body').on("click", "#non_secure_flag_check", function (x){
         if($(this).prop("checked") == true) {
-			$("#synonym_ns_check").val("1");
+			$("#non_secure_flag_check").val("1");
         }else{
-			$("#synonym_ns_check").val("0");
+			$("#non_secure_flag_check").val("0");
 		}
     });
 

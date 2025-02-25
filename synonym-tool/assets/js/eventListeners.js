@@ -58,10 +58,10 @@ $(document).ready(function () {
           let finalSynonyms = [];
           res.synonyms.forEach((syn) => {
             [
-              "strict_synonym",
-              "synonym_partial_1",
-              "synonym_general",
-              "synonym_minor",
+              "synonym",
+              "cross_reference",
+              "generic_term",
+              "sub_term",
             ].forEach((key, index) => {
               if (syn[key]) {
                 syn[key].split(",").forEach((s) => {
@@ -156,7 +156,7 @@ $(document).ready(function () {
 
   // Fetch synonyms from ChatGPT
   function fetchChatGPTSynonyms(selectedWord) {
-    const apiKey = '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';
+    const apiKey = 'putkey';
     const requestBody = {
       model: "gpt-4",
       messages: [
@@ -186,14 +186,14 @@ $(document).ready(function () {
 
         const synonymData = {
           word: selectedWord,
-          strict_synonym: strictSynonym,
-          synonym_partial_1: "",
+          synonym: strictSynonym,
+          cross_reference: "",
           synonym_partial_2: "",
-          synonym_general: "",
-          synonym_minor: "",
+          generic_term: "",
+          sub_term: "",
           synonym_nn: "",
-          synonym_comment: "",
-          synonym_ns: "1",
+          comment: "",
+          non_secure_flag: "1",
           source_reference_ns: "1",
           active: 1,
         };

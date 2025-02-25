@@ -25,9 +25,9 @@ class SynonymRepository implements SynonymRepositoryInterface {
         return $success;
     }
 
-    public function updateWord(string $word, string $rootWord, string $strictSynonyms, string $crossReferences, string $hypernyms, string $hyponyms, string $comment, string $synonym_ns): bool {
-        $stmt = $this->db->prepare("UPDATE synonym_de SET root_word = ?, strict_synonym = ?, synonym_partial_1 = ?, synonym_general = ?, synonym_minor = ?, synonym_comment = ?, synonym_ns = ? WHERE LOWER(word) = LOWER(?)");
-        $stmt->bind_param("ssssssss", $rootWord, $strictSynonyms, $crossReferences, $hypernyms, $hyponyms, $comment, $synonym_ns, $word);
+    public function updateWord(string $word, string $rootWord, string $strictSynonyms, string $crossReferences, string $hypernyms, string $hyponyms, string $comment, string $non_secure_flag): bool {
+        $stmt = $this->db->prepare("UPDATE synonym_de SET root_word = ?, synonym = ?, cross_reference = ?, generic_term = ?, sub_term = ?, comment = ?, non_secure_flag = ? WHERE LOWER(word) = LOWER(?)");
+        $stmt->bind_param("ssssssss", $rootWord, $strictSynonyms, $crossReferences, $hypernyms, $hyponyms, $comment, $non_secure_flag, $word);
         $success = $stmt->execute();
         $stmt->close();
         return $success;

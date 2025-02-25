@@ -14,13 +14,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             SELECT * FROM synonym_de 
             WHERE 
                 word LIKE '%$word%' OR
-                strict_synonym LIKE '%$word%' OR
-                synonym_partial_1 LIKE '%$word%' OR 
+                synonym LIKE '%$word%' OR
+                cross_reference LIKE '%$word%' OR 
                 synonym_partial_2 LIKE '%$word%' OR
-                synonym_general LIKE '%$word%' OR
-                synonym_minor LIKE '%$word%' OR
+                generic_term LIKE '%$word%' OR
+                sub_term LIKE '%$word%' OR
                 synonym_nn LIKE '%$word%' OR
-                synonym_comment LIKE '%$word%'
+                comment LIKE '%$word%'
         ";
 
         $result = mysqli_query($db, $query);

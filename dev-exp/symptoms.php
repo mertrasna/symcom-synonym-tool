@@ -299,25 +299,25 @@ $_SESSION['current_page'] = $actual_link;
                                     }
 
                                     $resultData['synonym_word'] = displayFormateOfSynonym($row['synonym_word']);
-                                    $resultData['strict_synonym'] = displayFormateOfSynonym($row['strict_synonym']);
-                                    $resultData['synonym_partial_1'] = displayFormateOfSynonym($row['synonym_partial_1']);
+                                    $resultData['synonym'] = displayFormateOfSynonym($row['synonym']);
+                                    $resultData['cross_reference'] = displayFormateOfSynonym($row['cross_reference']);
                                     $resultData['synonym_partial_2'] = displayFormateOfSynonym($row['synonym_partial_2']);
-                                    $resultData['synonym_general'] = displayFormateOfSynonym($row['synonym_general']);
-                                    $resultData['synonym_minor'] = displayFormateOfSynonym($row['synonym_minor']);
+                                    $resultData['generic_term'] = displayFormateOfSynonym($row['generic_term']);
+                                    $resultData['sub_term'] = displayFormateOfSynonym($row['sub_term']);
                                     $resultData['synonym_nn'] = displayFormateOfSynonym($row['synonym_nn']);
                                     $synonymTxt = "";
                                     if($resultData['synonym_word'] != "")
                                         $synonymTxt .= $resultData['synonym_word']."";
-                                    if($resultData['strict_synonym'] != "")
-                                        $synonymTxt .= $resultData['strict_synonym']."";
-                                    if($resultData['synonym_partial_1'] != "")
-                                        $synonymTxt .= $resultData['synonym_partial_1']."";
+                                    if($resultData['synonym'] != "")
+                                        $synonymTxt .= $resultData['synonym']."";
+                                    if($resultData['cross_reference'] != "")
+                                        $synonymTxt .= $resultData['cross_reference']."";
                                     if($resultData['synonym_partial_2'] != "")
                                         $synonymTxt .= $resultData['synonym_partial_2']."";
-                                    if($resultData['synonym_general'] != "")
-                                        $synonymTxt .= $resultData['synonym_general']."";
-                                    if($resultData['synonym_minor'] != "")
-                                        $synonymTxt .= $resultData['synonym_minor']."";
+                                    if($resultData['generic_term'] != "")
+                                        $synonymTxt .= $resultData['generic_term']."";
+                                    if($resultData['sub_term'] != "")
+                                        $synonymTxt .= $resultData['sub_term']."";
                                     if($resultData['synonym_nn'] != "")
                                         $synonymTxt .= $resultData['synonym_nn']."";
 
@@ -450,8 +450,8 @@ $_SESSION['current_page'] = $actual_link;
                                     </select>
                                 </div>
                                 <div class="form-group">
-                                    <label for="strict_synonym">Striktes Synonym*</label>&nbsp;<span id="strict_synonym_error" class="error-text text-danger"></span>
-                                    <input type="text" class="form-control" id="strict_synonym" name="strict_synonym" required>
+                                    <label for="synonym">Striktes Synonym*</label>&nbsp;<span id="synonym_error" class="error-text text-danger"></span>
+                                    <input type="text" class="form-control" id="synonym" name="synonym" required>
                                     <small>Fügen Sie kommagetrennte Werte hinzu(i.e.: <b>ache, aching, agony</b>)</small>
                                 </div>
                                 <div class="form-group">
@@ -460,8 +460,8 @@ $_SESSION['current_page'] = $actual_link;
                                     <small>Fügen Sie kommagetrennte Werte hinzu(i.e.: <b>ache, aching, agony</b>)</small>
                                 </div>
                                 <div class="form-group">
-                                    <label for="synonym_minor">Hyponym (Unterbegriff)</label><span class="error-text"></span>
-                                    <input type="text" class="form-control" id="synonym_minor" name="synonym_minor">
+                                    <label for="sub_term">Hyponym (Unterbegriff)</label><span class="error-text"></span>
+                                    <input type="text" class="form-control" id="sub_term" name="sub_term">
                                     <small>Fügen Sie kommagetrennte Werte hinzu(i.e.: <b>ache, aching, agony</b>)</small>
                                 </div>
                                 <div class="form-group">
@@ -527,13 +527,13 @@ $_SESSION['current_page'] = $actual_link;
                                     <input type="text" class="form-control" id="word" name="word" required>
                                 </div>
                                 <div class="form-group">
-                                    <label for="synonym_partial_1">Partielles Synonym I</label><span class="error-text"></span>
-                                    <input type="text" class="form-control" id="synonym_partial_1" name="synonym_partial_1">
+                                    <label for="cross_reference">Partielles Synonym I</label><span class="error-text"></span>
+                                    <input type="text" class="form-control" id="cross_reference" name="cross_reference">
                                     <small>Fügen Sie kommagetrennte Werte hinzu(i.e.: <b>ache, aching, agony</b>)</small>
                                 </div>
                                 <div class="form-group">
-                                    <label for="synonym_general">Hyperonym (Oberbegriff)</label><span class="error-text"></span>
-                                    <input type="text" class="form-control" id="synonym_general" name="synonym_general">
+                                    <label for="generic_term">Hyperonym (Oberbegriff)</label><span class="error-text"></span>
+                                    <input type="text" class="form-control" id="generic_term" name="generic_term">
                                     <small>Fügen Sie kommagetrennte Werte hinzu(i.e.: <b>ache, aching, agony</b>)</small>
                                 </div>
                                 <div class="form-group">
@@ -2435,7 +2435,7 @@ $_SESSION['current_page'] = $actual_link;
             $("#add_synonym_modal_loader").addClass('hidden');
         $("#synonym_language_error").html("");
         $("#word_error").html("");
-        $("#strict_synonym_error").html("");
+        $("#synonym_error").html("");
         $('#add_symptom_synonym_form')[0].reset();
         var quelleId =  $(this).attr("data-quelle-id");
         var arzneiId =  $(this).attr("data-arznei-id");
@@ -2454,7 +2454,7 @@ $_SESSION['current_page'] = $actual_link;
 
         var synonym_language = $("#synonym_language").val();
         var word = $("#word").val();
-        var strict_synonym = $("#strict_synonym").val();
+        var synonym = $("#synonym").val();
         var modal_quelle_id = $("#modal_quelle_id").val();
         var modal_arznei_id = $("#modal_arznei_id").val();
         var modal_quelle_import_master_id = $("#modal_quelle_import_master_id").val();
@@ -2471,11 +2471,11 @@ $_SESSION['current_page'] = $actual_link;
         }else{
             $("#word_error").html("");
         }
-        if(strict_synonym == ""){
-            $("#strict_synonym_error").html("This field is required");
+        if(synonym == ""){
+            $("#synonym_error").html("This field is required");
             error_count++;
         }else{
-            $("#strict_synonym_error").html("");
+            $("#synonym_error").html("");
         }
         if(modal_quelle_id == "" || modal_arznei_id == "" || modal_quelle_import_master_id == ""){
             error_count++;

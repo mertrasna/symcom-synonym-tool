@@ -769,11 +769,11 @@ CREATE TABLE `quelle_import_test` (
   `chapter_information` varchar(255) DEFAULT NULL,
   `modality` varchar(255) DEFAULT NULL COMMENT 'Related to chapter information',
   `synonym_word` varchar(1200) DEFAULT NULL,
-  `strict_synonym` varchar(1200) DEFAULT NULL,
-  `synonym_partial_1` varchar(1200) DEFAULT NULL,
+  `synonym` varchar(1200) DEFAULT NULL,
+  `cross_reference` varchar(1200) DEFAULT NULL,
   `synonym_partial_2` varchar(1200) DEFAULT NULL,
-  `synonym_general` varchar(1200) DEFAULT NULL,
-  `synonym_minor` varchar(1200) DEFAULT NULL,
+  `generic_term` varchar(1200) DEFAULT NULL,
+  `sub_term` varchar(1200) DEFAULT NULL,
   `synonym_nn` varchar(1200) DEFAULT NULL,
   `symptom_edit_comment` varchar(255) DEFAULT NULL,
   `individual_upgrade_justification` varchar(255) DEFAULT NULL,
@@ -794,7 +794,7 @@ CREATE TABLE `quelle_import_test` (
 -- Dumping data for table `quelle_import_test`
 --
 
-INSERT INTO `quelle_import_test` (`id`, `original_symptom_id`, `master_id`, `arznei_id`, `quelle_id`, `original_quelle_id`, `quelle_code`, `Symptomnummer`, `SeiteOriginalVon`, `SeiteOriginalBis`, `final_version_de`, `final_version_en`, `Beschreibung_de`, `Beschreibung_en`, `BeschreibungOriginal_de`, `BeschreibungOriginal_en`, `BeschreibungFull_de`, `BeschreibungFull_en`, `BeschreibungPlain_de`, `BeschreibungPlain_en`, `searchable_text_de`, `searchable_text_en`, `bracketedString_de`, `bracketedString_en`, `part_of_symptom_string`, `timeString_de`, `timeString_en`, `Fussnote`, `PrueferID`, `EntnommenAus`, `Verweiss`, `Graduierung`, `BereichID`, `isKDCommandChapter`, `Kommentar`, `Unklarheiten`, `Remedy`, `symptom_of_different_remedy`, `subChapter`, `subSubChapter`, `chapter_information`, `modality`, `synonym_word`, `strict_synonym`, `synonym_partial_1`, `synonym_partial_2`, `synonym_general`, `synonym_minor`, `synonym_nn`, `symptom_edit_comment`, `individual_upgrade_justification`, `symptom_edit_count`, `is_excluded_in_comparison`, `is_final_version_available`, `is_symptom_number_mismatch`, `is_symptom_appended`, `is_appended_symptom_active`, `ip_address`, `stand`, `bearbeiter_id`, `ersteller_datum`, `ersteller_id`) VALUES
+INSERT INTO `quelle_import_test` (`id`, `original_symptom_id`, `master_id`, `arznei_id`, `quelle_id`, `original_quelle_id`, `quelle_code`, `Symptomnummer`, `SeiteOriginalVon`, `SeiteOriginalBis`, `final_version_de`, `final_version_en`, `Beschreibung_de`, `Beschreibung_en`, `BeschreibungOriginal_de`, `BeschreibungOriginal_en`, `BeschreibungFull_de`, `BeschreibungFull_en`, `BeschreibungPlain_de`, `BeschreibungPlain_en`, `searchable_text_de`, `searchable_text_en`, `bracketedString_de`, `bracketedString_en`, `part_of_symptom_string`, `timeString_de`, `timeString_en`, `Fussnote`, `PrueferID`, `EntnommenAus`, `Verweiss`, `Graduierung`, `BereichID`, `isKDCommandChapter`, `Kommentar`, `Unklarheiten`, `Remedy`, `symptom_of_different_remedy`, `subChapter`, `subSubChapter`, `chapter_information`, `modality`, `synonym_word`, `synonym`, `cross_reference`, `synonym_partial_2`, `generic_term`, `sub_term`, `synonym_nn`, `symptom_edit_comment`, `individual_upgrade_justification`, `symptom_edit_count`, `is_excluded_in_comparison`, `is_final_version_available`, `is_symptom_number_mismatch`, `is_symptom_appended`, `is_appended_symptom_active`, `ip_address`, `stand`, `bearbeiter_id`, `ersteller_datum`, `ersteller_id`) VALUES
 (1, NULL, 5069, 292, 3119, 3119, '2025', NULL, NULL, NULL, NULL, NULL, NULL, 'Stitch in forehead, eyes fog.', NULL, '<non-asterisk-degree-normal>Stitch in forehead, eyes fog.</non-asterisk-degree-normal>', NULL, '<non-asterisk-degree-normal>Stitch in forehead, eyes fog.</non-asterisk-degree-normal>', NULL, 'Stitch in forehead, eyes fog.', NULL, '<non-asterisk-degree-normal>Stitch in forehead, eyes fog.</non-asterisk-degree-normal>', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'a:2:{s:8:\"forehead\";s:8:\"forehead\";s:3:\"fog\";s:3:\"fog\";}', 'a:2:{s:8:\"forehead\";s:4:\"brow\";s:3:\"fog\";s:10:\"mist, haze\";}', NULL, NULL, 'a:1:{s:8:\"forehead\";s:5:\"front\";}', NULL, NULL, NULL, NULL, 0, 0, 0, 0, 0, 1, NULL, NULL, NULL, NULL, NULL),
 (2, NULL, 5069, 292, 3119, 3119, '2025', NULL, NULL, NULL, NULL, NULL, NULL, 'Press in forehead and dizzy.', NULL, '<non-asterisk-degree-normal>Press in forehead and dizzy.</non-asterisk-degree-normal>', NULL, '<non-asterisk-degree-normal>Press in forehead and dizzy.</non-asterisk-degree-normal>', NULL, 'Press in forehead and dizzy.', NULL, '<non-asterisk-degree-normal>Press in forehead and dizzy.</non-asterisk-degree-normal>', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'a:2:{s:8:\"forehead\";s:8:\"forehead\";s:5:\"dizzy\";s:5:\"giddy\";}', 'a:2:{s:8:\"forehead\";s:4:\"brow\";s:5:\"dizzy\";s:5:\"dizzy\";}', 'a:1:{s:5:\"dizzy\";s:7:\"vertigo\";}', NULL, 'a:1:{s:8:\"forehead\";s:5:\"front\";}', NULL, NULL, NULL, NULL, 0, 0, 0, 0, 0, 1, NULL, NULL, NULL, NULL, NULL),
 (3, NULL, 5069, 292, 3119, 3119, '2025', NULL, NULL, NULL, NULL, NULL, NULL, 'Nostril cold and agony.', NULL, '<non-asterisk-degree-normal>Nostril cold and agony.</non-asterisk-degree-normal>', NULL, '<non-asterisk-degree-normal>Nostril cold and agony.</non-asterisk-degree-normal>', NULL, 'Nostril cold and agony.', NULL, '<non-asterisk-degree-normal>Nostril cold and agony.</non-asterisk-degree-normal>', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'a:2:{s:7:\"nostril\";s:15:\"ala of the nose\";s:5:\"agony\";s:4:\"pain\";}', 'a:2:{s:7:\"nostril\";s:19:\"nostril, nasal wing\";s:5:\"agony\";s:19:\"ache, aching, agony\";}', 'a:1:{s:5:\"agony\";s:10:\"hurt,prick\";}', 'a:1:{s:5:\"agony\";s:14:\"trouble, wound\";}', 'a:1:{s:5:\"agony\";s:17:\"discomfort,strain\";}', 'a:1:{s:5:\"agony\";s:20:\"soreness, irritation\";}', 'a:1:{s:5:\"agony\";s:15:\"distress,twinge\";}', NULL, NULL, 0, 0, 0, 0, 0, 1, NULL, NULL, NULL, NULL, NULL);
@@ -2103,14 +2103,14 @@ INSERT INTO `stop_words` (`id`, `name`, `active`, `language`) VALUES
 CREATE TABLE `synonym_de` (
   `synonym_id` int(11) UNSIGNED NOT NULL,
   `word` varchar(150) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `strict_synonym` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
-  `synonym_partial_1` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'It is now considered as cross reference',
+  `synonym` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
+  `cross_reference` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'It is now considered as cross reference',
   `synonym_partial_2` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'It is now considered as hyperlink',
-  `synonym_general` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `synonym_minor` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `generic_term` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `sub_term` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `synonym_nn` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `synonym_comment` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `synonym_ns` enum('0','1') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '0',
+  `comment` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `non_secure_flag` enum('0','1') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '0',
   `source_reference_ns` enum('0','1') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '0',
   `active` tinyint(1) NOT NULL DEFAULT 1 COMMENT '1=Active, 0=Inactive',
   `ip_address` varchar(15) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
@@ -2124,7 +2124,7 @@ CREATE TABLE `synonym_de` (
 -- Dumping data for table `synonym_de`
 --
 
-INSERT INTO `synonym_de` (`synonym_id`, `word`, `strict_synonym`, `synonym_partial_1`, `synonym_partial_2`, `synonym_general`, `synonym_minor`, `synonym_nn`, `synonym_comment`, `synonym_ns`, `source_reference_ns`, `active`, `ip_address`, `stand`, `bearbeiter_id`, `ersteller_datum`, `ersteller_id`) VALUES
+INSERT INTO `synonym_de` (`synonym_id`, `word`, `synonym`, `cross_reference`, `synonym_partial_2`, `generic_term`, `sub_term`, `synonym_nn`, `comment`, `non_secure_flag`, `source_reference_ns`, `active`, `ip_address`, `stand`, `bearbeiter_id`, `ersteller_datum`, `ersteller_id`) VALUES
 (16, 'Aberwitz', 'Wahnsinn', NULL, NULL, NULL, NULL, NULL, NULL, '0', '0', 1, '78.94.1.201', NULL, NULL, '2022-06-27 10:09:35', 1),
 (17, 'Aderkröpfe', 'Varices, Krampfadern', NULL, NULL, NULL, NULL, NULL, NULL, '0', '0', 1, '78.94.1.201', NULL, NULL, '2022-06-27 10:11:31', 1),
 (18, 'Ameisen-Laufen', 'Ameisenlaufen, Kriebeln, Kribbeln', NULL, NULL, NULL, NULL, NULL, NULL, '0', '0', 1, '78.94.1.201', NULL, NULL, '2022-06-27 10:20:40', 1),
@@ -2163,15 +2163,15 @@ CREATE TABLE `synonym_de_synonym_reference` (
 CREATE TABLE `synonym_en` (
   `synonym_id` int(11) UNSIGNED NOT NULL,
   `word` varchar(150) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `strict_synonym` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
-  `synonym_partial_1` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'It is now considered as cross reference',
+  `synonym` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
+  `cross_reference` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'It is now considered as cross reference',
   `synonym_partial_2` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'It is now considered as hyperlink',
-  `synonym_general` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `synonym_minor` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `generic_term` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `sub_term` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `synonym_nn` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `reference_id` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `synonym_comment` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `synonym_ns` enum('0','1') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '0',
+  `comment` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `non_secure_flag` enum('0','1') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '0',
   `source_reference_ns` enum('0','1') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '0',
   `active` tinyint(1) NOT NULL DEFAULT 1 COMMENT '1=Active, 0=Inactive',
   `ip_address` varchar(15) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
@@ -2185,7 +2185,7 @@ CREATE TABLE `synonym_en` (
 -- Dumping data for table `synonym_en`
 --
 
-INSERT INTO `synonym_en` (`synonym_id`, `word`, `strict_synonym`, `synonym_partial_1`, `synonym_partial_2`, `synonym_general`, `synonym_minor`, `synonym_nn`, `reference_id`, `synonym_comment`, `synonym_ns`, `source_reference_ns`, `active`, `ip_address`, `stand`, `bearbeiter_id`, `ersteller_datum`, `ersteller_id`) VALUES
+INSERT INTO `synonym_en` (`synonym_id`, `word`, `synonym`, `cross_reference`, `synonym_partial_2`, `generic_term`, `sub_term`, `synonym_nn`, `reference_id`, `comment`, `non_secure_flag`, `source_reference_ns`, `active`, `ip_address`, `stand`, `bearbeiter_id`, `ersteller_datum`, `ersteller_id`) VALUES
 (1, 'pain', 'ache, aching, agony', 'hurt,prick', 'trouble, wound', 'discomfort,strain', 'soreness, irritation', 'distress,twinge', NULL, NULL, '0', '0', 1, '47.29.172.64', '2022-07-09 19:06:13', 1, '2022-06-18 09:32:58', 1),
 (2, 'Fat', 'Stout', 'Corpulent,Paunchy', 'Plump', NULL, NULL, NULL, NULL, NULL, '0', '0', 1, '47.29.172.64', NULL, NULL, '2022-07-09 19:07:21', 1),
 (3, 'grief', 'sorrow, pain', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '0', '0', 1, '78.94.1.201', NULL, NULL, '2022-07-11 09:25:57', 1),
@@ -2411,7 +2411,7 @@ ALTER TABLE `synonym_de`
   ADD KEY `ersteller_id` (`ersteller_id`) USING BTREE,
   ADD KEY `active` (`active`) USING BTREE,
   ADD KEY `code` (`word`) USING BTREE,
-  ADD KEY `strict_synonym` (`strict_synonym`);
+  ADD KEY `synonym` (`synonym`);
 
 --
 -- Indexes for table `synonym_de_synonym_reference`
@@ -2432,7 +2432,7 @@ ALTER TABLE `synonym_en`
   ADD KEY `ersteller_id` (`ersteller_id`) USING BTREE,
   ADD KEY `active` (`active`) USING BTREE,
   ADD KEY `code` (`word`) USING BTREE,
-  ADD KEY `strict_synonym` (`strict_synonym`);
+  ADD KEY `synonym` (`synonym`);
 
 --
 -- Indexes for table `synonym_en_synonym_reference`
@@ -2560,3 +2560,4 @@ COMMIT;
 
 ALTER TABLE synonym_de ADD COLUMN root_word VARCHAR(255) AFTER synonym_id;
 ALTER TABLE `synonym_de`  ADD COLUMN `isgreen` BOOLEAN NOT NULL DEFAULT FALSE COMMENT 'Indicates if green';
+

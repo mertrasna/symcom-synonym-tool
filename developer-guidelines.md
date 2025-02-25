@@ -52,12 +52,12 @@ stop_words => all stop words.
 ```
 --- Column name associated with the Synonym Tables | synonym_de | synonym_en ---
 word => for the root word
-strict_synonym => for the synonyms
-synonym_partial_1 => for cross-references
-synonym_general => for generic term
-synonym_minor => for sub term
-synonym_ns => non secure flag
-synonym_comment => comment for the synonym
+synonym => for the synonyms
+cross_reference => for cross-references
+generic_term => for generic term
+sub_term => for sub term
+non_secure_flag => non secure flag
+comment => comment for the synonym
 ```
 
 If relational tables of synonym and symptoms `rel_symptom_english_synonym` and `rel_symptom_german_synonym` are not present in the database. Use the below commands to import it to the database:

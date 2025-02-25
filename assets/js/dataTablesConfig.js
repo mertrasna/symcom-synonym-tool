@@ -443,12 +443,12 @@ $(document).ready(function () {
 						var source_type = (resultData.source_type != "" && resultData.source_type != null) ? resultData.source_type : "-";
 						
 						var synonym_word = (resultData.synonym_word != "" && resultData.synonym_word != null) ? resultData.synonym_word : "-";
-						var strict_synonym = (resultData.strict_synonym != "" && resultData.strict_synonym != null) ? resultData.strict_synonym : "-";
-						var strict_synonym = (resultData.strict_synonym != "" && resultData.strict_synonym != null) ? resultData.strict_synonym : "-";
-						var synonym_partial_1 = (resultData.synonym_partial_1 != "" && resultData.synonym_partial_1 != null) ? resultData.synonym_partial_1 : "-";
+						var synonym = (resultData.synonym != "" && resultData.synonym != null) ? resultData.synonym : "-";
+						var synonym = (resultData.synonym != "" && resultData.synonym != null) ? resultData.synonym : "-";
+						var cross_reference = (resultData.cross_reference != "" && resultData.cross_reference != null) ? resultData.cross_reference : "-";
 						var synonym_partial_2 = (resultData.synonym_partial_2 != "" && resultData.synonym_partial_2 != null) ? resultData.synonym_partial_2 : "-";
-						var synonym_general = (resultData.synonym_general != "" && resultData.synonym_general != null) ? resultData.synonym_general : "-";
-						var synonym_minor = (resultData.synonym_minor != "" && resultData.synonym_minor != null) ? resultData.synonym_minor : "-";
+						var generic_term = (resultData.generic_term != "" && resultData.generic_term != null) ? resultData.generic_term : "-";
+						var sub_term = (resultData.sub_term != "" && resultData.sub_term != null) ? resultData.sub_term : "-";
 						var synonym_nn = (resultData.synonym_nn != "" && resultData.synonym_nn != null) ? resultData.synonym_nn : "-";
 
 						var is_final_version_available = (resultData.is_final_version_available != "" && resultData.is_final_version_available != null) ? resultData.is_final_version_available : 0;
@@ -516,15 +516,15 @@ $(document).ready(function () {
 						html += '		<div class="col-sm-4"><p><b>Synonym Word</b></p></div>';
 						html += '		<div class="col-sm-8"><p>'+synonym_word+'</p></div>';
 						html += '		<div class="col-sm-4"><p><b>Strict Synonym</b></p></div>';
-						html += '		<div class="col-sm-8"><p>'+strict_synonym+'</p></div>';
+						html += '		<div class="col-sm-8"><p>'+synonym+'</p></div>';
 						html += '		<div class="col-sm-4"><p><b>Synonym Partial 1</b></p></div>';
-						html += '		<div class="col-sm-8"><p>'+synonym_partial_1+'</p></div>';
+						html += '		<div class="col-sm-8"><p>'+cross_reference+'</p></div>';
 						html += '		<div class="col-sm-4"><p><b>Synonym Partial 2</b></p></div>';
 						html += '		<div class="col-sm-8"><p>'+synonym_partial_2+'</p></div>';
 						html += '		<div class="col-sm-4"><p><b>Synonym General</b></p></div>';
-						html += '		<div class="col-sm-8"><p>'+synonym_general+'</p></div>';
+						html += '		<div class="col-sm-8"><p>'+generic_term+'</p></div>';
 						html += '		<div class="col-sm-4"><p><b>Synonym Minor</b></p></div>';
-						html += '		<div class="col-sm-8"><p>'+synonym_minor+'</p></div>';
+						html += '		<div class="col-sm-8"><p>'+sub_term+'</p></div>';
 						html += '		<div class="col-sm-4"><p><b>Synonym NN</b></p></div>';
 						html += '		<div class="col-sm-8"><p>'+synonym_nn+'</p></div>';
 						html += '	</div>';
@@ -658,12 +658,12 @@ $(document).ready(function () {
 						var source_type = (resultData.source_type != "" && resultData.source_type != null) ? resultData.source_type : "-";
 						
 						var synonym_word = (resultData.synonym_word != "" && resultData.synonym_word != null) ? resultData.synonym_word : "-";
-						var strict_synonym = (resultData.strict_synonym != "" && resultData.strict_synonym != null) ? resultData.strict_synonym : "-";
-						var strict_synonym = (resultData.strict_synonym != "" && resultData.strict_synonym != null) ? resultData.strict_synonym : "-";
-						var synonym_partial_1 = (resultData.synonym_partial_1 != "" && resultData.synonym_partial_1 != null) ? resultData.synonym_partial_1 : "-";
+						var synonym = (resultData.synonym != "" && resultData.synonym != null) ? resultData.synonym : "-";
+						var synonym = (resultData.synonym != "" && resultData.synonym != null) ? resultData.synonym : "-";
+						var cross_reference = (resultData.cross_reference != "" && resultData.cross_reference != null) ? resultData.cross_reference : "-";
 						var synonym_partial_2 = (resultData.synonym_partial_2 != "" && resultData.synonym_partial_2 != null) ? resultData.synonym_partial_2 : "-";
-						var synonym_general = (resultData.synonym_general != "" && resultData.synonym_general != null) ? resultData.synonym_general : "-";
-						var synonym_minor = (resultData.synonym_minor != "" && resultData.synonym_minor != null) ? resultData.synonym_minor : "-";
+						var generic_term = (resultData.generic_term != "" && resultData.generic_term != null) ? resultData.generic_term : "-";
+						var sub_term = (resultData.sub_term != "" && resultData.sub_term != null) ? resultData.sub_term : "-";
 						var synonym_nn = (resultData.synonym_nn != "" && resultData.synonym_nn != null) ? resultData.synonym_nn : "-";
 
 						var is_final_version_available = (resultData.is_final_version_available != "" && resultData.is_final_version_available != null) ? resultData.is_final_version_available : 0;
@@ -731,15 +731,15 @@ $(document).ready(function () {
 						html += '		<div class="col-sm-4"><p><b>Synonym Word</b></p></div>';
 						html += '		<div class="col-sm-8"><p>'+synonym_word+'</p></div>';
 						html += '		<div class="col-sm-4"><p><b>Strict Synonym</b></p></div>';
-						html += '		<div class="col-sm-8"><p>'+strict_synonym+'</p></div>';
+						html += '		<div class="col-sm-8"><p>'+synonym+'</p></div>';
 						html += '		<div class="col-sm-4"><p><b>Synonym Partial 1</b></p></div>';
-						html += '		<div class="col-sm-8"><p>'+synonym_partial_1+'</p></div>';
+						html += '		<div class="col-sm-8"><p>'+cross_reference+'</p></div>';
 						html += '		<div class="col-sm-4"><p><b>Synonym Partial 2</b></p></div>';
 						html += '		<div class="col-sm-8"><p>'+synonym_partial_2+'</p></div>';
 						html += '		<div class="col-sm-4"><p><b>Synonym General</b></p></div>';
-						html += '		<div class="col-sm-8"><p>'+synonym_general+'</p></div>';
+						html += '		<div class="col-sm-8"><p>'+generic_term+'</p></div>';
 						html += '		<div class="col-sm-4"><p><b>Synonym Minor</b></p></div>';
-						html += '		<div class="col-sm-8"><p>'+synonym_minor+'</p></div>';
+						html += '		<div class="col-sm-8"><p>'+sub_term+'</p></div>';
 						html += '		<div class="col-sm-4"><p><b>Synonym NN</b></p></div>';
 						html += '		<div class="col-sm-8"><p>'+synonym_nn+'</p></div>';
 						html += '	</div>';

@@ -736,7 +736,7 @@ select[readonly].select2-hidden-accessible + .select2-container {
         width: 65px;
     }
 }
-.synonym_ns_checkbox{
+.non_secure_flag_checkbox{
   padding-top: 10px;
 }
 .ns_bg_color{

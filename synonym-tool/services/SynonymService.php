@@ -34,9 +34,9 @@ class SynonymService {
         $crossReferences = $this->removeDuplicates($selectedSynonyms['Q'] ?? []);
         $hypernyms = $this->removeDuplicates($selectedSynonyms['O'] ?? []);
         $hyponyms = $this->removeDuplicates($selectedSynonyms['U'] ?? []);
-        $synonym_ns = !empty($comment) ? '1' : '0';
+        $non_secure_flag = !empty($comment) ? '1' : '0';
 
-        if ($this->synonymRepository->updateWord($word, $rootWord, $strictSynonyms, $crossReferences, $hypernyms, $hyponyms, $comment, $synonym_ns)) {
+        if ($this->synonymRepository->updateWord($word, $rootWord, $strictSynonyms, $crossReferences, $hypernyms, $hyponyms, $comment, $non_secure_flag)) {
             return ["success" => true, "message" => "Root word, synonyms, and comment updated successfully without duplicates."];
         } else {
             return ["success" => false, "message" => "Database update failed."];

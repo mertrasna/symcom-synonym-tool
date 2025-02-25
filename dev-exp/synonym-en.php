@@ -71,10 +71,10 @@
                                 ?>
                                 <tr> 
                                     <td><?php echo $row['word']; ?></td>
-                                    <td><?php echo $row['strict_synonym']; ?></td>
-                                    <td><?php echo $row['synonym_partial_1']; ?></td>
-                                    <td><?php echo $row['synonym_general']; ?></td>
-                                    <td><?php echo $row['synonym_minor']; ?></td>
+                                    <td><?php echo $row['synonym']; ?></td>
+                                    <td><?php echo $row['cross_reference']; ?></td>
+                                    <td><?php echo $row['generic_term']; ?></td>
+                                    <td><?php echo $row['sub_term']; ?></td>
                                 </tr>
                                 <?php
                             }
