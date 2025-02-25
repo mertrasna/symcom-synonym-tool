@@ -581,7 +581,7 @@ $(document).ready(function () {
                   );
 
                   // Show the Wörterbuchnetz button dynamically
-                  let woerterbuchnetzURL = `https://www.woerterbuchnetz.de/}`;
+                  let woerterbuchnetzURL = `https://www.woerterbuchnetz.de`;
                   
                   $("#woerterbuchnetz-btn").attr("href", woerterbuchnetzURL);
                   $("#woerterbuchnetz-btn").text(`🔎 Search in Wörterbuchnetz.`);
