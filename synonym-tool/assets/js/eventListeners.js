@@ -156,7 +156,7 @@ $(document).ready(function () {
 
   // Fetch synonyms from ChatGPT
   function fetchChatGPTSynonyms(selectedWord) {
-    const apiKey = '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';
+    const apiKey = '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';
     const requestBody = {
       model: "gpt-4",
       messages: [
@@ -560,4 +560,38 @@ function removeDuplicateSynonyms(korrekturenSynonyms) {
   });
 });
 
+$(document).ready(function () {
+  $(document).on("click", ".synonym-word", function () {
+      let selectedWord = $(this).attr("data-word").trim();
+      console.log("Selected Word:", selectedWord);
+
+      $.ajax({
+          url: "search_synonym.php",
+          type: "POST",
+          data: { word: selectedWord },
+          dataType: "json",
+          success: function (res) {
+              console.log("search_synonym.php Response:", res);
+
+              if (!res.success || !res.synonyms.length) {
+                  $("#synonymTableContainer").html(
+                      `<p style='color:red;'>No synonyms found for ${selectedWord}.</p>`
+                  );
+
+                  // Show the Wörterbuchnetz button dynamically
+                  let woerterbuchnetzURL = `https://www.woerterbuchnetz.de/?sigle=Lex&mode=Volltextsuche&hitlist=fulltext&pattern=${encodeURIComponent(selectedWord)}`;
+                  
+                  $("#woerterbuchnetz-btn").attr("href", woerterbuchnetzURL);
+                  $("#woerterbuchnetz-btn").text(`🔎 Search in Wörterbuchnetz.`);
+                  $("#woerterbuchnetz-container").show(); // Show the button
+              } else {
+                  $("#woerterbuchnetz-container").hide(); // Hide if synonyms exist
+              }
+          },
+          error: function (xhr, status, error) {
+              console.error("AJAX Error (search_synonym.php):", status, error);
+          },
+      });
+  });
+});
 

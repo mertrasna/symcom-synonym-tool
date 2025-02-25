@@ -140,6 +140,12 @@ function processText($text, $stopwords, $db) {
                 <div id="korrekturen-container">
                     <a id="korrekturen-btn" href="#" target="_blank" class="korrekturen-button">🔎 Check korrekturen for ""</a>
                 </div>
+                <!-- Dynamic Dictionary Network Button (Hidden Initially) -->
+<div id="woerterbuchnetz-container" style="display: none;">
+    <a id="woerterbuchnetz-btn" href="#" target="_blank" class="dictionary-button">🔎 Search in Wörterbuchnetz for ""</a>
+</div>
+
+
 
                 <div id="symptom-details2">
                     <form id="synonymForm">
@@ -187,6 +193,7 @@ function processText($text, $stopwords, $db) {
 <script src="assets/js/ajaxHandlers.js"></script>
 <script src="assets/js/helpers.js"></script>
 <script src="assets/js/modal.js"></script>
+<script src="assets/js/woerter.js"></script>
 
 
 
