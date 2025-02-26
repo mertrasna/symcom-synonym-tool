@@ -32,12 +32,15 @@ while ($row = mysqli_fetch_assoc($stopwordsResult)) {
     $stopwords[] = strtolower($row['name']); 
 }
 
+// limit the symptoms fetched by 200 for performance improvements 
+$offset = isset($_GET['offset']) ? (int)$_GET['offset'] : 0;
 $symptoms = [];
 $query = "
     SELECT id, BeschreibungOriginal_en, BeschreibungOriginal_de
     FROM quelle_import_test
     WHERE master_id = '$masterId'
     ORDER BY id ASC
+    LIMIT 200 OFFSET $offset
 ";
 $symptomResult = mysqli_query($db, $query);
 if (!$symptomResult) {
@@ -108,6 +111,12 @@ function processText($text, $stopwords, $db) {
             <div id="symptom-list-container" class="left-pane">
                 <div class="pane-header">
                     <h3>Symptoms</h3>
+                    <button id="reloadSymptoms" style="margin-bottom: 10px; padding: 5px 10px; border-radius: 5px; border: none; background-color: #007bff; color: white; cursor: pointer;">
+                    🔄 Reload New Symptoms
+                </button>
+                <button id="resetToStart" style="margin-bottom: 10px; padding: 5px 10px; border-radius: 5px; border: none; background-color: #28a745; color: white; cursor: pointer;">
+                    ⬅️ Back to Start
+                </button>
                 </div>
                 <div class="symptom-list">
                     <?php if (empty($symptoms)) : ?>
@@ -186,15 +195,12 @@ function processText($text, $stopwords, $db) {
 <!-- Load jQuery -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-
 <!-- Load external JavaScript files -->
 <script src="assets/js/ui.js"></script>
-<script src="assets/js/eventListeners.js"></script>
 <script src="assets/js/ajaxHandlers.js"></script>
+<script src="assets/js/eventListeners.js"></script>
 <script src="assets/js/helpers.js"></script>
 <script src="assets/js/modal.js"></script>
 <script src="assets/js/woerter.js"></script>
-
-
 
 <?php include '../inc/footer.php'; ?>
