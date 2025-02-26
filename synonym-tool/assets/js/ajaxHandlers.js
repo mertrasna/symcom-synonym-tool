@@ -35,11 +35,13 @@ function fetchRootWord(selectedWord, finalSynonyms) {
         dataType: "json",
         success: function (rootRes) {
 
-            // If "fetch_root_word" is successful, determine the root word HTML
             let rootWordHTML = rootRes.success && rootRes.word
-                ? `<span id="root-word">${rootRes.word}</span>`
-                : `<input type="text" id="root-word" value="${selectedWord}" 
-                    placeholder="Enter root word..." style="padding: 5px; border: 1px solid #ccc; border-radius: 5px; width: 200px;">`;
+  ? `<span id="root-word-container">
+       <span id="root-word-display">${rootRes.word}</span>
+       <button type="button" id="edit-root-word" style="cursor:pointer; margin-left:5px;">Edit</button>
+     </span>`
+  : `<input type="text" id="root-word" value="${selectedWord}" 
+      placeholder="Enter root word..." style="padding: 5px; border: 1px solid #ccc; border-radius: 5px; width: 200px;">`;
 
             // Build the ENTIRE form, table, checkbox, submit button, and modal
             let tableHTML = `
@@ -154,3 +156,28 @@ $(document).on("click", ".synonym-word", function () {
     let selectedWord = $(this).attr("data-word").trim();
     fetchSynonyms(selectedWord);
 });
+
+// Switch to edit mode when the Edit button is clicked.
+$(document).on("click", "#edit-root-word", function () {
+    var currentText = $("#root-word-display").text().trim();
+    var editHtml = `
+      <input type="text" id="root-word-input" value="${currentText}" 
+        placeholder="Enter root word..." style="padding:5px; border:1px solid #ccc; border-radius:5px; width:200px;">
+      <button type="button" id="save-root-word" style="cursor:pointer; margin-left:5px;">Save</button>
+    `;
+    $("#root-word-container").html(editHtml);
+  });
+  
+  // Save the updated root word and revert back to display mode.
+  $(document).on("click", "#save-root-word", function () {
+    var newText = $("#root-word-input").val().trim();
+    if (newText === "") {
+      alert("Root word cannot be empty");
+      return;
+    }
+    var displayHtml = `
+      <span id="root-word-display">${newText}</span>
+      <button type="button" id="edit-root-word" style="cursor:pointer; margin-left:5px;">Edit</button>
+    `;
+    $("#root-word-container").html(displayHtml);
+  });

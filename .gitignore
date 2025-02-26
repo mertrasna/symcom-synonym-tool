@@ -43,3 +43,8 @@ dev-exp/chapter-data
 .Spotlight-V100
 .Trashes
 ehthumbs.db
+
+
+# Ignore entire vendor directory
+/vendor/
+

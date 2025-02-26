@@ -21,6 +21,7 @@ class Raven_Autoloader
      */
     public static function register()
     {
+        ini_set('unserialize_callback_func', 'spl_autoload_call');
         spl_autoload_register(array('Raven_Autoloader', 'autoload'));
     }
 
@@ -31,13 +32,11 @@ class Raven_Autoloader
      */
     public static function autoload($class)
     {
-        if (substr($class, 0, 6) !== 'Raven_') {
+        if (0 !== strpos($class, 'Raven')) {
             return;
         }
 
-        $file = dirname(__FILE__).'/../'.str_replace(array('_', "\0"), array('/', ''), $class).'.php';
-        if (is_file($file)) {
-            /** @noinspection PhpIncludeInspection */
+        if (is_file($file = dirname(__FILE__).'/../'.str_replace(array('_', "\0"), array('/', ''), $class).'.php')) {
             require $file;
         }
     }

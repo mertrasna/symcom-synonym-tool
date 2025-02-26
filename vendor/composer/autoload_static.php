@@ -6,10 +6,6 @@ namespace Composer\Autoload;
 
 class ComposerStaticInitf73c47c96851f5210d4d2bc9b958aa85
 {
-    public static $files = array (
-        '7e9bd612cc444b3eed788ebbe46263a0' => __DIR__ . '/..' . '/laminas/laminas-zendframework-bridge/src/autoload.php',
-    );
-
     public static $prefixLengthsPsr4 = array (
         'P' => 
         array (
@@ -17,7 +13,6 @@ class ComposerStaticInitf73c47c96851f5210d4d2bc9b958aa85
         ),
         'L' => 
         array (
-            'Laminas\\ZendFrameworkBridge\\' => 28,
             'Laminas\\Escaper\\' => 16,
         ),
     );
@@ -26,10 +21,6 @@ class ComposerStaticInitf73c47c96851f5210d4d2bc9b958aa85
         'PhpOffice\\PhpWord\\' => 
         array (
             0 => __DIR__ . '/..' . '/phpoffice/phpword/src/PhpWord',
-        ),
-        'Laminas\\ZendFrameworkBridge\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/laminas/laminas-zendframework-bridge/src',
         ),
         'Laminas\\Escaper\\' => 
         array (
@@ -47,12 +38,17 @@ class ComposerStaticInitf73c47c96851f5210d4d2bc9b958aa85
         ),
     );
 
+    public static $classMap = array (
+        'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
+    );
+
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
             $loader->prefixLengthsPsr4 = ComposerStaticInitf73c47c96851f5210d4d2bc9b958aa85::$prefixLengthsPsr4;
             $loader->prefixDirsPsr4 = ComposerStaticInitf73c47c96851f5210d4d2bc9b958aa85::$prefixDirsPsr4;
             $loader->prefixesPsr0 = ComposerStaticInitf73c47c96851f5210d4d2bc9b958aa85::$prefixesPsr0;
+            $loader->classMap = ComposerStaticInitf73c47c96851f5210d4d2bc9b958aa85::$classMap;
 
         }, null, ClassLoader::class);
     }

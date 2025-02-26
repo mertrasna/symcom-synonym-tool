@@ -83,11 +83,13 @@ $(document).ready(function () {
             success: function (rootRes) {
               console.log("fetch_root_word.php Response:", rootRes);
 
-              let rootWordHTML =
-                rootRes.success && rootRes.word
-                  ? `<span id="root-word">${rootRes.word}</span>`
-                  : `<input type="text" id="root-word" value="${selectedWord}" 
-                                placeholder="Enter root word..." style="padding: 5px; border: 1px solid #ccc; border-radius: 5px; width: 200px;">`;
+              let rootWordHTML = rootRes.success && rootRes.word
+  ? `<span id="root-word-container">
+       <span id="root-word-display">${rootRes.word}</span>
+       <button type="button" id="edit-root-word" style="cursor:pointer; margin-left:5px;">Edit</button>
+     </span>`
+  : `<input type="text" id="root-word" value="${selectedWord}" 
+      placeholder="Enter root word..." style="padding: 5px; border: 1px solid #ccc; border-radius: 5px; width: 200px;">`;
 
               let tableHTML = `
                           <div style="display: flex; align-items: center; justify-content: space-between; width: 100%; margin-bottom: 10px;">
@@ -156,7 +158,7 @@ $(document).ready(function () {
 
   // Fetch synonyms from ChatGPT
   function fetchChatGPTSynonyms(selectedWord) {
-    const apiKey = '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';
+    const apiKey = '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';
     const requestBody = {
       model: "gpt-4",
       messages: [
@@ -478,7 +480,11 @@ function removeDuplicateSynonyms(korrekturenSynonyms) {
       });
     });
 
-    let rootWord = $("#root-word").val() || $("#root-word").text().trim();
+    // Retrieve the root word from either an input field or the display span.
+let rootWord =
+$("#root-word-container input").val() ||
+$("#root-word-container #root-word-display").text().trim();
+
     let comment = $("#notSureCheckbox").prop("checked")
       ? $("#commentText").val().trim()
       : "";
