@@ -158,7 +158,7 @@ $(document).ready(function () {
 
   // Fetch synonyms from ChatGPT
   function fetchChatGPTSynonyms(selectedWord) {
-    const apiKey = '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';
+    const apiKey = 'apikey';
     const requestBody = {
       model: "gpt-4",
       messages: [
@@ -481,9 +481,12 @@ function removeDuplicateSynonyms(korrekturenSynonyms) {
     });
 
     // Retrieve the root word from either an input field or the display span.
-let rootWord =
-$("#root-word-container input").val() ||
-$("#root-word-container #root-word-display").text().trim();
+    let rootWord =
+    $("#root-word-container input").val() ||
+    $("#root-word-container #root-word-display").text().trim() ||
+    $("#root-word").val() ||
+    $("#root-word").text().trim();
+  
 
     let comment = $("#notSureCheckbox").prop("checked")
       ? $("#commentText").val().trim()
