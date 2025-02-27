@@ -2,31 +2,24 @@ import time
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.alert import Alert
-from selenium.webdriver.chrome.service import Service
-from webdriver_manager.chrome import ChromeDriverManager
 
 options = webdriver.ChromeOptions()
-options.add_argument("--headless")  
 options.add_argument("--no-sandbox")
 options.add_argument("--disable-dev-shm-usage")
 
-driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
+driver = webdriver.Chrome(options=options)
 
-# Use host.docker.internal for GitHub Actions
-driver.get("http://host.docker.internal:8080/synonym-tool/all-symptoms.php")
+# localhost
+SERVER_URL = "http://localhost:8080"
+driver.get(f"{SERVER_URL}/synonym-tool/all-symptoms.php")
 
-time.sleep(10)  # Increased from 2s to 10s
+time.sleep(2)  
 
-for _ in range(3):  
-    try:
-        target_word = driver.find_element(By.XPATH, "//span[text()='ungereimtes']")
-        print("🔎 Found word: 'ungereimtes'")
-        break  
-    except:
-        print("⚠️ 'ungereimtes' not found. Retrying...")
-        time.sleep(5)  
-else:
-    print("❌ Test Failed: Word 'ungereimtes' not found after multiple attempts!")
+try:
+    target_word = driver.find_element(By.XPATH, "//span[text()='ungereimtes']")
+    print("Found word: 'ungereimtes'")
+except:
+    print("Test Failed: Word 'ungereimtes' not found!")
     driver.quit()
     exit(1)
 
@@ -44,7 +37,7 @@ try:
     print("Alert dismissed successfully!")
     time.sleep(2) 
 except:
-    print("No alert found. Continuing...")
+    print("⚠️ No alert found. Continuing...")
     time.sleep(1)
 
 try:
@@ -56,8 +49,8 @@ except:
     exit(1)
 
 if new_selected_word == "Zeug":
-    print("✅ Test Passed: Successfully switched from 'ungereimtes' to 'Zeug' after submitting!")
+    print("Test Passed: Successfully switched from 'ungereimtes' to 'Zeug' after submitting!")
 else:
-    print(f"❌ Test Failed: Expected 'Zeug', but got '{new_selected_word}'.")
+    print(f"Test Failed: Expected 'Zeug', but got '{new_selected_word}'.")
 
 driver.quit()

@@ -1,6 +1,10 @@
 name: Selenium Tests
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - main
+  pull_request:
 
 jobs:
   selenium-tests:
@@ -8,44 +12,29 @@ jobs:
 
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
 
-      - name: Install Docker Compose
-        run: |
-          sudo apt update
-          sudo apt install -y docker-compose
-
-      - name: Start Docker Containers
-        run: |
-          docker-compose up -d
-          docker ps  # List running containers for debugging
-
-      - name: Wait for PHP Server to Start
-        run: |
-          echo "Waiting for PHP server..."
-          for i in {1..30}; do
-            if curl --output /dev/null --silent --head --fail http://host.docker.internal:8080; then
-              echo "PHP server is up!"
-              exit 0
-            fi
-            echo "Waiting for PHP server... ($i/30)"
-            sleep 5
-          done
-          echo "PHP server failed to start"
-          exit 1
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.9"
 
       - name: Install Chrome and ChromeDriver
         run: |
-          sudo apt update
-          sudo apt install -y google-chrome-stable chromium-chromedriver
-          sudo ln -sf /usr/lib/chromium-browser/chromedriver /usr/local/bin/chromedriver
+          sudo apt-get update
+          sudo apt-get install -y google-chrome-stable
+          CHROME_VERSION=$(google-chrome --version | awk '{print $3}')
+          CHROMEDRIVER_VERSION=$(curl -s "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_$CHROME_VERSION")
+          wget -q "https://chromedriver.storage.googleapis.com/$CHROMEDRIVER_VERSION/chromedriver_linux64.zip"
+          unzip chromedriver_linux64.zip
+          sudo mv chromedriver /usr/local/bin/
+          rm chromedriver_linux64.zip
+          chromedriver --version
 
-      - name: Install Dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install selenium webdriver-manager
+      - name: Install Selenium
+        run: pip install selenium
 
       - name: Run Selenium Tests
         run: |
-          python synonym-tool/tests-selenium/test3-nextword.py
-          python synonym-tool/tests-selenium/test4-reload.py
+          python synonym_tool/tests-selenium/test3-nextword.py
+          python synonym_tool/tests-selenium/test4-reload.py

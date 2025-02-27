@@ -8,23 +8,23 @@ from webdriver_manager.chrome import ChromeDriverManager
 from urllib.parse import urlparse, parse_qs
 
 options = webdriver.ChromeOptions()
-options.add_argument("--headless")
 options.add_argument("--no-sandbox")
 options.add_argument("--disable-dev-shm-usage")
 
 driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
 
-# Use host.docker.internal for GitHub Actions
-driver.get("http://host.docker.internal:8080/synonym-tool/all-symptoms.php")
+
+SERVER_URL = "http://localhost:8080"
+driver.get(f"{SERVER_URL}/synonym-tool/all-symptoms.php")
+
 
 try:
     WebDriverWait(driver, 10).until(
         EC.presence_of_element_located((By.CLASS_NAME, "symptom-item"))
     )
-    print("✅ Symptoms loaded successfully!")
+    print("Symptoms loaded successfully!")
 except:
-    print("❌ Symptoms did not load in time!")
-    print(driver.page_source)  # Print page content for debugging
+    print("Symptoms did not load in time!")
     driver.quit()
     exit(1)
 
@@ -49,11 +49,11 @@ new_symptoms = driver.find_elements(By.CLASS_NAME, "symptom-item")
 new_symptoms_texts = [symptom.text for symptom in new_symptoms]
 
 if symptoms_texts_before != new_symptoms_texts and parse_qs(urlparse(new_url).query).get("offset"):
-    print("✅ Test Passed: 'Reload New Symptoms' loaded new symptoms correctly!")
+    print("Test Passed: 'Reload New Symptoms' loaded new symptoms correctly!")
 else:
-    print("❌ Test Failed: Symptoms did not change or offset is missing in URL.")
-    print(f"Before: {symptoms_texts_before}")
-    print(f"After: {new_symptoms_texts}")
+    print("Test Failed: Symptoms did not change or offset is missing in URL.")
+    print(f" Before: {symptoms_texts_before}")
+    print(f" After: {new_symptoms_texts}")
 
 try:
     back_to_start_button = driver.find_element(By.ID, "resetToStart")
@@ -67,8 +67,8 @@ except:
 
 reset_url = driver.current_url
 if "offset=0" in reset_url:
-    print("✅ Test Passed: 'Back to Start' correctly reset offset!")
+    print("Test Passed: 'Back to Start' correctly reset offset!")
 else:
-    print(f"❌ Test Failed: Expected offset=0 but got {reset_url}")
+    print(f"Test Failed: Expected offset=0 but got {reset_url}")
 
 driver.quit()
