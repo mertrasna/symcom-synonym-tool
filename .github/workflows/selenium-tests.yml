@@ -15,11 +15,15 @@ jobs:
         with:
           python-version: "3.x"
 
-      - name: Install Chrome and ChromeDriver
+      - name: Install Chrome
         run: |
           sudo apt update
           sudo apt install -y google-chrome-stable
-          LATEST_DRIVER_VERSION=$(curl -s "https://chromedriver.storage.googleapis.com/LATEST_RELEASE")
+
+      - name: Install ChromeDriver (Auto-match Chrome version)
+        run: |
+          CHROME_VERSION=$(google-chrome --version | awk '{print $3}' | cut -d'.' -f1)
+          LATEST_DRIVER_VERSION=$(curl -s "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_$CHROME_VERSION")
           wget -N "https://chromedriver.storage.googleapis.com/$LATEST_DRIVER_VERSION/chromedriver_linux64.zip"
           unzip chromedriver_linux64.zip
           sudo mv chromedriver /usr/local/bin/
@@ -39,7 +43,7 @@ jobs:
 
       - name: Run Selenium Tests
         env:
-          DISPLAY: ":99" # Needed for headless browser execution
+          DISPLAY: ":99"
         run: |
           python synonym-tool/tests-selenium/test3-nextword.py
           python synonym-tool/tests-selenium/test4-reload.py
