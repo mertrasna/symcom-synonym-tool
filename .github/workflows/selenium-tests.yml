@@ -1,3 +1,5 @@
+name: Selenium Tests
+
 on: [push, pull_request]
 
 jobs:
@@ -13,22 +15,11 @@ jobs:
         with:
           python-version: "3.x"
 
-      - name: Install Chrome
+      - name: Install Chrome and ChromeDriver
         run: |
-          wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
-          echo 'deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main' | sudo tee /etc/apt/sources.list.d/google-chrome.list
-          sudo apt-get update
-          sudo apt-get install -y google-chrome-stable
-
-      - name: Install ChromeDriver
-        run: |
-          CHROME_VERSION=$(google-chrome --version | awk '{print $3}' | cut -d'.' -f1)
-          LATEST_DRIVER_VERSION=$(curl -s "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_$CHROME_VERSION")
-          wget -N "https://chromedriver.storage.googleapis.com/$LATEST_DRIVER_VERSION/chromedriver_linux64.zip"
-          unzip chromedriver_linux64.zip
-          sudo mv chromedriver /usr/local/bin/
-          sudo chmod +x /usr/local/bin/chromedriver
-          rm chromedriver_linux64.zip
+          sudo apt update
+          sudo apt install -y google-chrome-stable chromium-chromedriver
+          sudo ln -sf /usr/lib/chromium-browser/chromedriver /usr/local/bin/chromedriver
 
       - name: Install Dependencies
         run: |
@@ -36,13 +27,10 @@ jobs:
           pip install selenium webdriver-manager
 
       - name: Start PHP Local Server
-        run: |
-          sudo apt-get install -y php php-cli php-mbstring unzip
-          php -S 0.0.0.0:8080 -t synonym-tool/ &
-        working-directory: ./ # Make sure to set the correct working directory
+        run: php -S localhost:8080 -t synonym-tool/ &
 
       - name: Wait for Server to Start
-        run: sleep 5 # Wait 5 seconds for the PHP server to be ready
+        run: sleep 10
 
       - name: Run Selenium Tests
         run: |
