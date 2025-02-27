@@ -17,7 +17,8 @@ driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), opti
 # ✅ Retry mechanism for connecting to server
 for attempt in range(5):
     try:
-        driver.get("http://127.0.0.1:8080/synonym-tool/all-symptoms.php")
+        driver.get("http://host.docker.internal:8080/synonym-tool/all-symptoms.php")
+
         print("✅ Connected to PHP server!")
         break  
     except:

@@ -15,25 +15,37 @@ jobs:
         with:
           python-version: "3.x"
 
-      - name: Install Chrome
+      - name: Start Docker Containers
+        run: |
+          docker compose up -d
+          sleep 15  # Allow containers to initialize
+
+      - name: Install Chrome and ChromeDriver
         run: |
           sudo apt update
           sudo apt install -y google-chrome-stable
+          LATEST_DRIVER_VERSION=$(curl -sS chromedriver.storage.googleapis.com/LATEST_RELEASE)
+          wget -N "https://chromedriver.storage.googleapis.com/${LATEST_DRIVER_VERSION}/chromedriver_linux64.zip"
+          unzip chromedriver_linux64.zip
+          sudo mv chromedriver /usr/local/bin/
+          sudo chmod +x /usr/local/bin/chromedriver
+          rm chromedriver_linux64.zip
 
       - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
           pip install selenium webdriver-manager
 
-      - name: Start PHP Local Server
-        run: php -S 127.0.0.1:8080 -t synonym-tool/ &
-
-      - name: Wait for Server to Start
-        run: sleep 10
+      - name: Wait for PHP Server to Start
+        run: |
+          echo "Waiting for PHP server..."
+          sleep 10  # Give PHP time to initialize
+          curl --retry 5 --retry-connrefused --retry-delay 5 http://host.docker.internal:8080/synonym-tool/all-symptoms.php
 
       - name: Run Selenium Tests
-        env:
-          DISPLAY: ":99"
         run: |
           python synonym-tool/tests-selenium/test3-nextword.py
           python synonym-tool/tests-selenium/test4-reload.py
+
+      - name: Stop Docker Containers
+        run: docker compose down
