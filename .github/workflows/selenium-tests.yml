@@ -37,6 +37,11 @@ jobs:
           python -m pip install --upgrade pip
           pip install selenium webdriver-manager
 
+      - name: Install Docker Compose
+        run: |
+          sudo apt update
+          sudo apt install -y docker-compose
+
       - name: Start Docker Containers
         run: docker-compose up -d
 
@@ -45,13 +50,13 @@ jobs:
           echo "Waiting for PHP server..."
           for i in {1..30}; do
             if curl -s http://localhost:8080 > /dev/null; then
-              echo "✅ PHP server is running!"
+              echo "PHP server is running!"
               exit 0
             fi
-            echo "⏳ Waiting for server to be ready... ($i/30)"
+            echo " Waiting for server to be ready... ($i/30)"
             sleep 3
           done
-          echo "❌ PHP server did not start in time."
+          echo " PHP server did not start in time."
           exit 1
 
       - name: Run Selenium Tests
