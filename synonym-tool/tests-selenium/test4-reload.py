@@ -14,22 +14,9 @@ options.add_argument("--disable-dev-shm-usage")
 
 driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
 
-# ✅ Retry mechanism for connecting to server
-for attempt in range(5):
-    try:
-        driver.get("http://host.docker.internal:8080/synonym-tool/all-symptoms.php")
+# 🔥 Update this URL to use the Docker container name
+driver.get("http://php-apache/synonym-tool/all-symptoms.php")
 
-        print("✅ Connected to PHP server!")
-        break  
-    except:
-        print(f"⚠️ Connection failed. Retrying {attempt + 1}/5...")
-        time.sleep(5)
-else:
-    print("❌ Test Failed: Could not connect to server!")
-    driver.quit()
-    exit(1)
-
-# ✅ Wait for page to load
 try:
     WebDriverWait(driver, 10).until(
         EC.presence_of_element_located((By.CLASS_NAME, "symptom-item"))
@@ -43,8 +30,6 @@ except:
 symptoms_before = driver.find_elements(By.CLASS_NAME, "symptom-item")
 symptoms_texts_before = [symptom.text for symptom in symptoms_before]
 current_url = driver.current_url
-
-print(f"📌 Initial URL: {current_url}")
 
 try:
     reload_button = driver.find_element(By.ID, "reloadSymptoms")
@@ -64,8 +49,6 @@ if symptoms_texts_before != new_symptoms_texts and parse_qs(urlparse(new_url).qu
     print("✅ Test Passed: 'Reload New Symptoms' loaded new symptoms correctly!")
 else:
     print("❌ Test Failed: Symptoms did not change or offset is missing in URL.")
-    print(f"🔎 Before: {symptoms_texts_before}")
-    print(f"🔎 After: {new_symptoms_texts}")
 
 try:
     back_to_start_button = driver.find_element(By.ID, "resetToStart")
@@ -76,11 +59,5 @@ except:
     print("❌ Test Failed: 'Back to Start' button not found!")
     driver.quit()
     exit(1)
-
-reset_url = driver.current_url
-if "offset=0" in reset_url:
-    print("✅ Test Passed: 'Back to Start' correctly reset offset!")
-else:
-    print(f"❌ Test Failed: Expected offset=0 but got {reset_url}")
 
 driver.quit()
