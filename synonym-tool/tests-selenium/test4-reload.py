@@ -2,35 +2,50 @@ import time
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 from webdriver_manager.chrome import ChromeDriverManager
 from urllib.parse import urlparse, parse_qs
 
 
 options = webdriver.ChromeOptions()
-options.add_argument("--headless")  
+options.add_argument("--headless")
 options.add_argument("--no-sandbox")
 options.add_argument("--disable-dev-shm-usage")
 
+
 driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
+
 
 driver.get("http://localhost:8080/synonym-tool/all-symptoms.php")
 
-time.sleep(2)  # Allow page to load
+
+try:
+    WebDriverWait(driver, 10).until(
+        EC.presence_of_element_located((By.CLASS_NAME, "symptom-item"))
+    )
+    print("✅ Symptoms loaded successfully!")
+except:
+    print("❌ Symptoms did not load in time!")
+    print(driver.page_source)  # Print page content for debugging
+    driver.quit()
+    exit(1)
 
 
 symptoms_before = driver.find_elements(By.CLASS_NAME, "symptom-item")
 symptoms_texts_before = [symptom.text for symptom in symptoms_before]
 current_url = driver.current_url
 
-print(f"📌 Initial URL: {current_url}")
+print(f"Initial URL: {current_url}")
+
 
 try:
     reload_button = driver.find_element(By.ID, "reloadSymptoms")
     reload_button.click()
-    time.sleep(3)  
-    print("🔄 Clicked 'Reload New Symptoms' button.")
+    time.sleep(3)  # Allow new symptoms to load
+    print(" Clicked 'Reload New Symptoms' button.")
 except:
-    print("❌ Test Failed: 'Reload New Symptoms' button not found!")
+    print(" Test Failed: 'Reload New Symptoms' button not found!")
     driver.quit()
     exit(1)
 
@@ -44,17 +59,20 @@ if symptoms_texts_before != new_symptoms_texts and parse_qs(urlparse(new_url).qu
     print("✅ Test Passed: 'Reload New Symptoms' loaded new symptoms correctly!")
 else:
     print("❌ Test Failed: Symptoms did not change or offset is missing in URL.")
+    print(f" Before: {symptoms_texts_before}")
+    print(f" After: {new_symptoms_texts}")
 
 
 try:
     back_to_start_button = driver.find_element(By.ID, "resetToStart")
     back_to_start_button.click()
-    time.sleep(3)  
-    print("Clicked 'Back to Start' button.")
+    time.sleep(3)  # Allow page reset
+    print(" Clicked 'Back to Start' button.")
 except:
-    print("Test Failed: 'Back to Start' button not found!")
+    print(" Test Failed: 'Back to Start' button not found!")
     driver.quit()
     exit(1)
+
 
 reset_url = driver.current_url
 if "offset=0" in reset_url:

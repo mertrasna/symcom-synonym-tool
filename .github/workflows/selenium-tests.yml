@@ -18,8 +18,13 @@ jobs:
       - name: Install Chrome and ChromeDriver
         run: |
           sudo apt update
-          sudo apt install -y google-chrome-stable chromium-chromedriver
-          sudo ln -sf /usr/lib/chromium-browser/chromedriver /usr/local/bin/chromedriver
+          sudo apt install -y google-chrome-stable
+          LATEST_DRIVER_VERSION=$(curl -s "https://chromedriver.storage.googleapis.com/LATEST_RELEASE")
+          wget -N "https://chromedriver.storage.googleapis.com/$LATEST_DRIVER_VERSION/chromedriver_linux64.zip"
+          unzip chromedriver_linux64.zip
+          sudo mv chromedriver /usr/local/bin/
+          sudo chmod +x /usr/local/bin/chromedriver
+          rm chromedriver_linux64.zip
 
       - name: Install Dependencies
         run: |
@@ -27,12 +32,14 @@ jobs:
           pip install selenium webdriver-manager
 
       - name: Start PHP Local Server
-        run: php -S localhost:8080 -t synonym-tool/ &
+        run: php -S 127.0.0.1:8080 -t synonym-tool/ &
 
       - name: Wait for Server to Start
         run: sleep 10
 
       - name: Run Selenium Tests
+        env:
+          DISPLAY: ":99" # Needed for headless browser execution
         run: |
           python synonym-tool/tests-selenium/test3-nextword.py
           python synonym-tool/tests-selenium/test4-reload.py
