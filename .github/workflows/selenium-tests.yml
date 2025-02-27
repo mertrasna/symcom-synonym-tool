@@ -37,4 +37,6 @@ jobs:
           pip install selenium webdriver-manager
 
       - name: Run Selenium Tests
-        run: python synonym_tool/tests-selenium/test3-nextword.py
+        run: |
+          python synonym-tool/tests-selenium/test3-nextword.py
+          python synonym-tool/tests-selenium/test4-reload.py
