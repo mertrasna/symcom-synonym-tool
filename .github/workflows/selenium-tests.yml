@@ -6,25 +6,33 @@ jobs:
   selenium-tests:
     runs-on: ubuntu-latest
 
-    services:
-      mysql:
-        image: mysql:8.0
-        env:
-          MYSQL_ROOT_PASSWORD: root
-          MYSQL_DATABASE: symcom_minified_db
-          MYSQL_AUTHENTICATION_PLUGIN: mysql_native_password
-        ports:
-          - 6000:3306
-        options: --health-cmd="mysqladmin ping -h 127.0.0.1 --silent" --health-interval=10s --health-timeout=5s --health-retries=5
-
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: "3.x"
+      - name: Install Docker Compose
+        run: |
+          sudo apt update
+          sudo apt install -y docker-compose
+
+      - name: Start Docker Containers
+        run: |
+          docker-compose up -d
+          docker ps  # List running containers for debugging
+
+      - name: Wait for PHP Server to Start
+        run: |
+          echo "Waiting for PHP server..."
+          for i in {1..30}; do
+            if curl --output /dev/null --silent --head --fail http://host.docker.internal:8080; then
+              echo "PHP server is up!"
+              exit 0
+            fi
+            echo "Waiting for PHP server... ($i/30)"
+            sleep 5
+          done
+          echo "PHP server failed to start"
+          exit 1
 
       - name: Install Chrome and ChromeDriver
         run: |
@@ -37,32 +45,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install selenium webdriver-manager
 
-      - name: Install Docker Compose
-        run: |
-          sudo apt update
-          sudo apt install -y docker-compose
-
-      - name: Start Docker Containers
-        run: docker-compose up -d
-
-      - name: Wait for PHP Server to Start
-        run: |
-          echo "Waiting for PHP server..."
-          for i in {1..30}; do
-            if curl -s http://localhost:8080 > /dev/null; then
-              echo "PHP server is running!"
-              exit 0
-            fi
-            echo " Waiting for server to be ready... ($i/30)"
-            sleep 3
-          done
-          echo " PHP server did not start in time."
-          exit 1
-
       - name: Run Selenium Tests
         run: |
           python synonym-tool/tests-selenium/test3-nextword.py
           python synonym-tool/tests-selenium/test4-reload.py
-
-      - name: Stop Docker Containers
-        run: docker-compose down
