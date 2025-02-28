@@ -42,13 +42,11 @@ function fetchRootWord(selectedWord, finalSynonyms) {
     dataType: "json",
     success: function (rootRes) {
       let rootWordHTML =
-        rootRes.success && rootRes.word
-          ? `<span id="root-word-container">
-       <span id="root-word-display">${rootRes.word}</span>
-       <button type="button" id="edit-root-word" style="cursor:pointer; margin-left:5px;">Edit</button>
-     </span>`
-          : `<input type="text" id="root-word" value="${selectedWord}" 
-      placeholder="Enter root word..." style="padding: 5px; border: 1px solid #ccc; border-radius: 5px; width: 200px;">`;
+  rootRes.success && rootRes.word
+    ? `<input type="text" id="root-word" value="${rootRes.word}" 
+          placeholder="Enter root word..." style="padding:5px; border:1px solid #ccc; border-radius:5px; width:200px;">`
+    : `<input type="text" id="root-word" value="${selectedWord}" 
+          placeholder="Enter root word..." style="padding:5px; border:1px solid #ccc; border-radius:5px; width:200px;">`;
 
       // Build the ENTIRE form, table, checkbox, submit button, and modal
       let tableHTML = `
