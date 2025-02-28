@@ -12,11 +12,11 @@ from selenium.common.exceptions import StaleElementReferenceException
 #  MySQL Configuration
 DB_CONFIG = {
     "host": "localhost",
-    "port": 6000,  # Change to your Docker-exposed port
+    "port": 6000, 
     "user": "root",
     "password": "root",
     "database": "symcom_minified_db",
-    "charset": "utf8mb4"  #  Ensures special characters are handled
+    "charset": "utf8mb4"  
 }
 
 class SynonymizingToolTests(unittest.TestCase):
@@ -24,9 +24,9 @@ class SynonymizingToolTests(unittest.TestCase):
     def setUpClass(cls):
         """  Setup WebDriver with Logging Enabled """
         chrome_options = webdriver.ChromeOptions()
-        chrome_options.set_capability("goog:loggingPrefs", {"browser": "ALL"})  # Enable console logs
+        chrome_options.set_capability("goog:loggingPrefs", {"browser": "ALL"})  
         cls.driver = webdriver.Chrome(options=chrome_options)
-        cls.driver.get("http://localhost:8080/synonym-tool/all-symptoms.php?mid=5072")  # Update if needed
+        cls.driver.get("http://localhost:8080/synonym-tool/all-symptoms.php?mid=5072")  
         cls.driver.maximize_window()
 
     def test_find_synonyms_until_3_found(self):
@@ -43,7 +43,7 @@ class SynonymizingToolTests(unittest.TestCase):
         symptom.click()
         print(f"  Clicked on Symptom: `{symptom_text}`\n")
 
-        #  Step 2: Find **blue synonyms** (ignoring green words)
+        #  Step 2: Find blue synonyms (ignoring green words)
         synonym_elements = WebDriverWait(self.driver, 10).until(
             EC.presence_of_all_elements_located((By.XPATH, "//span[contains(@class, 'synonym-word')][not(contains(@class, 'green'))]"))
         )
@@ -54,24 +54,24 @@ class SynonymizingToolTests(unittest.TestCase):
 
         print(f"  Found {len(synonym_elements)} blue synonyms. Selecting up to 6.\n")
 
-        found_synonyms = 0  #  Counter to track synonyms found in DB
+        found_synonyms = 0  
 
-        #  Randomly shuffle the synonyms before selecting
+        
         random.shuffle(synonym_elements)
 
         for synonym_element in synonym_elements:
             synonym_text = synonym_element.text.strip()
 
-            #  Skip numbers & empty synonyms
+            
             if not synonym_text or synonym_text.isdigit():
                 continue
 
             found = self.click_synonym_twice(symptom_text, synonym_text)
 
             if found:
-                found_synonyms += 1  #  Increment count if synonym is found in DB
+                found_synonyms += 1 
             
-            #  Stop when at least 3 synonyms are found in the database
+           
             if found_synonyms >= 3:
                 print("\n Found 3 synonyms in the database. Stopping test.\n")
                 break
@@ -83,33 +83,33 @@ class SynonymizingToolTests(unittest.TestCase):
         print(f" **Testing Synonym:** `{synonym}`")
 
         try:
-            #  Click the synonym for the first time
+            #  click the synonym for the first time
             synonym_element = WebDriverWait(self.driver, 10).until(
                 EC.presence_of_element_located((By.XPATH, f"//span[contains(@class, 'synonym-word') and text()='{synonym}']"))
             )
             synonym_element.click()
             print(f"  Clicked on Synonym: `{synonym}`")
 
-            #  Wait for AJAX processing
+            
             time.sleep(1)
 
-            #  Re-fetch the element before clicking again (prevents stale reference)
+           
             synonym_element = WebDriverWait(self.driver, 10).until(
                 EC.presence_of_element_located((By.XPATH, f"//span[contains(@class, 'synonym-word') and text()='{synonym}']"))
             )
             synonym_element.click()
             print(f"  Clicked AGAIN on Synonym: `{synonym}`")
 
-            #  Capture logs
+        
             logs = self.driver.get_log("browser")
             clean_logs = self.extract_relevant_logs(logs)
 
-            #  Verify if synonyms have been added to the DB
+            
             if self.check_synonym_in_db(synonym):
-                # Synonym exists in DB (either newly added or updated)
+                
                 return True
             else:
-                # Check if console log indicates no synonyms are available
+                
                 if "No synonyms available" in clean_logs:
                     print(f"ℹ️ No synonyms available for `{synonym}`.\n")
                 else:
@@ -130,14 +130,14 @@ class SynonymizingToolTests(unittest.TestCase):
         for log in logs:
             log_message = log['message']
 
-            # Only keep logs that are useful (avoid HTML previews & noise)
+            
             if (
                 "Selected Word:" in log_message
                 or "Fetching synonyms from Korrekturen" in log_message
                 or "search_synonym.php Response:" in log_message
                 or "No synonyms available" in log_message
             ):
-                # Clean up formatting issues
+               
                 log_message = re.sub(r"http://localhost:8080/[^ ]+ ", "", log_message)  # Remove file paths
                 log_message = log_message.replace("📜 Console Log:", "").strip()
                 clean_logs.append(log_message)
@@ -150,7 +150,7 @@ class SynonymizingToolTests(unittest.TestCase):
             query = "SELECT synonym FROM synonym_de WHERE word = %s"
 
             connection = mysql.connector.connect(**DB_CONFIG)
-            connection.autocommit = True  # Ensure the insert is committed
+            connection.autocommit = True 
             cursor = connection.cursor()
 
             cursor.execute(query, (word,))
@@ -161,11 +161,11 @@ class SynonymizingToolTests(unittest.TestCase):
                 print(f" ✓ Synonyms for `{word}` in DB: `{stored_synonyms}`\n")
                 cursor.close()
                 connection.close()
-                return True  #  Synonym exists
+                return True  #  synonym exists
             else:
                 cursor.close()
                 connection.close()
-                return False  #  Synonym not found
+                return False  #  synonym not found
 
         except mysql.connector.Error as db_err:
             print(f" Database Error: {db_err}")

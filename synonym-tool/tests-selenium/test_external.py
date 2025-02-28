@@ -12,7 +12,6 @@ class NoSynonymsFoundTest(unittest.TestCase):
         chrome_options = webdriver.ChromeOptions()
         chrome_options.set_capability("goog:loggingPrefs", {"browser": "ALL"})
         cls.driver = webdriver.Chrome(options=chrome_options)
-        # Update the URL if needed
         cls.driver.get("http://localhost:8080/synonym-tool/all-symptoms.php?mid=5072")
         cls.driver.maximize_window()
 
@@ -24,23 +23,18 @@ class NoSynonymsFoundTest(unittest.TestCase):
           - The "woerterbuchnetz" button's href is set correctly.
         """
         driver = self.driver
-        test_word = "(Whl.)."  # Test word per your sample HTML
+        test_word = "(Whl.)."  
 
-        # Locate any synonym element (assumes at least one exists)
+        # Locate any synonym element 
         synonym_elem = WebDriverWait(driver, 10).until(
             EC.presence_of_element_located((By.CSS_SELECTOR, ".synonym-word"))
         )
 
-        # Force the element's data-word attribute to our test word.
         driver.execute_script("arguments[0].setAttribute('data-word', arguments[1]);", synonym_elem, test_word)
         print(f"Forced a synonym element's data-word to '{test_word}'.")
 
-        # Simulate clicking the synonym.
         synonym_elem.click()
         print(f"Clicked on the synonym element for '{test_word}'.")
-
-        # (Optional) Wait until any error message or UI update occurs.
-        # Here we simply proceed to verify the button hrefs.
 
         # Verify the "korrekturen" button.
         korrekturen_btn = WebDriverWait(driver, 10).until(
