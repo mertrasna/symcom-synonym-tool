@@ -5,10 +5,21 @@ header('Content-Type: application/json'); // Force JSON response
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
+// In fetch_word_info.php
+
+// Check if $db is initialized, and initialize it if not
+if (!isset($db)) {
+    $db = new mysqli("127.0.0.1", "root", "root", "symcom_minified_db", 6000);
+    if ($db->connect_error) {
+        die("Connection failed: " . $db->connect_error);
+    }
+}
+
+// Check if the request method is POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['word']) && !empty($_POST['word'])) {
         $word = mysqli_real_escape_string($db, $_POST['word']);
-        
+
         // Search in the entire synonym_de table, across relevant columns
         $query = "
             SELECT * FROM synonym_de 
@@ -62,4 +73,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'message' => 'Invalid request method'
     ]);
 }
+
 ?>

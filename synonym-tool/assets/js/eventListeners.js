@@ -63,7 +63,6 @@ $(document).ready(function () {
 
     // Fetch synonyms from OpenAI
     fetchChatGPTSynonyms(selectedWord);
-    fetchKorrekturenSynonyms(selectedWord);
 
     // Existing AJAX call to fetch synonyms
     $.ajax({
@@ -152,7 +151,7 @@ $(document).ready(function () {
 
               // Update the table dynamically without refreshing
               $("#synonymTableContainer").html(tableHTML);
-
+              fetchKorrekturenSynonyms(selectedWord);
               // call the OpenThesaurus API to fetch synonyms after gpt-4 and korrekturen
               fetchSynonymsFromOpenThesaraus(selectedWord);
             },
@@ -174,7 +173,7 @@ $(document).ready(function () {
 
   // Fetch synonyms from ChatGPT
   function fetchChatGPTSynonyms(selectedWord) {
-    const apiKey = "apiKey"; // <-- Add your OpenAI API key here
+    const apiKey = "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"; // <-- Add your OpenAI API key here
     const requestBody = {
       model: "gpt-4",
       messages: [
@@ -243,120 +242,117 @@ $(document).ready(function () {
    * we skip entirely.
    */
   function fetchKorrekturenSynonyms(selectedWord) {
-    console.log(
-      `🔎 Fetching synonyms from Korrekturen.de (server-side) for: ${selectedWord}`
-    );
+    console.log(`🔎 Fetching synonyms from Korrekturen.de for: ${selectedWord}`);
 
     $.ajax({
-      url: "scrape_korrekturen.php", // <-- This calls the PHP file
-      type: "GET",
-      data: { word: selectedWord },
-      dataType: "json",
-      success: function (response) {
-        if (!response.success) {
-          console.warn("❌ PHP Proxy Error:", response.message);
-          return;
+        url: "scrape_korrekturen.php", // Calls PHP scraper directly
+        type: "GET",
+        data: { word: selectedWord },
+        dataType: "json",
+        success: function (response) {
+            if (!response.success) {
+                console.log(`ℹ️ No synonyms found for '${selectedWord}'.`);
+                return;
+            }
+
+            let html = response.html;
+            console.log("✅ HTML successfully fetched from Korrekturen.de.");
+
+            // Check if no synonyms were found
+            if (html.includes("Keine Synonyme gefunden.")) {
+                console.log(`ℹ️ No synonyms available for '${selectedWord}'.`);
+                return;
+            }
+
+            let parser = new DOMParser();
+            let doc = parser.parseFromString(html, "text/html");
+
+            // Extract synonyms
+            let synonymElements = doc.querySelectorAll("a.synonyme");
+            let synonymList = [];
+
+            synonymElements.forEach((el) => {
+                let synonym = el.innerText
+                    .replace(/\(.*?\)/g, "") // Remove (ugs.), etc.
+                    .replace(/\[.*?\]/g, "") // Remove [☯ Gegensatz...]
+                    .replace(/[•.,]/g, "") // Remove bullets, commas, etc.
+                    .replace(/\s+/g, " ") // Collapse extra spaces
+                    .trim();
+
+                if (synonym.length > 1 && !synonymList.includes(synonym)) {
+                    synonymList.push(synonym);
+                }
+            });
+
+            if (synonymList.length === 0) {
+                console.log(`ℹ️ No valid synonyms extracted for '${selectedWord}'.`);
+                return;
+            }
+
+            // Limit to 7 synonyms
+            if (synonymList.length > 7) {
+                synonymList = synonymList.slice(0, 7);
+                console.log(`ℹ️ Limiting synonyms to 7:`, synonymList);
+            }
+
+            // Add new synonyms to the table
+            addSynonymsToTable(selectedWord, synonymList);
         }
-
-        let html = response.html;
-        console.log("✅ Successfully fetched HTML via PHP script.");
-        console.log("📜 HTML Preview:", html.substring(0, 1000)); // log first 1000 chars
-
-        // If the HTML itself says "Keine Synonyme gefunden", skip
-        if (html.includes("Keine Synonyme gefunden.")) {
-          console.warn("⚠️ HTML indicates: Keine Synonyme gefunden. Skipping.");
-          return;
-        }
-
-        let parser = new DOMParser();
-        let doc = parser.parseFromString(html, "text/html");
-
-        // 1) Try <a class="synonyme">
-        let synonymElements = doc.querySelectorAll("a.synonyme");
-        console.log("🔍 Selector: a.synonyme → Found:", synonymElements.length);
-
-        if (!synonymElements.length) {
-          console.warn("⚠️ No <a class='synonyme'>. Trying fallback parse...");
-          let rawText = doc.body.innerText;
-          let fallbackSynonyms = parseSynonymsFromText(rawText, selectedWord);
-
-          if (!fallbackSynonyms.length) {
-            console.warn("⚠️ Fallback parse also found no synonyms. Skipping.");
-            return;
-          }
-
-          // Limit to 7 synonyms
-          if (fallbackSynonyms.length > 7) {
-            fallbackSynonyms = fallbackSynonyms.slice(0, 7);
-            console.log(
-              "ℹ️ Limiting fallback synonyms to 7:",
-              fallbackSynonyms
-            );
-          }
-
-          removeDuplicateSynonyms(fallbackSynonyms);
-          return;
-        }
-
-        // 2) Normal extraction from <a.synonyme>
-        let synonymList = [];
-        synonymElements.forEach((el) => {
-          let synonym = el.innerText
-            .replace(/\(.*?\)/g, "") // Remove (ugs.), etc.
-            .replace(/\[.*?\]/g, "") // Remove [☯ Gegensatz...]
-            .replace(/[•.,]/g, "") // Remove bullets, commas, etc.
-            .replace(/\s+/g, " ") // Collapse extra spaces
-            .trim();
-
-          if (synonym.length > 1 && !synonymList.includes(synonym)) {
-            synonymList.push(synonym);
-          }
-        });
-
-        console.log("📝 Final Synonyms List (via <a.synonyme>):", synonymList);
-
-        // If empty, fallback parse
-        if (!synonymList.length) {
-          console.warn(
-            "⚠️ No synonyms found after cleaning <a.synonyme>. Trying fallback parse..."
-          );
-          let fallbackSynonyms = parseSynonymsFromText(
-            doc.body.innerText,
-            selectedWord
-          );
-
-          if (!fallbackSynonyms.length) {
-            console.warn("⚠️ Still no synonyms. Skipping.");
-            return;
-          }
-
-          // Limit to 7
-          if (fallbackSynonyms.length > 7) {
-            fallbackSynonyms = fallbackSynonyms.slice(0, 7);
-            console.log(
-              "ℹ️ Limiting fallback synonyms to 7:",
-              fallbackSynonyms
-            );
-          }
-
-          removeDuplicateSynonyms(fallbackSynonyms);
-          return;
-        }
-
-        // 3) We have synonyms. Limit to 7 if more.
-        if (synonymList.length > 7) {
-          synonymList = synonymList.slice(0, 7);
-          console.log("ℹ️ Limiting synonyms to 7:", synonymList);
-        }
-
-        // 4) Add them to your table (avoiding duplicates)
-        removeDuplicateSynonyms(synonymList);
-      },
-      error: function (xhr, status, error) {
-        console.error("❌ AJAX Error scraping Korrekturen:", status, error);
-      },
     });
+}
+
+
+function addSynonymsToTable(word, synonyms) {
+  if (!synonyms || synonyms.length === 0) {
+      return; // ⛔ No synonyms provided, do nothing
   }
+
+  let existingSynonyms = new Set();
+
+  // Collect existing synonyms from the table
+  $("#synonymTable tbody tr").each(function () {
+      let synonymText = $(this).find("td:last").text().trim().toLowerCase();
+      existingSynonyms.add(synonymText);
+  });
+
+  // Filter out already existing synonyms
+  let newSynonyms = synonyms.filter((syn) => {
+      let cleanSyn = syn.trim().toLowerCase();
+      return cleanSyn.length > 1 && !existingSynonyms.has(cleanSyn);
+  });
+
+  if (newSynonyms.length === 0) {
+      return; // ⛔ All synonyms were duplicates, do nothing
+  }
+
+  // Limit synonyms to 7
+  if (newSynonyms.length > 7) {
+      newSynonyms = newSynonyms.slice(0, 7);
+  }
+
+  // Create new table rows for each synonym
+  let newRows = newSynonyms
+      .map(
+          (syn) => `
+          <tr>
+              <td><input type="checkbox" name="S" value="${syn}"></td>
+              <td><input type="checkbox" name="Q" value="${syn}"></td>
+              <td><input type="checkbox" name="O" value="${syn}"></td>
+              <td><input type="checkbox" name="U" value="${syn}"></td>
+              <td>${syn}</td>
+          </tr>
+      `
+      )
+      .join("");
+
+  $("#synonymTable tbody").append(newRows);
+
+  // ✅ Log ONLY if synonyms were actually added
+  console.log(`✅ Successfully added ${newSynonyms.length} new synonyms for '${word}':`, newSynonyms);
+}
+
+
+
 
   function removeDuplicateSynonyms(korrekturenSynonyms) {
     console.log("🔍 Checking for duplicates...");
