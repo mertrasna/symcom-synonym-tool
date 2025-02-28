@@ -11,11 +11,11 @@ from selenium.common.exceptions import StaleElementReferenceException
 # MySQL Configuration
 DB_CONFIG = {
     "host": "localhost",
-    "port": 6000,  # Change if needed
+    "port": 6000, 
     "user": "root",
     "password": "root",
     "database": "symcom_minified_db",
-    "charset": "utf8mb4"  # Ensures special characters are handled
+    "charset": "utf8mb4"  
 }
 
 class RootWordUpdateTest(unittest.TestCase):
@@ -91,10 +91,10 @@ class RootWordUpdateTest(unittest.TestCase):
         selected_word = green_word.get_attribute("data-word").strip()
         print(f"Randomly selected Green Word: '{selected_word}'")
 
-        # Ensure the selection event is triggered by clicking twice.
+        #  the selection event is triggered by clicking twice.
         self.click_synonym(green_word, times=2)
 
-        # Submit the form and verify default value is saved.
+        # submit the form and verify default value is saved.
         alert_text = self.submit_form_and_handle_alert()
         self.assertIn("updated successfully", alert_text.lower(), "Default submission did not succeed.")
 
@@ -105,7 +105,7 @@ class RootWordUpdateTest(unittest.TestCase):
         print("Default root word saved correctly.\n")
 
         print("\n=== Part 2: Update Root Word ===\n")
-        # Reload the previously selected word by locating it via its data-word attribute.
+        # reload the previously selected word 
         prev_word_xpath = f"//span[@data-word='{selected_word}']"
         prev_word_elem = WebDriverWait(driver, 10).until(
             EC.presence_of_element_located((By.XPATH, prev_word_xpath))
@@ -114,7 +114,7 @@ class RootWordUpdateTest(unittest.TestCase):
         print(f"Reloaded form for previously selected word '{selected_word}'.")
         time.sleep(1)
 
-        # Update the root word input with a new value.
+        # update the root word input with a new value.
         new_root_value = "new_root_value"
         root_input = WebDriverWait(driver, 10).until(
             EC.presence_of_element_located((By.ID, "root-word"))
@@ -123,7 +123,7 @@ class RootWordUpdateTest(unittest.TestCase):
         root_input.send_keys(new_root_value)
         print(f"Entered new root word: '{new_root_value}'")
 
-        # Submit the updated form.
+        # submit the updated form.
         alert_text = self.submit_form_and_handle_alert()
         self.assertIn("updated successfully", alert_text.lower(), "Updated submission did not succeed.")
 
