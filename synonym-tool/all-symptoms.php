@@ -202,5 +202,6 @@ function processText($text, $stopwords, $db) {
 <script src="assets/js/helpers.js"></script>
 <script src="assets/js/modal.js"></script>
 <script src="assets/js/woerter.js"></script>
+<script src="assets/js/hover.js"></script>
 
 <?php include '../inc/footer.php'; ?>
