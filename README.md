@@ -51,26 +51,75 @@ Change $dbHost, $dbUsername, $dbPassword, $dbName.
 
 This project includes Selenium-based UI tests. Follow the steps below to install the dependencies, download the required drivers, and run the tests.
 
+### Prerequisites
 
-Ensure you have Python installed. Then, install the required packages using pip:
+- **Python:** Make sure Python is installed.
+- **Live Project:** Ensure the project is running live at [http://localhost:8080/](http://localhost:8080/).
+
+### Installation
+
+Open your terminal and install the required packages by running:
 
 ```bash
-pip install selenium webdriver-manager pytest unittest
+pip install selenium webdriver-manager mysql-connector-python pytest
 ```
-redirect to this path : /symcom-synonym-tool/synonym-tool/tests
+
+redirect to this path :
+
+```bash
+cd /symcom-synonym-tool/synonym-tool/tests-selenium
+```
+
 use the following command lines below to run tests:
+
 ```bash
-python test1-search.py
-python test2-doubleclick.py
-python -m unittest test1-ui.py
+python3 test_synonym_management.py
+python3 test_rootword.py
+python3 test_external.py
+python3 nonsecure.py
+
 ```
 
-The project should be runnign live at `http://localhost:8080/`.
+
+## 11. Running PHP Tests
+
+This project includes PHP tests. Follow the steps below to install the dependencies, download the required drivers, and run the tests.
+
+### Prerequisites
+
+- **Live Project:** Ensure the project is running live at [http://localhost:8080/](http://localhost:8080/).
+
+### Installation
+
+Open your terminal and install the required packages by running:
+
+Install PHPUnit globally:
+```bash 
+composer global require phpunit/phpunit
+```
+
+Then ensure Composer's global bin directory is in your $PATH:
+```bash 
+echo 'export PATH="$HOME/.composer/vendor/bin:$PATH"' >> ~/.zshrc
+source ~/.zshrc
+```
+
+
+use the following command lines below to run tests:
+
+```bash
+vendor/bin/phpunit --bootstrap vendor/autoload.php synonym-tool/tests/ChatGPT1.php    
+vendor/bin/phpunit --bootstrap vendor/autoload.php synonym-tool/tests/ChatGPT2.php              
+vendor/bin/phpunit --bootstrap vendor/autoload.php synonym-tool/tests/FetchWordInfoTest.php
+```
+
+if it does not run then use the following commands and run the above test lines again:
+```bash
+rm -rf vendor/phpunit
+composer remove --dev phpunit/phpunit
+composer require --dev phpunit/phpunit
+vendor/bin/phpunit --version
+```
 
 # Developer Guidelines
 [Synonym Tool Implementation Guidelines](developer-guidelines.md)
-
-
-
-
-

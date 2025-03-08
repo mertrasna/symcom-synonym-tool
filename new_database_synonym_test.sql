@@ -27,6 +27,9 @@ SET time_zone = "+00:00";
 --
 -- Table structure for table `arznei`
 --
+DROP DATABASE IF EXISTS symcom_minified_db; 
+CREATE DATABASE symcom_minified_db;
+USE symcom_minified_db;
 
 CREATE TABLE `arznei` (
   `arznei_id` int(11) UNSIGNED NOT NULL COMMENT 'medicine_id',
@@ -2560,7 +2563,3 @@ COMMIT;
 
 ALTER TABLE synonym_de ADD COLUMN root_word VARCHAR(255) AFTER synonym_id;
 ALTER TABLE `synonym_de`  ADD COLUMN `isgreen` BOOLEAN NOT NULL DEFAULT FALSE COMMENT 'Indicates if green';
-
-ALTER TABLE synonym_de CHANGE COLUMN strict_synonym synonym varchar(255) NULL, CHANGE COLUMN synonym_partial_1 cross_reference varchar(200) NULL,
-CHANGE COLUMN synonym_general generic_term varchar(200) NULL,CHANGE COLUMN synonym_minor sub_term varchar(200) NULL,CHANGE COLUMN synonym_ns non_secure_flag
-enum('0','1') NOT NULL DEFAULT '0',CHANGE COLUMN synonym_comment comment varchar(255) NULL;
