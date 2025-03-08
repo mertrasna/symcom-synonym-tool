@@ -2563,3 +2563,6 @@ COMMIT;
 
 ALTER TABLE synonym_de ADD COLUMN root_word VARCHAR(255) AFTER synonym_id;
 ALTER TABLE `synonym_de`  ADD COLUMN `isgreen` BOOLEAN NOT NULL DEFAULT FALSE COMMENT 'Indicates if green';
+ALTER TABLE synonym_de DROP INDEX synonym;
+ALTER TABLE synonym_de MODIFY synonym TEXT;
+ALTER TABLE synonym_de MODIFY synonym LONGTEXT;

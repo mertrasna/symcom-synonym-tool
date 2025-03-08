@@ -62,8 +62,7 @@ $(document).ready(function () {
     console.log("Selected Word:", selectedWord);
 
     fetchKorrekturenSynonyms(selectedWord);
-    // call the OpenThesaurus API to fetch synonyms after gpt-4 and korrekturen
-    fetchSynonymsFromOpenThesaraus(selectedWord);
+  
 
     // Existing AJAX call to fetch synonyms
     $.ajax({
@@ -144,6 +143,8 @@ $(document).ready(function () {
 
               // Update the table dynamically without refreshing
               $("#synonymTableContainer").html(tableHTML);
+               // call the OpenThesaurus API to fetch synonyms after gpt-4 and korrekturen
+               fetchSynonymsFromOpenThesaraus(selectedWord);
 
             },
             error: function (xhr, status, error) {
@@ -233,64 +234,95 @@ $(document).ready(function () {
    * we skip entirely.
    */
   function fetchKorrekturenSynonyms(selectedWord) {
+    
     console.log(`🔎 Fetching synonyms from Korrekturen.de for: ${selectedWord}`);
+    selectedWord = selectedWord.trim().replace(/,$/, "");
 
     $.ajax({
-      url: "scrape_korrekturen.php", // Calls PHP scraper directly
-      type: "GET",
-      data: { word: selectedWord },
-      dataType: "json",
-      success: function (response) {
-        if (!response.success) {
-          console.log(`ℹ️ No synonyms found for '${selectedWord}'.`);
-          return;
+        url: "scrape_korrekturen.php", // Calls PHP scraper directly
+        type: "GET",
+        data: { word: selectedWord },
+        dataType: "json",
+        success: function (response) {
+            if (!response.success) {
+                console.log(`ℹ️ No synonyms found for '${selectedWord}'.`);
+                return;
+            }
+
+            let html = response.html;
+            console.log("✅ HTML successfully fetched from Korrekturen.de.");
+
+            // Check if no synonyms were found
+            if (html.includes("Keine Synonyme gefunden.")) {
+                console.log(`ℹ️ No synonyms available for '${selectedWord}'. from Korrekturen.de.`);
+                return;
+            }
+
+            let parser = new DOMParser();
+            let doc = parser.parseFromString(html, "text/html");
+
+            // Extract synonyms
+            let synonymElements = doc.querySelectorAll("a.synonyme");
+            let synonymList = [];
+
+            synonymElements.forEach((el) => {
+                let synonym = el.innerText
+                    .replace(/\(.*?\)/g, "") // Remove (ugs.), etc.
+                    .replace(/\[.*?\]/g, "") // Remove [☯ Gegensatz...]
+                    .replace(/\[☯ Gegensatz:.*?\]/g, "")
+                    .replace(/[•.,]/g, "") // Remove bullets, commas, etc.
+                    .replace(/\s+/g, " ") // Collapse extra spaces
+                    .trim();
+
+                if (synonym.length > 1 && !synonymList.includes(synonym)) {
+                    synonymList.push(synonym);
+                }
+            });
+
+            if (synonymList.length === 0) {
+                console.log(`ℹ️ No valid synonyms extracted for '${selectedWord}'.`);
+                return;
+            }
+
+            const strictSynonym = synonymList.join(",");
+
+            const synonymData = {
+                word: selectedWord,
+                synonym: strictSynonym,
+                cross_reference: "",
+                synonym_partial_2: "",
+                generic_term: "",
+                sub_term: "",
+                synonym_nn: "",
+                comment: "",
+                non_secure_flag: "1",
+                source_reference_ns: "1",
+                active: 1,
+            };
+
+            // ✅ Insert synonyms into the database
+            console.log("✅ Preparing to insert synonyms:", synonymData);
+
+            // Insert synonym data into the database
+            $.ajax({
+                url: "insert_synonym.php",
+                type: "POST",
+                data: synonymData,
+                success: function (response) {
+                    console.log("Insert Synonym Response (Korrekturen.de):", response);
+                },
+                error: function (xhr, status, error) {
+                    console.error("AJAX Error (insert_synonym.php - Korrekturen.de):", status, error);
+                },
+            });
+
+        },
+        error: function (xhr, status, error) {
+            console.error("AJAX Error (scrape_korrekturen.php):", status, error);
         }
-
-        let html = response.html;
-        console.log("✅ HTML successfully fetched from Korrekturen.de.");
-
-        // Check if no synonyms were found
-        if (html.includes("Keine Synonyme gefunden.")) {
-          console.log(`ℹ️ No synonyms available for '${selectedWord}'.`);
-          return;
-        }
-
-        let parser = new DOMParser();
-        let doc = parser.parseFromString(html, "text/html");
-
-        // Extract synonyms
-        let synonymElements = doc.querySelectorAll("a.synonyme");
-        let synonymList = [];
-
-        synonymElements.forEach((el) => {
-          let synonym = el.innerText
-            .replace(/\(.*?\)/g, "") // Remove (ugs.), etc.
-            .replace(/\[.*?\]/g, "") // Remove [☯ Gegensatz...]
-            .replace(/[•.,]/g, "") // Remove bullets, commas, etc.
-            .replace(/\s+/g, " ") // Collapse extra spaces
-            .trim();
-
-          if (synonym.length > 1 && !synonymList.includes(synonym)) {
-            synonymList.push(synonym);
-          }
-        });
-
-        if (synonymList.length === 0) {
-          console.log(`ℹ️ No valid synonyms extracted for '${selectedWord}'.`);
-          return;
-        }
-
-        // Limit to 7 synonyms
-        if (synonymList.length > 7) {
-          synonymList = synonymList.slice(0, 7);
-          console.log(`ℹ️ Limiting synonyms to 7:`, synonymList);
-        }
-
-        // Add new synonyms to the table
-        addSynonymsToTable(selectedWord, synonymList);
-      }
     });
-  }
+}
+
 
 
   function addSynonymsToTable(word, synonyms) {
