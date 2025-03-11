@@ -43,7 +43,7 @@ Afterwards, update table with symptoms
 ```
 cd synonym-tool
 cd test-symptoms
-cat new_database_synonym_test.sql | docker exec -i mysql mysql -u root -proot symcom_minified_db
+cat update_tables.sql | docker exec -i mysql mysql -u root -proot symcom_minified_db
 ```
 
 
