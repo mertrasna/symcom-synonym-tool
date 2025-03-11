@@ -62,6 +62,7 @@ $(document).ready(function () {
     console.log("Selected Word:", selectedWord);
 
     fetchKorrekturenSynonyms(selectedWord);
+    fetchSynonymsFromOpenThesaraus(selectedWord);
   
 
     // Existing AJAX call to fetch synonyms
@@ -250,7 +251,7 @@ $(document).ready(function () {
             }
 
             let html = response.html;
-            console.log("✅ HTML successfully fetched from Korrekturen.de.");
+            console.log("HTML successfully fetched from Korrekturen.de.");
 
             // Check if no synonyms were found
             if (html.includes("Keine Synonyme gefunden.")) {
@@ -300,8 +301,8 @@ $(document).ready(function () {
                 active: 1,
             };
 
-            // ✅ Insert synonyms into the database
-            console.log("✅ Preparing to insert synonyms:", synonymData);
+            // Insert synonyms into the database
+            console.log("Preparing to insert synonyms:", synonymData);
 
             // Insert synonym data into the database
             $.ajax({
@@ -329,7 +330,7 @@ $(document).ready(function () {
     console.log(`🔍 Attempting to add synonyms to table for: ${word}`);
     console.log(`🔍 Synonyms received:`, synonyms);
 
-    // ✅ Check if the table exists, if not, create it
+    // Check if the table exists, if not, create it
     if ($("#synonymTable").length === 0) {
         console.log("⚠️ Table not found! Creating it now...");
         $("#synonymTableContainer").html(`
@@ -342,8 +343,8 @@ $(document).ready(function () {
         `);
     }
 
-    // ✅ Check again if the table exists after creating it
-    console.log("✅ Table exists: ", $("#synonymTable").length > 0);
+    // Check again if the table exists after creating it
+    console.log("Table exists: ", $("#synonymTable").length > 0);
 
     let existingSynonyms = new Set();
     $("#synonymTable tbody tr").each(function () {
@@ -363,7 +364,7 @@ $(document).ready(function () {
         return;
     }
 
-    // ✅ Create new table rows for each synonym
+    // Create new table rows for each synonym
     let newRows = newSynonyms.map(syn => `
         <tr>
             <td><input type="checkbox" name="S" value="${syn}"></td>
@@ -376,10 +377,10 @@ $(document).ready(function () {
 
     console.log("📝 Adding New Rows to Table:", newRows);
 
-    // ✅ Ensure the tbody is present before appending rows
+    // Ensure the tbody is present before appending rows
     $("#synonymTable tbody").append(newRows);
 
-    console.log("✅ Synonyms successfully added!");
+    console.log("Synonyms successfully added!");
 }
 
 
@@ -451,7 +452,7 @@ $(document).ready(function () {
     console.log("📝 Adding New Rows to Table:", newRows);
 
     $("#synonymTable tbody").append(newRows);
-    console.log("✅ Synonyms added successfully!");
+    console.log("Synonyms added successfully!");
   }
 
   // Function to fetch Synonyms from OpenThesaurus.de
@@ -599,7 +600,7 @@ $(document).ready(function () {
     }
   }
 
-  // ✅ Use event delegation so it works for dynamically added elements
+  // Use event delegation so it works for dynamically added elements
   $(document).on("change", "#notSureCheckbox", function () {
     if (this.checked) {
       $("#commentModal").show();
@@ -608,12 +609,12 @@ $(document).ready(function () {
     }
   });
 
-  // ✅ Close modal and keep checkbox checked
+  // Close modal and keep checkbox checked
   $(document).on("click", "#saveComment", function () {
     $("#commentModal").hide();
   });
 
-  // ✅ Allow closing the modal
+  // Allow closing the modal
   $(document).on("click", ".close-modal, #closeComment", function () {
     $("#commentModal").hide();
     $("#notSureCheckbox").prop("checked", false);
