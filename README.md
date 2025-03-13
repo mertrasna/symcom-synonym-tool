@@ -28,11 +28,12 @@ docker exec -it php-apache bash
 7. Check composer and install dependencies.
 ```
 
-rm -rf vendor/
-rm composer.lock
 composer install
 
 ```
+
+exit
+
 8. Database import.
 ```
 cat new_database_synonym_test.sql | docker exec -i mysql mysql -u root -proot symcom_minified_db
