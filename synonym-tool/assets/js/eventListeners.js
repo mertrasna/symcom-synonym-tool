@@ -167,7 +167,7 @@ $(document).ready(function () {
 
   // Fetch synonyms from ChatGPT
   function fetchChatGPTSynonyms(selectedWord) {
-    const apiKey = "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"; // <-- Add your OpenAI API key here
+    const apiKey = "key"; // <-- Add your OpenAI API key here
     const requestBody = {
       model: "gpt-4",
       messages: [
