@@ -1,5 +1,7 @@
 <?php
 include '../config/route.php';
+include '../lang/GermanWords.php';
+include '../lang/EnglishWords.php';
 $pageTitle = "Synonymizing Tool";
 include '../inc/header.php';
 include '../inc/sidebar.php';
