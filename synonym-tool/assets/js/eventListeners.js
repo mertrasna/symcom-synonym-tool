@@ -61,10 +61,10 @@ $(document).ready(function () {
     selectedWord = $(this).attr("data-word").trim();
     console.log("Selected Word:", selectedWord);
 
-    // Fetch synonyms from all external databases
     fetchChatGPTSynonyms(selectedWord);
     fetchKorrekturenSynonyms(selectedWord);
     fetchSynonymsFromOpenThesaurus(selectedWord);
+
 
     // Existing AJAX call to fetch synonyms
     $.ajax({
@@ -153,7 +153,9 @@ $(document).ready(function () {
 
               // Update the table dynamically without refreshing
               $("#synonymTableContainer").html(tableHTML);
-            
+              // call the OpenThesaurus API to fetch synonyms after gpt-4 and korrekturen
+              fetchSynonymsFromOpenThesaraus(selectedWord);
+
             },
             error: function (xhr, status, error) {
               console.error("AJAX Error (fetch_root_word.php):", status, error);
@@ -173,7 +175,7 @@ $(document).ready(function () {
 
   // Fetch synonyms from ChatGPT
   function fetchChatGPTSynonyms(selectedWord) {
-    const apiKey = "api key"; // <-- Add your OpenAI API key here
+    const apiKey = "key"; // <-- Add your OpenAI API key here
     const requestBody = {
       model: "gpt-4",
       messages: [
@@ -242,8 +244,9 @@ $(document).ready(function () {
    * we skip entirely.
    */
   function fetchKorrekturenSynonyms(selectedWord) {
-
-    console.log(`🔎 Fetching synonyms from Korrekturen.de for: ${selectedWord}`);
+    console.log(
+      `🔎 Fetching synonyms from Korrekturen.de for: ${selectedWord}`
+    );
     selectedWord = selectedWord.trim().replace(/,$/, "");
 
     $.ajax({
@@ -262,7 +265,9 @@ $(document).ready(function () {
 
         // Check if no synonyms were found
         if (html.includes("Keine Synonyme gefunden.")) {
-          console.log(`ℹ️ No synonyms available for '${selectedWord}'. from Korrekturen.de.`);
+          console.log(
+            `ℹ️ No synonyms available for '${selectedWord}'. from Korrekturen.de.`
+          );
           return;
         }
 
@@ -320,16 +325,20 @@ $(document).ready(function () {
             console.log("Insert Synonym Response (Korrekturen.de):", response);
           },
           error: function (xhr, status, error) {
-            console.error("AJAX Error (insert_synonym.php - Korrekturen.de):", status, error);
+            console.error(
+              "AJAX Error (insert_synonym.php - Korrekturen.de):",
+              status,
+              error
+            );
           },
         });
-
       },
       error: function (xhr, status, error) {
         console.error("AJAX Error (scrape_korrekturen.php):", status, error);
-      }
+      },
     });
   }
+
 
 
 function addSynonymsToTable(word, synonyms) {
@@ -360,26 +369,25 @@ function addSynonymsToTable(word, synonyms) {
       newSynonyms = newSynonyms.slice(0, 7);
   }
 
-  // Create new table rows for each synonym
-  let newRows = newSynonyms
-      .map(
-          (syn) => `
-          <tr>
-              <td><input type="checkbox" name="S" value="${syn}"></td>
-              <td><input type="checkbox" name="Q" value="${syn}"></td>
-              <td><input type="checkbox" name="O" value="${syn}"></td>
-              <td><input type="checkbox" name="U" value="${syn}"></td>
-              <td>${syn}</td>
-          </tr>
-      `
-      )
-      .join("");
+    // Create new table rows for each synonym
+    let newRows = newSynonyms.map(syn => `
+        <tr>
+            <td><input type="checkbox" name="S" value="${syn}"></td>
+            <td><input type="checkbox" name="Q" value="${syn}"></td>
+            <td><input type="checkbox" name="O" value="${syn}"></td>
+            <td><input type="checkbox" name="U" value="${syn}"></td>
+            <td>${syn}</td>
+        </tr>
+    `).join("");
 
-  $("#synonymTable tbody").append(newRows);
+    console.log("📝 Adding New Rows to Table:", newRows);
 
-  // ✅ Log ONLY if synonyms were actually added
-  console.log(`✅ Successfully added ${newSynonyms.length} new synonyms for '${word}':`, newSynonyms);
-}
+    // Ensure the tbody is present before appending rows
+    $("#synonymTable tbody").append(newRows);
+
+    console.log("Synonyms successfully added!");
+  }
+
 
 
 
@@ -453,10 +461,14 @@ function addSynonymsToTable(word, synonyms) {
   }
 
   function fetchSynonymsFromOpenThesaurus(selectedWord) {
-    console.log(`🔎 Fetching synonyms from OpenThesaurus.de for: ${selectedWord}`);
+    console.log(
+      `🔎 Fetching synonyms from OpenThesaurus.de for: ${selectedWord}`
+    );
     selectedWord = selectedWord.trim().replace(/,$/, "");
 
-    const apiUrl = `https://www.openthesaurus.de/synonyme/search?q=${encodeURIComponent(selectedWord)}&format=application/json`;
+    const apiUrl = `https://www.openthesaurus.de/synonyme/search?q=${encodeURIComponent(
+      selectedWord
+    )}&format=application/json`;
 
     $.ajax({
       url: apiUrl,
@@ -469,7 +481,7 @@ function addSynonymsToTable(word, synonyms) {
 
         if (response.synsets && response.synsets.length > 0) {
           response.synsets.forEach((set) => {
-            if (set.category !== "Assoziationen" && !set.meaning) {
+            if (set.terms && set.terms.length > 0) {
               set.terms.forEach((term) => {
                 let cleanedWord = term.term.replace(/\([^)]*\)/g, "").trim();
                 if (cleanedWord && !thesaurusSynonyms.includes(cleanedWord)) {
@@ -481,14 +493,21 @@ function addSynonymsToTable(word, synonyms) {
         }
 
         if (thesaurusSynonyms.length === 0) {
-          console.log(`ℹ️ No synonyms found for '${selectedWord}' on OpenThesaurus.de.`);
+          console.log(
+            `ℹ️ No synonyms found for '${selectedWord}' on OpenThesaurus.de.`
+          );
           return;
         }
 
-        console.log(`Filtered synonyms from OpenThesaurus.de for '${selectedWord}':`, thesaurusSynonyms);
+        console.log(`Found synonyms from OpenThesaurus.de:`, thesaurusSynonyms);
 
+        // Add the synonyms to the table
+        addSynonymsToTable(selectedWord, thesaurusSynonyms);
+
+        // Create a properly formatted synonym string
         const strictSynonym = thesaurusSynonyms.join(",");
 
+        // Create the data object to send to the server
         const synonymData = {
           word: selectedWord,
           synonym: strictSynonym,
@@ -500,81 +519,55 @@ function addSynonymsToTable(word, synonyms) {
           comment: "",
           non_secure_flag: "1",
           source_reference_ns: "1",
-          active: 1,
+          active: "1",
         };
 
-        console.log("Preparing to insert synonyms:", synonymData);
+        console.log("Sending data to insert_synonym.php:", synonymData);
 
-        // Insert synonyms into the database
+        // Insert synonyms into the database with improved error handling
         $.ajax({
           url: "insert_synonym.php",
           type: "POST",
           data: synonymData,
+          dataType: "json",
           success: function (response) {
-            console.log("Insert Synonym Response (OpenThesaurus.de):", response);
+            console.log(
+              "Insert Synonym Response (OpenThesaurus.de):",
+              response
+            );
+            if (response.success) {
+              console.log(
+                "✅ Successfully saved OpenThesaurus synonyms for:",
+                selectedWord
+              );
+            } else {
+              console.warn("⚠️ Error saving synonyms:", response.message);
+            }
           },
           error: function (xhr, status, error) {
-            console.error("AJAX Error (insert_synonym.php - OpenThesaurus.de):", status, error);
+            console.error(
+              "AJAX Error (insert_synonym.php - OpenThesaurus.de):",
+              status,
+              error
+            );
+            console.error("Response Text:", xhr.responseText);
+
+            // Try to parse the error response if possible
+            try {
+              const errorDetails = JSON.parse(xhr.responseText);
+              console.error("Error Details:", errorDetails);
+            } catch (e) {
+              console.error("Unable to parse error response");
+            }
           },
         });
       },
       error: function (xhr, status, error) {
-        console.error("AJAX Error (OpenThesaurus.de):", status, error);
+        console.error("AJAX Error (OpenThesaurus.de API):", status, error);
       },
     });
   }
 
-  // Handle form submission
-  $(document).on("submit", "#synonymForm", function (event) {
-    event.preventDefault();
-    let selectedWord = $("#selected-word").text().trim();
-    if (!selectedWord) {
-      alert("Error: Selected word is empty.");
-      return;
-    }
-
-    let synonyms = { S: [], Q: [], O: [], U: [] };
-    $("#synonymTable tbody tr").each(function () {
-      let synonymText = $(this).find("td:last").text().trim();
-      ["S", "Q", "O", "U"].forEach((type, index) => {
-        if ($(this).find(`td:eq(${index}) input`).is(":checked")) {
-          synonyms[type].push({ word: synonymText });
-        }
-      });
-    });
-
-    // Retrieve the root word from either an input field or the display span.
-    let rootWord =
-      $("#root-word-container input").val() ||
-      $("#root-word-container #root-word-display").text().trim() ||
-      $("#root-word").val() ||
-      $("#root-word").text().trim();
-
-    let comment = $("#notSureCheckbox").prop("checked")
-      ? $("#commentText").val().trim()
-      : "";
-
-    $.ajax({
-      url: "update_synonym.php",
-      type: "POST",
-      data: {
-        word: selectedWord,
-        root_word: rootWord,
-        synonyms: JSON.stringify(synonyms),
-        comment: comment,
-      },
-      dataType: "json",
-      success: function (res) {
-        alert(res.message);
-        $(`.synonym-word[data-word='${selectedWord}']`).addClass("green");
-        clickNextClickableWord();
-      },
-      error: function (xhr, status, error) {
-        console.error("AJAX Error (update_synonym.php):", status, error);
-        console.error("Server Response:", xhr.responseText); // Log full response
-      },
-    });
-  });
 
   // Click the next clickable word (blue or green) in the sentence
   function clickNextClickableWord() {
