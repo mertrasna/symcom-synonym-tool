@@ -1,11 +1,9 @@
 .stopword {
   color: gray;
-  font-style: italic;
 }
 .synonym-word {
   color: blue;
   cursor: pointer;
-  text-decoration: underline;
 }
 .synonym-word.green {
   color: green !important;
@@ -42,7 +40,6 @@
 
 .stopword {
   color: gray;
-  font-style: italic;
 }
 
 .linked-words {

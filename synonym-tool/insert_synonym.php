@@ -11,23 +11,23 @@ $synonymService = new SynonymService($synonymRepo);
 header('Content-Type: application/json; charset=UTF-8');
 
 if (isset($_POST['word']) && !empty(trim($_POST['word']))) {
-    // ✅ Sanitize the word (remove trailing commas, spaces, hidden characters)
+    // Sanitize the word (remove trailing commas, spaces, hidden characters)
     $word = trim($_POST['word'], " ,\t\n\r\0\x0B"); 
     
-    // ✅ Process the synonyms
+    // Process the synonyms
     $synonym = trim($_POST['synonym'], " ,\t\n\r\0\x0B"); // Remove trailing spaces & commas
     $synonym = preg_replace('/\d+/', '', $synonym); // Remove numbers
     $synonym = preg_replace('/[\r\n]+/', ', ', $synonym); // Replace newlines with commas
     $synonym = preg_replace('/\./', '', $synonym); // Remove periods
     $synonym = implode(',', array_map('trim', explode(',', $synonym))); // Remove extra spaces
 
-    // ✅ Prevent empty synonyms from being inserted
+    // Prevent empty synonyms from being inserted
     if (empty($synonym)) {
         echo json_encode(["success" => false, "message" => "Synonym list is empty after processing."]);
         exit;
     }
 
-    // ✅ Prepare the data array
+    // Prepare the data array
     $data = [
         'word' => $word,
         'synonym' => $synonym,
@@ -43,13 +43,13 @@ if (isset($_POST['word']) && !empty(trim($_POST['word']))) {
         'existing_synonym' => $_POST['existing_synonym'] ?? ''
     ];
 
-    // ✅ Debugging - Log sanitized inputs for debugging
+    // Debugging - Log sanitized inputs for debugging
     file_put_contents("log.txt", "Sanitized Word: $word, Synonym: $synonym\n", FILE_APPEND);
 
-    // ✅ Call the service method to add/update synonym
+    // Call the service method to add/update synonym
     $response = $synonymService->processAddOrUpdateSynonym($data);
 
-    // ✅ Return response back to the client
+    // Return response back to the client
     echo json_encode($response);
 } else {
     echo json_encode(["success" => false, "message" => "No valid word provided."]);

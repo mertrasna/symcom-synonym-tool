@@ -586,6 +586,12 @@ $(document).ready(function () {
   });
 });
 
+$(document).on("change", "#synonymTable tbody input[type='checkbox']", function () {
+  let row = $(this).closest("tr"); // Find the current row
+  row.find("input[type='checkbox']").not(this).prop("checked", false); // Uncheck others
+});
+
+
 $(document).ready(function () {
   $(document).on("click", ".synonym-word", function () {
     let selectedWord = $(this).attr("data-word").trim();
@@ -620,3 +626,4 @@ $(document).ready(function () {
     });
   });
 });
+
