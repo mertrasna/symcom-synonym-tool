@@ -61,10 +61,17 @@ $(document).ready(function () {
     selectedWord = $(this).attr("data-word").trim();
     console.log("Selected Word:", selectedWord);
 
-    fetchChatGPTSynonyms(selectedWord);
-    fetchKorrekturenSynonyms(selectedWord);
-    fetchSynonymsFromOpenThesaurus(selectedWord);
+    // check if the word is already greem (processed)
+    const isGreen = $(this).hasClass("green");
 
+    if (!isGreen) {
+      // Only call these for new (blue) words
+      fetchChatGPTSynonyms(selectedWord);
+      fetchKorrekturenSynonyms(selectedWord);
+      setTimeout(() => {
+        fetchSynonymsFromOpenThesaurus(selectedWord);
+      }, 500);
+    }
 
     // Existing AJAX call to fetch synonyms
     $.ajax({
@@ -102,12 +109,12 @@ $(document).ready(function () {
               console.log("fetch_root_word.php Response:", rootRes);
 
               let rootWordHTML =
-              rootRes.success && rootRes.word
-              ? `<input type="text" id="root-word" value="${rootRes.word}" 
+                rootRes.success && rootRes.word
+                  ? `<input type="text" id="root-word" value="${rootRes.word}" 
                     placeholder="Enter root word..." style="padding:5px; border:1px solid #ccc; border-radius:5px; width:200px;">`
-              : `<input type="text" id="root-word" value="${selectedWord}" 
+                  : `<input type="text" id="root-word" value="${selectedWord}" 
                     placeholder="Enter root word..." style="padding:5px; border:1px solid #ccc; border-radius:5px; width:200px;">`;
-          
+
               let tableHTML = `
                           <div style="display: flex; align-items: center; justify-content: space-between; width: 100%; margin-bottom: 10px;">
                               <p><b>Selected Word:</b> <span id="selected-word">${selectedWord}</span></p>
@@ -153,9 +160,6 @@ $(document).ready(function () {
 
               // Update the table dynamically without refreshing
               $("#synonymTableContainer").html(tableHTML);
-              // call the OpenThesaurus API to fetch synonyms after gpt-4 and korrekturen
-              fetchSynonymsFromOpenThesaraus(selectedWord);
-
             },
             error: function (xhr, status, error) {
               console.error("AJAX Error (fetch_root_word.php):", status, error);
@@ -460,6 +464,7 @@ function addSynonymsToTable(word, synonyms) {
     console.log("✅ Synonyms added successfully!");
   }
 
+  // Function to fetch Synonyms from OpenThesaurus.de
   function fetchSynonymsFromOpenThesaurus(selectedWord) {
     console.log(
       `🔎 Fetching synonyms from OpenThesaurus.de for: ${selectedWord}`
@@ -627,6 +632,75 @@ function addSynonymsToTable(word, synonyms) {
   $(document).on("change", "#synonymTable tbody input[type='checkbox']", function () {
     let row = $(this).closest("tr"); // Find the current row
     row.find("input[type='checkbox']").not(this).prop("checked", false); // Uncheck others
+  });
+});
+
+// Handle form submission
+$(document).on("submit", "#synonymForm", function (event) {
+  event.preventDefault();
+  if (!selectedWord.trim()) {
+    alert("Error: Selected word is empty.");
+    return;
+  }
+
+  let rootWord = $("#root-word").val() || $("#root-word").text().trim();
+  console.log("Submitting Root Word:", rootWord);
+
+  // Collect all synonym categorizations
+  let synonyms = { S: [], Q: [], O: [], U: [] };
+  let comment = $("#notSureCheckbox").prop("checked")
+    ? $("#commentText").val().trim()
+    : "";
+
+  // Collect checked checkboxes
+  $("#synonymTable tbody tr").each(function () {
+    let synonymText = $(this).find("td:last").text().trim();
+
+    // Check each checkbox in the row
+    $(this)
+      .find('input[type="checkbox"]')
+      .each(function (index) {
+        if ($(this).is(":checked")) {
+          let category = ["S", "Q", "O", "U"][index];
+          synonyms[category].push({ word: synonymText });
+          console.log(`Adding ${synonymText} to category ${category}`);
+        }
+      });
+  });
+
+  console.log("Collected synonyms:", synonyms);
+
+  // Submit the data to the server
+  $.ajax({
+    url: "update_synonym.php",
+    type: "POST",
+    data: {
+      word: selectedWord,
+      root_word: rootWord,
+      synonyms: JSON.stringify(synonyms),
+      comment: comment,
+    },
+    dataType: "json",
+    success: function (res) {
+      console.log("Update response:", res);
+
+      if (res.success) {
+        alert(res.message);
+
+        // Update UI to reflect saved state
+        $(`.synonym-word[data-word="${selectedWord}"]`).addClass("green");
+
+        // Optional: Move to next word automatically
+        // clickNextClickableWord();
+      } else {
+        alert("Error: " + res.message);
+      }
+    },
+    error: function (xhr, status, error) {
+      console.error("AJAX Error (update_synonym.php):", status, error);
+      console.error("Response Text:", xhr.responseText);
+      alert("Error updating synonyms. Check console for details.");
+    },
   });
 });
 
