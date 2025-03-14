@@ -27,13 +27,26 @@ docker exec -it php-apache bash
 ```
 7. Check composer and install dependencies.
 ```
-composer --version 
+
 composer install
+
 ```
+
+exit
+
 8. Database import.
 ```
 cat new_database_synonym_test.sql | docker exec -i mysql mysql -u root -proot symcom_minified_db
+
 ```
+Afterwards, update table with symptoms
+
+```
+cd synonym-tool
+cd test-symptoms
+cat update_tables.sql | docker exec -i mysql mysql -u root -proot symcom_minified_db
+```
+
 
 Afterwards, check to verify the tables inside the database going to MySQL bash
 ```

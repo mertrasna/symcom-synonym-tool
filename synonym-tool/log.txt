@@ -14,3 +14,130 @@ Sanitized Word: Schwindel, Synonym: Taumel,Vertigo,Machenschaft,unlautere Handlu
 Sanitized Word: Schwindel, Synonym: Taumel,Vertigo,Machenschaft,unlautere Handlung,Unregelmäßigkeit,Betrügerei,Betrug,fauler Zauber,Gaunerei,Irreführung,Manipulation,Nepp,Prellerei,Rosstäuscherei,Täuschung,Trickserei,Abzocke,Bauernfängerei,Beschmu,Beschub,Beschupp,krumme Tour,Mogelpackung,Schmu,Schummelei,Fraud,Scam,Schurkenstück,Ammenmärchen,Aufschneiderei,Bluff,Erdichtung,Erfindung,Lügengeschichte,Märchen,Münchhauseniade,Münchhausiade,Räuberpistole,Schwindelei,Seemannsgarn,Windei,Anglerlatein,Flunkerei,Geflunker,Jägerlatein,wilde Geschichte
 Sanitized Word: Sitzen;, Synonym: absitzen,einsitzen,im Gefängnis sein,verbüßen,abbrummen,gesiebte Luft atmen,im Gefängnis stecken,sitzen,meditieren,genau passen,richtige Größe,passen wie angegossen,sitzen wie angegossen,treffen,zünden,nicht vergessen,hängenbleiben,befinden,liegen,sein,stecken,stehen,zu finden sein,thronen,gesetzt haben
 Sanitized Word: Sitzen;, Synonym: absitzen,einsitzen,im Gefängnis sein,verbüßen,abbrummen,gesiebte Luft atmen,im Gefängnis stecken,sitzen,meditieren,genau passen,richtige Größe,passen wie angegossen,sitzen wie angegossen,treffen,zünden,nicht vergessen,hängenbleiben,befinden,liegen,sein,stecken,stehen,zu finden sein,thronen,gesetzt haben
+Sanitized Word: Taumel, Synonym: Ekstase,Rausch,Trance,Verzückung,Wahn,Zustand absoluter Verzückung,Zustand der Euphorie,Zustand der Trance,Schwindel,Vertigo
+Sanitized Word: bringen, Synonym: einbringen,einfahren,erwirtschaften,es wagen,getrauen,Mut haben,mutig sein,feige,trauen,zutrauen,Arsch in der Hose haben,keine Eier in der Hose haben,zieren,keinen Kommentar abgeben,bringen,die Stirn haben,animieren,anregen,anspornen,aufrufen,bestärken,abbringen,ermuntern,ermutigen,Mut einflößen,Mut machen,stärken,stimulieren,herbeibringen,herbeischaffen,herbringen,herschaffen,mitbringen,befördern,fahren,schaffen,transportieren,überführen,verbringen,verfrachten,karren,expedieren,können,verstehen zu,wissen zu,gute Hilfe sein,hilfreich sein,nützlich sein,von Nutzen sein,weiterhelfen,Anlass geben,motivieren,veranlassen,abdrucken,drucken,hinlegen,zeigen,abliefern,austragen,herumbringen,verteilen,zustellen,bekommen,bewegen,ausstrahlen,laufen,senden,übertragen,kommen
+Sanitized Word: bringen, Synonym: einbringen,einfahren,erwirtschaften,es wagen,getrauen,Mut haben,mutig sein,feige,trauen,zutrauen,Arsch in der Hose haben,keine Eier in der Hose haben,zieren,keinen Kommentar abgeben,bringen,die Stirn haben,animieren,anregen,anspornen,aufrufen,bestärken,abbringen,ermuntern,ermutigen,Mut einflößen,Mut machen,stärken,stimulieren,herbeibringen,herbeischaffen,herbringen,herschaffen,mitbringen,befördern,fahren,schaffen,transportieren,überführen,verbringen,verfrachten,karren,expedieren,können,verstehen zu,wissen zu,gute Hilfe sein,hilfreich sein,nützlich sein,von Nutzen sein,weiterhelfen,Anlass geben,motivieren,veranlassen,abdrucken,drucken,hinlegen,zeigen,abliefern,austragen,herumbringen,verteilen,zustellen,bekommen,bewegen,ausstrahlen,laufen,senden,übertragen,kommen
+Sanitized Word: wolle, Synonym: Haar,Haare,Haarpracht,Haarschopf,Haartracht,Haupthaar,Kopfbehaarung,Kopfhaar,Mähne,Schopf,Fell,Matte,Pelz,Schurwolle
+Sanitized Word: bitter, Synonym: schlimm,halb so wild,schmerzlich,schmerzvoll,schwer zu ertragen,hart,außergewöhnlich,außerordentlich,beängstigend,besonders,bitter,brennend,extrem,fürchterlich,ganz,hoffnungslos,mächtig,rettungslos,schrecklich,sehr,sündhaft,tief,ungeheuer,verflixt,verteufelt,zutiefst,furchtbar,verdammt,voll,wie hulle,Amer,Bitterspirituose,gallig,herb,verkniffen,angestrengt,harten Zug um den Mund haben,streng
+Sanitized Word: bitter, Synonym: schlimm,halb so wild,schmerzlich,schmerzvoll,schwer zu ertragen,hart,außergewöhnlich,außerordentlich,beängstigend,besonders,bitter,brennend,extrem,fürchterlich,ganz,hoffnungslos,mächtig,rettungslos,schrecklich,sehr,sündhaft,tief,ungeheuer,verflixt,verteufelt,zutiefst,furchtbar,verdammt,voll,wie hulle,Amer,Bitterspirituose,gallig,herb,verkniffen,angestrengt,harten Zug um den Mund haben,streng
+Sanitized Word: Stunde, Synonym: Unterrichtsstunde,Lehrstunde,Schulstunde,sechzig Minuten,Vierundzwanzigstel eines Tages,Minuten,Stunde
+Sanitized Word: Stunde, Synonym: Unterrichtsstunde,Lehrstunde,Schulstunde,sechzig Minuten,Vierundzwanzigstel eines Tages,Minuten,Stunde
+Sanitized Word: Uebelkeit, Synonym: Übelkeit,Brechreiz,Seekrankheit,Schlechtsein,Bewegungskrankheit,Kinetose,Nausea
+Sanitized Word: Uebelkeit, Synonym: Übelkeit,Brechreiz,Seekrankheit,Schlechtsein,Bewegungskrankheit,Kinetose,Nausea
+Sanitized Word: heraus., Synonym: heraus,hervor
+Sanitized Word: Magen, Synonym: Bauch,Gaster
+Sanitized Word: Magen, Synonym: Bauch,Gaster
+Sanitized Word: Erbrechen., Synonym: erbrechen,hochwürgen,Magen oral entleeren,nicht bei sich behalten,speiben,speien,spucken,übergeben,brechen,Bröckchen lachen,göbeln,kommt oben wieder heraus,reihern,rückwärts essen,vomieren,Erbrechen,Erbrechungen,Übergeben,Emesis,Vomitus
+Sanitized Word: Erbrechen., Synonym: erbrechen,hochwürgen,Magen oral entleeren,nicht bei sich behalten,speiben,speien,spucken,übergeben,brechen,Bröckchen lachen,göbeln,kommt oben wieder heraus,reihern,rückwärts essen,vomieren,Erbrechen,Erbrechungen,Übergeben,Emesis,Vomitus
+Sanitized Word: Umgang., Synonym: Verkehr,Kontakt,Interaktion,Beziehung,Zusammenarbeit
+Sanitized Word: Umgang., Synonym: Beziehung,Verkehr,Kontakt,Verbindung,Interaktion
+Sanitized Word: Umgang., Synonym: Verkehr,Interaktion,Kontakt,Beziehung,Kommunikation
+Sanitized Word: Umgang., Synonym: Interaktion,Beziehung,Verbindung,Kontakt,Verkehr
+Sanitized Word: stumpfsinnig, Synonym: Gedankenlos,Töricht,Dumm,Beschränkt,Einfältig
+Sanitized Word: stumpfsinnig, Synonym: Gedankenlos,Töricht,Dumm,Einfältig,Unbedacht
+Sanitized Word: stumpfsinnig, Synonym: Gedankenlos,Einfältig,Unbedacht,Geistlos,Beschränkt
+Sanitized Word: stumpfsinnig, Synonym: Gedankenlos,Einfältig,Dumm,Unintelligent,Hirnlos
+Sanitized Word: wobei, Synonym: wohingegen,dabei,indessen,währenddessen,wogegen
+Sanitized Word: wobei, Synonym: wogegen,während,wodurch,worin,wozu
+Sanitized Word: wobei, Synonym: wohingegen,wobeim,während,wodurch,indem
+Sanitized Word: wobei, Synonym: wohingegen,während,wogegen,obwohl,indes
+Sanitized Word: Freien., Synonym: Heiraten,Vermählen,Ehelichen,Trauen,Verloben
+Sanitized Word: Freien., Synonym: Heiraten,Vermählen,Trauen,Ehelichen,Sich verbinden
+Sanitized Word: Freien., Synonym: Heiraten,Vermählen,Trauen,Ehelichen,Sich verbinden
+Sanitized Word: Zimmer, Synonym: Raum,Gemach,Stube,Kammer,Räumlichkeit
+Sanitized Word: Zimmer, Synonym: Raum,Gemach,Stube,Kammer,Räumlichkeit
+Sanitized Word: Zimmer, Synonym: Raum,Gemach,Stube,Kammer,Räumlichkeit
+Sanitized Word: Kopfweh, Synonym: Kopfschmerzen,Migräne,Schädelweh,Stirnschmerzen,Gehirndruck
+Sanitized Word: Kopfweh, Synonym: Kopfschmerzen,Migräne,Schädelweh,Stirnschmerz,Gehirnschmerz
+Sanitized Word: Kopfweh, Synonym: Kopfschmerzen,Migräne,Schädelweh,Stirnschmerzen,Gehirnschmerzen
+Sanitized Word: Kopfweh, Synonym: Kopfschmerzen,Migräne,Schädelweh,Stirnschmerzen,Gehirnschmerzen
+Sanitized Word: Kopfweh, Synonym: Kopfschmerzen,Migräne,Schädelweh,Kopfdruck,Cephalgie
+Sanitized Word: Augen, Synonym: Sehorgane,Pupillen,Blicker,Peepers (slang),Glotzer (informal)
+Sanitized Word: AugenhÃ¶hl-Knochen., Synonym: Orbitaknochen,Augenhöhlenknochen,Augenpfannenknochen,Augensockelknochen,Knochen der Augenhöhle
+Sanitized Word: AugenhÃ¶hl-Knochen., Synonym: The German term "Augenhöhl-Knochen" refers to the orbital bone in English However,there aren't many synonyms for this specific term in German,but here are some terms that may refer to the same or similar concept:,
+Sanitized Word: AugenhÃ¶hl-Knochen., Synonym: Orbitaknochen,Augensockelknochen,Augenhöhlenknochen,Augenpfannenknochen,Augenschalenknochen
+Sanitized Word: AugenhÃ¶hl-Knochen., Synonym: Orbitaknochen,Augenbogenknochen,Augenhoehlenknochen,Okularknochen,Augenknochen
+Sanitized Word: AugenhÃ¶hl-Knochen., Synonym: "Augenhöhlenknochen" is a very specific anatomical term that refers to the bone structure of the eye socket,also known as the orbital bone It's unlikely to have many synonyms in any language,including German However
+Sanitized Word: AugenhÃ¶hl-Knochen., Synonym: Orbitaknochen,Augenhöhlenknochen,Augenpfannenknochen,Orbit,Okulärknochen
+Sanitized Word: Beissen, Synonym: Kauen,Knabbern,Zerkleinern,Nagen,Zubeißen
+Sanitized Word: Beissen, Synonym: Knabbern,Kauen,Nagen,Zubeißen,Anknabbern
+Sanitized Word: Beissen, Synonym: Knabbern,Nagen,Kauen,Zerkleinern,Kneifen (in a metaphorical sense)
+Sanitized Word: Brennen, Synonym: Verbrennen,Zünden,Entflammen,Glühen,Schmoren
+Sanitized Word: Beissen, Synonym: Kauen,Knabbern,Zubeißen,Nagen,Anknabbern
+Sanitized Word: Brennen, Synonym: Verbrennen,Zünden,Sengen,Schmoren,Entflammen
+Sanitized Word: Beissen, Synonym: Knabbern,Kauen,Zubeißen,Nagen,Beißen
+Sanitized Word: Brennen, Synonym: Verbrennen,Zünden,Entflammen,Sengen,Flammen
+Sanitized Word: Brennen, Synonym: Verbrennen,Zünden,Entflammen,Anzünden,Abfackeln
+Sanitized Word: Brennen, Synonym: Verbrennen,Zünden,Entflammen,Entzünden,Glühen
+Sanitized Word: Brennen, Synonym: Verbrennen,Zünden,Entflammen,Sengen,Glühen
+Sanitized Word: Brennen, Synonym: Verbrennen,Zünden,Flammen,Glühen,Entzünden
+Sanitized Word: Brennen, Synonym: Verbrennen,Zünden,Entflammen,In Brand setzen,Flamme aufgehen lassen
+Sanitized Word: Brennen, Synonym: Verbrennen,Zünden,Entzünden,Sengen,Flamme aufgehen lassen
+Sanitized Word: Brennen, Synonym: Verbrennen,Zünden,Entflammen,Sengen,Glühen
+Sanitized Word: begreifen, Synonym: verstehen,aufnehmen,begreifen,bewusst werden,erfassen,fassen,klar sehen,eingehen,erschließen,blicken,checken,dahintersteigen,durchblicken,durchschauen,durchsteigen,fällt der Groschen,hinter etwas steigen,kapieren,Klick machen,peilen,raffen,rallen,schnallen,spannen,überreißen,auffassen,interpretieren
+Sanitized Word: begreifen, Synonym: verstehen,aufnehmen,bewusst werden,erfassen,fassen,geht ein Licht auf,klar sehen,verarbeiten,wie Schuppen von den Augen fallen,blicken,checken,dahintersteigen,durchblicken,durchschauen,durchsehen,durchsteigen,fällt der Groschen,hinter etwas steigen,kapieren,Klick machen,peilen,raffen,rallen,schnallen,spannen,überreißen,eingehen,erschließen,auffassen,interpretieren
+Sanitized Word: begreifen, Synonym: verstehen,aufnehmen,begreifen,bewusst werden,erfassen,fassen,klar sehen,eingehen,erschließen,blicken,checken,dahintersteigen,durchblicken,durchschauen,durchsteigen,fällt der Groschen,hinter etwas steigen,kapieren,Klick machen,peilen,raffen,rallen,schnallen,spannen,überreißen,auffassen,interpretieren
+Sanitized Word: begreifen, Synonym: verstehen,aufnehmen,bewusst werden,erfassen,fassen,geht ein Licht auf,klar sehen,verarbeiten,wie Schuppen von den Augen fallen,blicken,checken,dahintersteigen,durchblicken,durchschauen,durchsehen,durchsteigen,fällt der Groschen,hinter etwas steigen,kapieren,Klick machen,peilen,raffen,rallen,schnallen,spannen,überreißen,eingehen,erschließen,auffassen,interpretieren
+Sanitized Word: begreifen, Synonym: verstehen,aufnehmen,begreifen,bewusst werden,erfassen,fassen,klar sehen,eingehen,erschließen,blicken,checken,dahintersteigen,durchblicken,durchschauen,durchsteigen,fällt der Groschen,hinter etwas steigen,kapieren,Klick machen,peilen,raffen,rallen,schnallen,spannen,überreißen,auffassen,interpretieren
+Sanitized Word: begreifen, Synonym: verstehen,aufnehmen,bewusst werden,erfassen,fassen,geht ein Licht auf,klar sehen,verarbeiten,wie Schuppen von den Augen fallen,blicken,checken,dahintersteigen,durchblicken,durchschauen,durchsehen,durchsteigen,fällt der Groschen,hinter etwas steigen,kapieren,Klick machen,peilen,raffen,rallen,schnallen,spannen,überreißen,eingehen,erschließen,auffassen,interpretieren
+Sanitized Word: Eigennamen., Synonym: Eigenbezeichnungen,Eigennamen,Spezifische Namen,Individualnamen,Persönliche Namen
+Sanitized Word: Eigennamen., Synonym: Eigenbezeichnungen,Eigennennungen,Proprium,Nominativ Eigennamen,Eigenname
+Sanitized Word: Eigennamen., Synonym: "Eigennamen" refers to proper names in English However,synonyms for this specific term are limited Here are some phrases that could be used interchangeably:,Eigennamen (Proper names),Namen (Names),
+Sanitized Word: Eigennamen., Synonym: Eigenname,Eigenbezeichnung,Spezifischer Name,Individueller Name,Eigentlicher Name
+Sanitized Word: vergesslich, Synonym: zerstreut,schusselig,schusslig,trottelig,tüddelig,tüdelig,zerstreuter Professor
+Sanitized Word: vergesslich, Synonym: vergesslich,zerstreut,schusselig,schusslig,trottelig,tüddelig,tüdelig,zerstreuter Professor
+Sanitized Word: vergesslich, Synonym: Gedächtnisschwach,Schusselig,Unachtsam,Zerstreut,Unbesonnen
+Sanitized Word: vergesslich, Synonym: vergesslich,zerstreut,schusselig,schusslig,trottelig,tüddelig,tüdelig,zerstreuter Professor
+Sanitized Word: vergesslich, Synonym: zerstreut,schusselig,schusslig,trottelig,tüddelig,tüdelig,zerstreuter Professor
+Sanitized Word: vergesslich, Synonym: Gedächtnisschwach,Unbesonnen,Schusselig,Zerstreut,Gedankenlos
+Sanitized Word: vergesslich, Synonym: vergesslich,zerstreut,schusselig,schusslig,trottelig,tüddelig,tüdelig,zerstreuter Professor
+Sanitized Word: vergesslich, Synonym: zerstreut,schusselig,schusslig,trottelig,tüddelig,tüdelig,zerstreuter Professor
+Sanitized Word: vergesslich, Synonym: vergesslich,zerstreut,schusselig,schusslig,trottelig,tüddelig,tüdelig,zerstreuter Professor
+Sanitized Word: vergesslich, Synonym: zerstreut,schusselig,schusslig,trottelig,tüddelig,tüdelig,zerstreuter Professor
+Sanitized Word: vergesslich, Synonym: Gedächtnisschwach,Gedankenlos,Unachtsam,Zerstreut,Unbesonnen
+Sanitized Word: vergesslich, Synonym: Gedächtnisschwach,Unzuverlässig,Unachtsam,Zerstreut,Nachlässig
+Sanitized Word: vergesslich, Synonym: vergesslich,zerstreut,schusselig,schusslig,trottelig,tüddelig,tüdelig,zerstreuter Professor
+Sanitized Word: vergesslich, Synonym: zerstreut,schusselig,schusslig,trottelig,tüddelig,tüdelig,zerstreuter Professor
+Sanitized Word: vergesslich, Synonym: vergesslich,zerstreut,schusselig,schusslig,trottelig,tüddelig,tüdelig,zerstreuter Professor
+Sanitized Word: vergesslich, Synonym: zerstreut,schusselig,schusslig,trottelig,tüddelig,tüdelig,zerstreuter Professor
+Sanitized Word: vergesslich, Synonym: vergesslich,zerstreut,schusselig,schusslig,trottelig,tüddelig,tüdelig,zerstreuter Professor
+Sanitized Word: vergesslich, Synonym: zerstreut,schusselig,schusslig,trottelig,tüddelig,tüdelig,zerstreuter Professor
+Sanitized Word: vergesslich, Synonym: Gedächtnisschwach,Unachtsam,Gedankenlos,Schusselig,Unbesonnen
+Sanitized Word: vergesslich, Synonym: Gedächtnisschwach,Unachtsam,Zerstreut,Schusselig,Gedankenlos
+Sanitized Word: vergesslich, Synonym: vergesslich,zerstreut,schusselig,schusslig,trottelig,tüddelig,tüdelig,zerstreuter Professor
+Sanitized Word: vergesslich, Synonym: zerstreut,schusselig,schusslig,trottelig,tüddelig,tüdelig,zerstreuter Professor
+Sanitized Word: vergesslich, Synonym: Gedächtnisschwach,Schusselig,Zerstreut,Gedankenlos,Unachtsam
+Sanitized Word: vergesslich, Synonym: Gedächtnisschwach,Unachtsam,Schusselig,Zerstreut,Gedankenlos
+Sanitized Word: dunkel, Synonym: dunkelfarben,dunkel,düster,gedämpft,dubios,anrüchig,fragwürdig,krumm,obskur,ominös,undurchsichtig,zweifelhaft,zwielichtig,Dunkel,Dunkelheit,Düsterheit,Düsternis,Finsternis,finster,lichtlos,nachtschwarz,stockdunkel,stockduster,stockfinster,zappenduster,Anmaßung,Arroganz,Blasiertheit,Einbildung,Eingebildetsein,Eingenommenheit von sich selbst,Hochmut,Hoffart,Narzissmus,Selbstgefälligkeit,Selbstüberschätzung,Selbstverliebtheit,Stolz,Überheblichkeit,übersteigertes Selbstbewusstsein,Dünkel,Hybris,Prätension,Prätention,Selbstüberhebung,schwer auszudeuten,schwer deutbar,schwer verständlich,schwer zu entschlüsseln,hermetisch,kryptisch,schwer zu erschließen,unergründlich
+Sanitized Word: dunkel, Synonym: düster,hell,finster,schwarz,dubios,seriös,anrüchig,fragwürdig,halbseiden,lichtscheu,nicht vertrauenswürdig,obskur,ominös,leibhaftig,undurchsichtig,windig,solide,verlässlich,zweifelhaft,zwielichtig,nicht koscher,Arroganz,Blasiertheit,Egozentrik,Einbildung,Eingebildetsein,Eingenommenheit von sich selbst,Exaltiertheit,Hochmut,Hoffart,Narzissmus,Selbstgefälligkeit,Selbstverliebtheit,Stolz,Überheblichkeit,übersteigertes Selbstbewusstsein,Dünkel,Demut,Hybris,Prätention,Selbstüberhebung,schattenhaft,undeutlich,ungefähr,unklar,unscharf,Düsterheit,Düsternis,Dunkelheit,Finsternis,dunkel,stockfinster,stockdunkel,stockduster,zappenduster,nicht zu entschlüsseln,schwer auszudeuten,schwer deutbar,unverständlich,verdeckt,verdunkelt,hermetisch,kryptisch,unergründlich,Anmaßung,Bescheidenheit,Prätension
+Sanitized Word: dunkel, Synonym: dunkelfarben,dunkel,düster,gedämpft,dubios,anrüchig,fragwürdig,krumm,obskur,ominös,undurchsichtig,zweifelhaft,zwielichtig,Dunkel,Dunkelheit,Düsterheit,Düsternis,Finsternis,finster,lichtlos,nachtschwarz,stockdunkel,stockduster,stockfinster,zappenduster,Anmaßung,Arroganz,Blasiertheit,Einbildung,Eingebildetsein,Eingenommenheit von sich selbst,Hochmut,Hoffart,Narzissmus,Selbstgefälligkeit,Selbstüberschätzung,Selbstverliebtheit,Stolz,Überheblichkeit,übersteigertes Selbstbewusstsein,Dünkel,Hybris,Prätension,Prätention,Selbstüberhebung,schwer auszudeuten,schwer deutbar,schwer verständlich,schwer zu entschlüsseln,hermetisch,kryptisch,schwer zu erschließen,unergründlich
+Sanitized Word: dunkel, Synonym: Finster,Düster,Schattig,Trüb,Schwarz
+Sanitized Word: dunkel, Synonym: düster,hell,finster,schwarz,dubios,seriös,anrüchig,fragwürdig,halbseiden,lichtscheu,nicht vertrauenswürdig,obskur,ominös,leibhaftig,undurchsichtig,windig,solide,verlässlich,zweifelhaft,zwielichtig,nicht koscher,Arroganz,Blasiertheit,Egozentrik,Einbildung,Eingebildetsein,Eingenommenheit von sich selbst,Exaltiertheit,Hochmut,Hoffart,Narzissmus,Selbstgefälligkeit,Selbstverliebtheit,Stolz,Überheblichkeit,übersteigertes Selbstbewusstsein,Dünkel,Demut,Hybris,Prätention,Selbstüberhebung,schattenhaft,undeutlich,ungefähr,unklar,unscharf,Düsterheit,Düsternis,Dunkelheit,Finsternis,dunkel,stockfinster,stockdunkel,stockduster,zappenduster,nicht zu entschlüsseln,schwer auszudeuten,schwer deutbar,unverständlich,verdeckt,verdunkelt,hermetisch,kryptisch,unergründlich,Anmaßung,Bescheidenheit,Prätension
+Sanitized Word: dunkel, Synonym: Finster,Düster,Schattig,Trüb,Nachtig
+Sanitized Word: vergesslich, Synonym: vergesslich,zerstreut,schusselig,schusslig,trottelig,tüddelig,tüdelig,zerstreuter Professor
+Sanitized Word: vergesslich, Synonym: zerstreut,schusselig,schusslig,trottelig,tüddelig,tüdelig,zerstreuter Professor
+Sanitized Word: vergesslich, Synonym: vergesslich,zerstreut,schusselig,schusslig,trottelig,tüddelig,tüdelig,zerstreuter Professor
+Sanitized Word: vergesslich, Synonym: zerstreut,schusselig,schusslig,trottelig,tüddelig,tüdelig,zerstreuter Professor
+Sanitized Word: vergesslich, Synonym: Gedächtnisschwach,Schusselig,Zerstreut,Gedankenlos,Unachtsam
+Sanitized Word: vergesslich, Synonym: vergesslich,zerstreut,schusselig,schusslig,trottelig,tüddelig,tüdelig,zerstreuter Professor
+Sanitized Word: vergesslich, Synonym: zerstreut,schusselig,schusslig,trottelig,tüddelig,tüdelig,zerstreuter Professor
+Sanitized Word: vergesslich, Synonym: Gedächtnislos,Unachtsam,Zerstreut,Schusselig,Nachlässig
+Sanitized Word: vergesslich, Synonym: Gedächtnisschwach,Zerstreut,Unachtsam,Schusselig,Gedankenlos
+Sanitized Word: vergesslich, Synonym: vergesslich,zerstreut,schusselig,schusslig,trottelig,tüddelig,tüdelig,zerstreuter Professor
+Sanitized Word: vergesslich, Synonym: zerstreut,schusselig,schusslig,trottelig,tüddelig,tüdelig,zerstreuter Professor
+Sanitized Word: vergesslich, Synonym: Gedächtnisschwach,Unachtsam,Unbesonnen,Zerstreut,Nachlässig
+Sanitized Word: verlegen, Synonym: abtransportieren,evakuieren,verlegen,verlieren,verlustig gehen,aus den Augen verlieren,nicht mehr wissen,wo man etwas gelassen hat,verbaseln,verbummeln,verdusseln,verklüngeln,verkramen,verschlampen,verschludern,verschluren,verschmeißen,verschusseln,editieren,herausgeben,publizieren,veröffentlichen,betreten,genierlich,gschamig,in Verlegenheit,peinlich berührt,verschämt,ändern,verschieben,anderen Termin nehmen,umlegen,umswitchen,betroffen,zerknirscht,bedröppelt,sparsam gucken
+Sanitized Word: verlegen, Synonym: abtransportieren,evakuieren,verlieren,verlustig gehen,verbaseln,verbummeln,verdusseln,verklüngeln,verkramen,verschlampen,verschludern,verschluren,verschmeißen,verschusseln,betreten,betroffen,zerknirscht,bedröppelt,sparsam gucken,editieren,herausgeben,publizieren,veröffentlichen,genierlich,gschamig,in Verlegenheit,peinlich berührt,verschämt,ändern,verlegen,verschieben,anderen Termin nehmen,umlegen,umswitchen
+Sanitized Word: verlegen, Synonym: abtransportieren,evakuieren,verlegen,verlieren,verlustig gehen,aus den Augen verlieren,nicht mehr wissen,wo man etwas gelassen hat,verbaseln,verbummeln,verdusseln,verklüngeln,verkramen,verschlampen,verschludern,verschluren,verschmeißen,verschusseln,editieren,herausgeben,publizieren,veröffentlichen,betreten,genierlich,gschamig,in Verlegenheit,peinlich berührt,verschämt,ändern,verschieben,anderen Termin nehmen,umlegen,umswitchen,betroffen,zerknirscht,bedröppelt,sparsam gucken
+Sanitized Word: verlegen, Synonym: Beschämt,Bedrängt,Unbehaglich,Ausweichend,Unruhig
+Sanitized Word: verlegen, Synonym: abtransportieren,evakuieren,verlieren,verlustig gehen,verbaseln,verbummeln,verdusseln,verklüngeln,verkramen,verschlampen,verschludern,verschluren,verschmeißen,verschusseln,betreten,betroffen,zerknirscht,bedröppelt,sparsam gucken,editieren,herausgeben,publizieren,veröffentlichen,genierlich,gschamig,in Verlegenheit,peinlich berührt,verschämt,ändern,verlegen,verschieben,anderen Termin nehmen,umlegen,umswitchen
+Sanitized Word: verlegen, Synonym: abtransportieren,evakuieren,verlegen,verlieren,verlustig gehen,aus den Augen verlieren,nicht mehr wissen,wo man etwas gelassen hat,verbaseln,verbummeln,verdusseln,verklüngeln,verkramen,verschlampen,verschludern,verschluren,verschmeißen,verschusseln,editieren,herausgeben,publizieren,veröffentlichen,betreten,genierlich,gschamig,in Verlegenheit,peinlich berührt,verschämt,ändern,verschieben,anderen Termin nehmen,umlegen,umswitchen,betroffen,zerknirscht,bedröppelt,sparsam gucken
+Sanitized Word: verlegen, Synonym: abtransportieren,evakuieren,verlieren,verlustig gehen,verbaseln,verbummeln,verdusseln,verklüngeln,verkramen,verschlampen,verschludern,verschluren,verschmeißen,verschusseln,betreten,betroffen,zerknirscht,bedröppelt,sparsam gucken,editieren,herausgeben,publizieren,veröffentlichen,genierlich,gschamig,in Verlegenheit,peinlich berührt,verschämt,ändern,verlegen,verschieben,anderen Termin nehmen,umlegen,umswitchen
+Sanitized Word: verlegen, Synonym: Ausweichen,Verschieben,Verzögern,Verlegenheit,Verbergen
+Sanitized Word: verlegen, Synonym: Ausweichen,Verschieben,Verzögern,Umleiten,Aufschieben
+Sanitized Word: vergesslich, Synonym: zerstreut,schusselig,schusslig,trottelig,tüddelig,tüdelig,zerstreuter Professor
+Sanitized Word: vergesslich, Synonym: vergesslich,zerstreut,schusselig,schusslig,trottelig,tüddelig,tüdelig,zerstreuter Professor
+Sanitized Word: vergesslich, Synonym: Gedächtnislos,Zerstreut,Unachtsam,Nachlässig,Gedankenlos
+Sanitized Word: vergesslich, Synonym: vergesslich,zerstreut,schusselig,schusslig,trottelig,tüddelig,tüdelig,zerstreuter Professor
+Sanitized Word: vergesslich, Synonym: zerstreut,schusselig,schusslig,trottelig,tüddelig,tüdelig,zerstreuter Professor
+Sanitized Word: vergesslich, Synonym: Gedächtnisschwach,Unachtsam,Zerstreut,Schusselig,Unbesonnen
