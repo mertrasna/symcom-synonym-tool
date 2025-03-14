@@ -635,33 +635,40 @@ function addSynonymsToTable(word, synonyms) {
   });
 });
 
-// Handle form submission
 $(document).on("submit", "#synonymForm", function (event) {
   event.preventDefault();
-  if (!selectedWord.trim()) {
+
+  // Dynamically retrieve the selected word
+  let selectedWord = $("#selected-word").text().trim();
+  if (!selectedWord) {
     alert("Error: Selected word is empty.");
     return;
   }
 
-  let rootWord = $("#root-word").val() || $("#root-word").text().trim();
-  console.log("Submitting Root Word:", rootWord);
+  console.log("Submitting for:", selectedWord);
 
-  // Collect all synonym categorizations
+  // Dynamically retrieve the root word from multiple possible elements
+  let rootWord =
+    $("#root-word-container input").val() ||
+    $("#root-word-container #root-word-display").text().trim() ||
+    $("#root-word").val() ||
+    $("#root-word").text().trim();
+
+  console.log("Root Word:", rootWord);
+
+  // Object to store categorized synonyms
   let synonyms = { S: [], Q: [], O: [], U: [] };
-  let comment = $("#notSureCheckbox").prop("checked")
-    ? $("#commentText").val().trim()
-    : "";
 
-  // Collect checked checkboxes
+  // Iterate through each row in the synonym table
   $("#synonymTable tbody tr").each(function () {
     let synonymText = $(this).find("td:last").text().trim();
 
-    // Check each checkbox in the row
+    // Check each checkbox dynamically
     $(this)
       .find('input[type="checkbox"]')
       .each(function (index) {
         if ($(this).is(":checked")) {
-          let category = ["S", "Q", "O", "U"][index];
+          let category = ["S", "Q", "O", "U"][index]; // Assign based on index
           synonyms[category].push({ word: synonymText });
           console.log(`Adding ${synonymText} to category ${category}`);
         }
@@ -670,7 +677,12 @@ $(document).on("submit", "#synonymForm", function (event) {
 
   console.log("Collected synonyms:", synonyms);
 
-  // Submit the data to the server
+  // Collect comment if "Not Sure" checkbox is checked
+  let comment = $("#notSureCheckbox").prop("checked")
+    ? $("#commentText").val().trim()
+    : "";
+
+  // Send the data to the server
   $.ajax({
     url: "update_synonym.php",
     type: "POST",
@@ -683,26 +695,36 @@ $(document).on("submit", "#synonymForm", function (event) {
     dataType: "json",
     success: function (res) {
       console.log("Update response:", res);
+      alert(res.message);
 
-      if (res.success) {
-        alert(res.message);
+      // Mark word as processed (turns it green)
+      $(`.synonym-word[data-word='${selectedWord}']`).addClass("green");
 
-        // Update UI to reflect saved state
-        $(`.synonym-word[data-word="${selectedWord}"]`).addClass("green");
-
-        // Optional: Move to next word automatically
-        // clickNextClickableWord();
-      } else {
-        alert("Error: " + res.message);
-      }
+      // Automatically move to the next word
+      clickNextClickableWord();
     },
     error: function (xhr, status, error) {
       console.error("AJAX Error (update_synonym.php):", status, error);
-      console.error("Response Text:", xhr.responseText);
+      console.error("Server Response:", xhr.responseText);
       alert("Error updating synonyms. Check console for details.");
     },
   });
 });
+
+/**
+ * Click the next clickable word (blue or green) in the sentence
+ */
+function clickNextClickableWord() {
+  let clickableWords = $(".synonym-word, .synonym-word.green"); // Get all clickable words
+  let currentIndex = clickableWords.index($(`.synonym-word[data-word='${selectedWord}']`));
+
+  if (currentIndex !== -1 && currentIndex < clickableWords.length - 1) {
+    clickableWords.eq(currentIndex + 1).trigger("click"); // Click the next word
+  } else {
+    alert("No more clickable words in this symptom. Processing completed.");
+  }
+}
+
 
 $(document).ready(function () {
   $(document).on("click", ".synonym-word", function () {
