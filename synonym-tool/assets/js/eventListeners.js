@@ -640,51 +640,60 @@ $(document).on("dblclick", ".synonym-word, .stopword", function (event) {
 $(document).on("submit", "#synonymForm", function (event) {
   event.preventDefault();
 
-  // Dynamically retrieve the selected word
+  // 1) Retrieve 'selectedWord' from #selected-word
   let selectedWord = $("#selected-word").text().trim();
   if (!selectedWord) {
     alert("Error: Selected word is empty.");
     return;
   }
 
-  console.log("Submitting for:", selectedWord);
+  // 2) Extract 'mid' from the URL (if needed to decide the correct table)
+  const urlParams = new URLSearchParams(window.location.search);
+  const mid = urlParams.get("mid") || 5075; // Default to 5075 (English)
 
-  // Dynamically retrieve the root word from multiple possible elements
+  // 3) Retrieve the root word from multiple possible locations
   let rootWord =
     $("#root-word-container input").val() ||
     $("#root-word-container #root-word-display").text().trim() ||
     $("#root-word").val() ||
     $("#root-word").text().trim();
 
-  console.log("Root Word:", rootWord);
+  // 4) Use Sets to prevent duplicate synonyms in each category (S, Q, O, U)
+  let synonyms = {
+    S: new Set(),
+    Q: new Set(),
+    O: new Set(),
+    U: new Set(),
+  };
 
-  // Object to store categorized synonyms
-  let synonyms = { S: [], Q: [], O: [], U: [] };
-
-  // Iterate through each row in the synonym table
+  // 5) Loop through each row of the table to find checked synonyms
   $("#synonymTable tbody tr").each(function () {
     let synonymText = $(this).find("td:last").text().trim();
 
-    // Check each checkbox dynamically
+    // For each checkbox in the row, figure out which category (S, Q, O, U)
     $(this)
       .find('input[type="checkbox"]')
       .each(function (index) {
         if ($(this).is(":checked")) {
-          let category = ["S", "Q", "O", "U"][index]; // Assign based on index
-          synonyms[category].push({ word: synonymText });
-          console.log(`Adding ${synonymText} to category ${category}`);
+          const category = ["S", "Q", "O", "U"][index];
+          synonyms[category].add(synonymText); // Using Set => duplicates removed
         }
       });
   });
 
-  console.log("Collected synonyms:", synonyms);
+  // 6) Convert each Set into an array of {word: "..."} for JSON
+  Object.keys(synonyms).forEach((cat) => {
+    synonyms[cat] = Array.from(synonyms[cat]).map((syn) => ({
+      word: syn.trim(),
+    }));
+  });
 
-  // Collect comment if "Not Sure" checkbox is checked
+  // 7) Collect the 'comment' if "Not Sure" checkbox is checked
   let comment = $("#notSureCheckbox").prop("checked")
     ? $("#commentText").val().trim()
     : "";
 
-  // Send the data to the server
+  // 8) Send the data to the server via AJAX
   $.ajax({
     url: "update_synonym.php",
     type: "POST",
@@ -693,16 +702,17 @@ $(document).on("submit", "#synonymForm", function (event) {
       root_word: rootWord,
       synonyms: JSON.stringify(synonyms),
       comment: comment,
+      master_id: mid, // Pass 'master_id' to use the correct table (synonym_de or synonym_en)
     },
     dataType: "json",
     success: function (res) {
       console.log("Update response:", res);
       alert(res.message);
 
-      // Mark word as processed (turns it green)
+      // Mark the selected word as processed
       $(`.synonym-word[data-word='${selectedWord}']`).addClass("green");
 
-      // Automatically move to the next word
+      // Automatically move to the next word (if any)
       clickNextClickableWord();
     },
     error: function (xhr, status, error) {
@@ -712,6 +722,17 @@ $(document).on("submit", "#synonymForm", function (event) {
     },
   });
 });
+
+
+
+// When user checks any checkbox in a row, uncheck all others in that row
+$(document).on("change", "#synonymTable tbody input[type='checkbox']", function () {
+  let row = $(this).closest("tr");
+  // Uncheck all other boxes in the same row
+  row.find('input[type="checkbox"]').not(this).prop("checked", false);
+});
+
+
 
 /**
  * Click the next clickable word (blue or green) in the sentence

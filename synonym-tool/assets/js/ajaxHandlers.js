@@ -120,18 +120,27 @@ function fetchRootWord(selectedWord, finalSynonyms) {
 }
 
 function submitSynonyms(selectedWord) {
+  // 1. Extract `mid` from URL (if needed to decide table: 5075 = English, 5072 = German)
+  const urlParams = new URLSearchParams(window.location.search);
+  const mid = urlParams.get("mid"); // e.g. "5075"
+
+  // 2. Get the root word
   let rootWord = $("#root-word").val() || $("#root-word").text().trim();
+
+  // 3. Build synonyms as an object of arrays of objects
   let synonyms = { S: [], Q: [], O: [], U: [] };
 
   $("#synonymTable tbody tr").each(function () {
     let synonymText = $(this).find("td:last").text().trim();
     ["S", "Q", "O", "U"].forEach((type, index) => {
       if ($(this).find(`td:eq(${index}) input`).is(":checked")) {
+        // Push an object with a 'word' key
         synonyms[type].push({ word: synonymText });
       }
     });
   });
 
+  // 4. Send the data to your PHP script, stringifying `synonyms`
   $.ajax({
     url: "update_synonym.php",
     type: "POST",
@@ -139,16 +148,20 @@ function submitSynonyms(selectedWord) {
       word: selectedWord,
       root_word: rootWord,
       synonyms: JSON.stringify(synonyms),
+      master_id: mid // Only if your backend needs this to choose the correct table
     },
-    dataType: "json",
+    dataType: "json", // We want JSON back from the server
     success: function (res) {
+      // On success, show message or do something else
       alert(res.message);
     },
     error: function (xhr, status, error) {
       console.error("AJAX Error (update_synonym.php):", status, error);
+      console.error("Server Response:", xhr.responseText);
     },
   });
 }
+
 
 // Function to toggle stopword status by sending the word and masterId to the backend.
 function toggleStopwordStatus(element) {
