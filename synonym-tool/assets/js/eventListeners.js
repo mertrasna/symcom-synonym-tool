@@ -103,7 +103,10 @@ $(document).ready(function () {
           $.ajax({
             url: "fetch_root_word.php",
             type: "POST",
-            data: { word: selectedWord },
+            data: {
+    word: selectedWord,
+    master_id: mid  
+  },
             dataType: "json",
             success: function (rootRes) {
               console.log("fetch_root_word.php Response:", rootRes);

@@ -229,7 +229,7 @@ function processText($text, $stopwords, $db, $synonymTable) {
 <script src="assets/js/eventListeners.js"></script>
 <script src="assets/js/helpers.js"></script>
 <script src="assets/js/modal.js"></script>
-<script src="assets/js/hover.js"></script>
+
 
 
 <?php include '../inc/footer.php';?>

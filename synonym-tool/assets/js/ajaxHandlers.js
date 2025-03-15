@@ -40,26 +40,33 @@ function fetchSynonyms(selectedWord) {
 
 
 function fetchRootWord(selectedWord, finalSynonyms) {
+  // Extract 'mid' from the URL (or set it by some other means)
+  const urlParams = new URLSearchParams(window.location.search);
+  const mid = urlParams.get("mid") || 5075; // This will be "5072" for German if in URL
+
   $.ajax({
     url: "fetch_root_word.php",
     type: "POST",
-    data: { word: selectedWord },
+    data: { 
+      word: selectedWord,
+      master_id: mid  // Include master_id so the server queries the correct table
+    },
     dataType: "json",
     success: function (rootRes) {
+      console.log("fetch_root_word.php Response:", rootRes);
+      
       let rootWordHTML =
-  rootRes.success && rootRes.word
-    ? `<input type="text" id="root-word" value="${rootRes.word}" 
-          placeholder="Enter root word..." style="padding:5px; border:1px solid #ccc; border-radius:5px; width:200px;">`
-    : `<input type="text" id="root-word" value="${selectedWord}" 
-          placeholder="Enter root word..." style="padding:5px; border:1px solid #ccc; border-radius:5px; width:200px;">`;
+        rootRes.success && rootRes.word
+          ? `<input type="text" id="root-word" value="${rootRes.word}" 
+                placeholder="Enter root word..." style="padding:5px; border:1px solid #ccc; border-radius:5px; width:200px;">`
+          : `<input type="text" id="root-word" value="${selectedWord}" 
+                placeholder="Enter root word..." style="padding:5px; border:1px solid #ccc; border-radius:5px; width:200px;">`;
 
-      // Build the ENTIRE form, table, checkbox, submit button, and modal
       let tableHTML = `
             <div style="display: flex; align-items: center; justify-content: space-between; width: 100%; margin-bottom: 10px;">
                 <p><b>Selected Word:</b> <span id="selected-word">${selectedWord}</span></p>
                 <p><b>Root Word:</b> ${rootWordHTML}</p>
             </div>
-
             <form id="synonymForm">
               <table id="synonymTable" class="styled-table">
                 <thead>
@@ -72,32 +79,20 @@ function fetchRootWord(selectedWord, finalSynonyms) {
       finalSynonyms.forEach((syn) => {
         tableHTML += `
                   <tr>
-                    <td><input type="checkbox" name="S" value="${syn.word}" ${
-          syn.type === "S" ? "checked" : ""
-        }></td>
-                    <td><input type="checkbox" name="Q" value="${syn.word}" ${
-          syn.type === "Q" ? "checked" : ""
-        }></td>
-                    <td><input type="checkbox" name="O" value="${syn.word}" ${
-          syn.type === "O" ? "checked" : ""
-        }></td>
-                    <td><input type="checkbox" name="U" value="${syn.word}" ${
-          syn.type === "U" ? "checked" : ""
-        }></td>
+                    <td><input type="checkbox" name="S" value="${syn.word}" ${syn.type === "S" ? "checked" : ""}></td>
+                    <td><input type="checkbox" name="Q" value="${syn.word}" ${syn.type === "Q" ? "checked" : ""}></td>
+                    <td><input type="checkbox" name="O" value="${syn.word}" ${syn.type === "O" ? "checked" : ""}></td>
+                    <td><input type="checkbox" name="U" value="${syn.word}" ${syn.type === "U" ? "checked" : ""}></td>
                     <td>${syn.word}</td>
                   </tr>`;
       });
 
-      // Close the table, then add the Not Sure checkbox, Submit button, and the modal
-      tableHTML += `
-                </tbody>
-              </table>
+      tableHTML += `</tbody></table>
               <div>
-                  <input type="checkbox" id="notSureCheckbox"> Not Sure
+                <input type="checkbox" id="notSureCheckbox"> Not Sure
               </div>
               <button type="submit" id="submitSynonyms">Submit</button>
             </form>
-
             <!-- Comment Box Modal -->
             <div id="commentModal" class="modal" style="display:none;">
               <div class="modal-content" style="position: relative; margin: 10% auto; padding: 20px; border: 1px solid #888; width: 300px; background: #fff;">
@@ -110,7 +105,6 @@ function fetchRootWord(selectedWord, finalSynonyms) {
               </div>
             </div>`;
 
-      // Inject the entire HTML into #symptom-details2
       $("#symptom-details2").html(tableHTML);
     },
     error: function (xhr, status, error) {
@@ -118,6 +112,7 @@ function fetchRootWord(selectedWord, finalSynonyms) {
     },
   });
 }
+
 
 function submitSynonyms(selectedWord) {
   // 1. Extract `mid` from URL (if needed to decide table: 5075 = English, 5072 = German)
