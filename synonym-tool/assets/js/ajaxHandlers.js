@@ -178,7 +178,6 @@ $(document).on("click", ".synonym-word", function () {
 });
 
 
-
 // Switch to edit mode when the Edit button is clicked.
 $(document).on("click", "#edit-root-word", function () {
   var currentText = $("#root-word-display").text().trim();
