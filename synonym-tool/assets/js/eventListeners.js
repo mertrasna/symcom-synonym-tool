@@ -177,70 +177,73 @@ $(document).ready(function () {
     });
   });
 
-  // Fetch synonyms from ChatGPT
-  function fetchChatGPTSynonyms(selectedWord) {
-    const apiKey = "key"; // <-- Add your OpenAI API key here
-    const requestBody = {
-      model: "gpt-4",
-      messages: [
-        { role: "system", content: "You are a helpful assistant." },
-        {
-          role: "user",
-          content: `Give me a list of 5 german synonyms for the word "${selectedWord}"`,
-        },
-      ],
-      max_tokens: 50,
-      temperature: 0.7,
-    };
+  // Fetch synonyms from ChatGPT, adjusting for language based on masterId
+function fetchChatGPTSynonyms(selectedWord) {
+  // Determine the language based on masterId (5072 for German, default to English)
+  const language = (masterId === 5072) ? "german" : "english";
 
-    fetch("https://api.openai.com/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${apiKey}`,
+  const apiKey = "k-proj-4h-45kiGeMwhtFd7jPMeVvQS9fbJ9bln63BsNtSwqA6NuCTXwymJ2SdZYFilD0HpGijpf3D5WOT3BlbkFJga4nuBDPh8nrXN4I8I4kcljSTyotV0X-EC1fMxa0gIAy0-rLheVTMj5En6gr0sxM0_dilS-g4A"; // <-- Add your OpenAI API key here
+  const requestBody = {
+    model: "gpt-4",
+    messages: [
+      { role: "system", content: "You are a helpful assistant." },
+      {
+        role: "user",
+        content: `Give me a list of 5 ${language} synonyms for the word "${selectedWord}"`,
       },
-      body: JSON.stringify(requestBody),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log("OpenAI Response:", data);
+    ],
+    max_tokens: 5,
+    temperature: 0.7,
+  };
 
-        const chatGptResponse = data.choices[0].message.content.trim();
-        const synonyms = chatGptResponse.split(",").map((syn) => syn.trim());
+  fetch("https://api.openai.com/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${apiKey}`,
+    },
+    body: JSON.stringify(requestBody),
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      console.log("OpenAI Response:", data);
+      const chatGptResponse = data.choices[0].message.content.trim();
+      const synonyms = chatGptResponse.split(",").map((syn) => syn.trim());
+      const strictSynonym = synonyms.join(",");
 
-        const strictSynonym = synonyms.join(",");
+      const synonymData = {
+        word: selectedWord,
+        synonym: strictSynonym,
+        cross_reference: "",
+        synonym_partial_2: "",
+        generic_term: "",
+        sub_term: "",
+        synonym_nn: "",
+        comment: "",
+        non_secure_flag: "1",
+        source_reference_ns: "1",
+        active: 1,
+        master_id: masterId // Pass the masterId for language-specific processing
+      };
 
-        const synonymData = {
-          word: selectedWord,
-          synonym: strictSynonym,
-          cross_reference: "",
-          synonym_partial_2: "",
-          generic_term: "",
-          sub_term: "",
-          synonym_nn: "",
-          comment: "",
-          non_secure_flag: "1",
-          source_reference_ns: "1",
-          active: 1,
-        };
-
-        // Insert synonym data into the database
-        $.ajax({
-          url: "insert_synonym.php",
-          type: "POST",
-          data: synonymData,
-          success: function (response) {
-            console.log("Insert Synonym Response:", response);
-          },
-          error: function (xhr, status, error) {
-            console.error("AJAX Error (insert_synonym.php):", status, error);
-          },
-        });
-      })
-      .catch((error) => {
-        console.error("OpenAI API Error:", error);
+      // Insert synonym data into the database
+      $.ajax({
+        url: "insert_synonym.php",
+        type: "POST",
+        data: synonymData,
+        success: function (response) {
+          console.log("Insert Synonym Response:", response);
+        },
+        error: function (xhr, status, error) {
+          console.error("AJAX Error (insert_synonym.php):", status, error);
+        },
       });
-  }
+    })
+    .catch((error) => {
+      console.error("OpenAI API Error:", error);
+    });
+}
+
 
   /**
    * Main function that fetches synonyms via PHP + fallback
