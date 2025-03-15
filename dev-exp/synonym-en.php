@@ -42,6 +42,13 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
   <link rel="stylesheet" href="assets/css/custom.css">
 </head>
+
+<style>
+    .highlight-row {
+        background-color: orange !important;
+    }
+</style>
+
 <body>
 <div class="container-fluid">
     <div class="row">
@@ -69,7 +76,7 @@
                             $result = mysqli_query($db,"SELECT * FROM synonym_en ORDER BY synonym_id DESC"); 
                             while($row = mysqli_fetch_array($result)){   
                                 ?>
-                                <tr> 
+                                <tr class="<?php echo ($row['non_secure_flag'] == 1) ? 'highlight-row' : ''; ?>">
                                     <td><?php echo $row['word']; ?></td>
                                     <td><?php echo $row['synonym']; ?></td>
                                     <td><?php echo $row['cross_reference']; ?></td>
