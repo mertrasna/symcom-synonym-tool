@@ -182,7 +182,7 @@ function fetchChatGPTSynonyms(selectedWord) {
   // Determine the language based on masterId (5072 for German, default to English)
   const language = (masterId === 5072) ? "german" : "english";
 
-  const apiKey = "k-proj-4h-45kiGeMwhtFd7jPMeVvQS9fbJ9bln63BsNtSwqA6NuCTXwymJ2SdZYFilD0HpGijpf3D5WOT3BlbkFJga4nuBDPh8nrXN4I8I4kcljSTyotV0X-EC1fMxa0gIAy0-rLheVTMj5En6gr0sxM0_dilS-g4A"; // <-- Add your OpenAI API key here
+  const apiKey = "key"; // <-- Add your OpenAI API key here
   const requestBody = {
     model: "gpt-4",
     messages: [
@@ -192,7 +192,7 @@ function fetchChatGPTSynonyms(selectedWord) {
         content: `Give me a list of 5 ${language} synonyms for the word "${selectedWord}"`,
       },
     ],
-    max_tokens: 5,
+    max_tokens: 50,
     temperature: 0.7,
   };
 

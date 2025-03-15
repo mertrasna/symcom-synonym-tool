@@ -5,8 +5,6 @@ header('Content-Type: application/json'); // Force JSON response
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-// In fetch_word_info.php
-
 // Check if $db is initialized, and initialize it if not
 if (!isset($db)) {
     $db = new mysqli("127.0.0.1", "root", "root", "symcom_minified_db", 6000);
@@ -18,11 +16,18 @@ if (!isset($db)) {
 // Check if the request method is POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['word']) && !empty($_POST['word'])) {
+        // Sanitize the input word
         $word = mysqli_real_escape_string($db, $_POST['word']);
+        
+        // Retrieve master_id from POST (default to 5075 for English if not provided)
+        $masterId = isset($_POST['master_id']) ? intval($_POST['master_id']) : 5075;
+        
+        // Choose the table based on master_id (5072 for German, 5075 for English)
+        $table = ($masterId === 5072) ? 'synonym_de' : 'synonym_en';
 
-        // Search in the entire synonym_de table, across relevant columns
+        // Search in the selected synonym table across relevant columns
         $query = "
-            SELECT * FROM synonym_de 
+            SELECT * FROM $table 
             WHERE 
                 word LIKE '%$word%' OR
                 synonym LIKE '%$word%' OR
@@ -43,7 +48,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
 
             if (!empty($synonyms)) {
-                // Do not update the 'isgreen' column
                 echo json_encode([
                     'success' => true, 
                     'synonyms' => $synonyms, 
@@ -73,5 +77,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'message' => 'Invalid request method'
     ]);
 }
-
 ?>
