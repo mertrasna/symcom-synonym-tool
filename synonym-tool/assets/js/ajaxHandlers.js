@@ -2,7 +2,10 @@ function fetchSynonyms(selectedWord) {
   $.ajax({
     url: "search_synonym.php",
     type: "POST",
-    data: { word: selectedWord },
+    data: { 
+      word: selectedWord,
+      master_id: masterId // Pass the global masterId to determine language
+    },
     dataType: "json",
     success: function (res) {
       if (res.success) {
@@ -33,6 +36,8 @@ function fetchSynonyms(selectedWord) {
     },
   });
 }
+
+
 
 function fetchRootWord(selectedWord, finalSynonyms) {
   $.ajax({
@@ -145,6 +150,7 @@ function submitSynonyms(selectedWord) {
   });
 }
 
+// Function to toggle stopword status by sending the word and masterId to the backend.
 function toggleStopwordStatus(element) {
   let word = element.attr("data-word");
   let url = element.hasClass("stopword")
@@ -154,7 +160,7 @@ function toggleStopwordStatus(element) {
   $.ajax({
     url: url,
     type: "POST",
-    data: { word: word },
+    data: { word: word, master_id: masterId },
     success: function (response) {
       let res = JSON.parse(response);
       if (res.success) {
@@ -164,11 +170,14 @@ function toggleStopwordStatus(element) {
   });
 }
 
-// Event Listener for Fetching Synonyms
+// Event Listener for Fetching Synonyms (click on a synonym-word)
 $(document).on("click", ".synonym-word", function () {
   let selectedWord = $(this).attr("data-word").trim();
+  console.log("Selected Word:", selectedWord);
   fetchSynonyms(selectedWord);
 });
+
+
 
 // Switch to edit mode when the Edit button is clicked.
 $(document).on("click", "#edit-root-word", function () {

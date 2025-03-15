@@ -5,8 +5,8 @@ include '../lang/EnglishWords.php';
 $pageTitle = "Synonymizing Tool";
 include '../inc/header.php';
 include '../inc/sidebar.php';
-?>
 
+?>
 
 <link rel="stylesheet" href="assets/css/styles.css">
 
@@ -24,6 +24,18 @@ if ($masterId == 0) {
     }
 }
 
+// Determine language based on master ID
+if ($masterId == 5072) {
+    $synonymTable = "synonym_de";
+    $descriptionColumn = "BeschreibungOriginal_de";
+} elseif ($masterId == 5075) {
+    $synonymTable = "synonym_en";
+    $descriptionColumn = "BeschreibungOriginal_en";
+} else {
+    $synonymTable = "synonym_en"; // Default to English
+    $descriptionColumn = "BeschreibungOriginal_en";
+}
+
 if (!$db) {
     die("<p style='color:red;'>Database connection failed: " . mysqli_connect_error() . "</p>");
 }
@@ -34,11 +46,11 @@ while ($row = mysqli_fetch_assoc($stopwordsResult)) {
     $stopwords[] = strtolower($row['name']); 
 }
 
-// limit the symptoms fetched by 200 for performance improvements 
+// Limit symptoms fetched by 200 for performance improvements 
 $offset = isset($_GET['offset']) ? (int)$_GET['offset'] : 0;
 $symptoms = [];
 $query = "
-    SELECT id, BeschreibungOriginal_en, BeschreibungOriginal_de
+    SELECT id, $descriptionColumn AS original_symptom
     FROM quelle_import_test
     WHERE master_id = '$masterId'
     ORDER BY id ASC
@@ -50,19 +62,18 @@ if (!$symptomResult) {
 }
 
 while ($row = mysqli_fetch_assoc($symptomResult)) {
-    $originalSymptom = !empty($row['BeschreibungOriginal_en']) ? $row['BeschreibungOriginal_en'] : $row['BeschreibungOriginal_de'];
     $symptoms[] = [
         "id" => $row['id'],
-        "original_symptom" => $originalSymptom
+        "original_symptom" => $row['original_symptom']
     ];
 }
 
-function processText($text, $stopwords, $db) {
+function processText($text, $stopwords, $db, $synonymTable) {
     if (empty($text)) {
         return "<span style='color: red;'>[No symptom text found]</span>";
     }
 
-    // Remove any HTML tags and decode entities
+    // Remove HTML tags and decode entities
     $text = preg_replace('/<[^>]+>/', '', $text);
     $text = html_entity_decode($text, ENT_QUOTES | ENT_HTML5, 'UTF-8');
     $text = trim(preg_replace('/\s+/', ' ', $text));
@@ -71,15 +82,13 @@ function processText($text, $stopwords, $db) {
     $processedText = "";
 
     foreach ($words as $word) {
-        // Clean the word for database lookup
+        // Clean word for lookup
         $cleanedWord = strtolower(trim($word, ".,()"));
         
-        // Check if it's a stopword
         if (in_array($cleanedWord, $stopwords)) {
             $processedText .= "<span class='stopword' data-word='$word'>$word</span> ";
         } else {
-            // Query to check if the word is marked as green
-            $checkQuery = "SELECT isgreen FROM synonym_de WHERE word LIKE '%" . mysqli_real_escape_string($db, $cleanedWord) . "%' LIMIT 1";
+            $checkQuery = "SELECT isgreen FROM $synonymTable WHERE word LIKE '%" . mysqli_real_escape_string($db, $cleanedWord) . "%' LIMIT 1";
             $checkResult = mysqli_query($db, $checkQuery);
             $isGreen = false;
             if ($checkResult) {
@@ -89,12 +98,10 @@ function processText($text, $stopwords, $db) {
                 }
             }
             
-            // Add extra class if the word is green
             $class = $isGreen ? 'synonym-word green' : 'synonym-word';
             $processedText .= "<span class='$class' data-word='$word'>$word</span> ";
         }
     }
-
     return trim($processedText);
 }
 ?>
@@ -125,14 +132,12 @@ function processText($text, $stopwords, $db) {
                         <p style="color: red;">No symptoms found for master ID: <?php echo $masterId; ?></p>
                     <?php else : ?>
                         <ul>
-                            <?php foreach ($symptoms as $entry) : ?>
-                                <li class="symptom-item"
-                                    data-symptom-id="<?php echo $entry['id']; ?>"
-                                    data-original-symptom="<?php echo htmlspecialchars(strip_tags($entry['original_symptom'])); ?>">
-                                    <span><?php echo processText($entry['original_symptom'], $stopwords ,$db); ?></span>
-                                </li>
-                            <?php endforeach; ?>
-                        </ul>
+                    <?php foreach ($symptoms as $entry) : ?>
+                        <li class="symptom-item" data-symptom-id="<?php echo $entry['id']; ?>">
+                            <span><?php echo processText($entry['original_symptom'], $stopwords ,$db, $synonymTable); ?></span>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
                     <?php endif; ?>
                 </div>
             </div>
@@ -147,14 +152,23 @@ function processText($text, $stopwords, $db) {
                     <p>Select a word to see its synonym.</p>
                 </div>
 
-                <!-- Dynamic Check Korrekturen Button -->
-                <div id="korrekturen-container">
-                    <a id="korrekturen-btn" href="#" target="_blank" class="korrekturen-button">🔎 Check korrekturen for ""</a>
-                </div>
-                <!-- Dynamic Dictionary Network Button (Hidden Initially) -->
-<div id="woerterbuchnetz-container" style="display: none;">
-    <a id="woerterbuchnetz-btn" href="#" target="_blank" class="dictionary-button">🔎 Search in Wörterbuchnetz for ""</a>
-</div>
+                <?php if ($masterId == 5072) : ?>
+    <!-- Korrekturen Button for German Synonyms -->
+    <div id="korrekturen-container">
+        <a id="korrekturen-btn" href="#" target="_blank" class="korrekturen-button">🔎 Check Korrekturen</a>
+    </div>
+
+    <!-- Wörterbuchnetz Button for German Synonyms -->
+    <div id="woerterbuchnetz-container">
+        <a id="woerterbuchnetz-btn" href="#" target="_blank" class="dictionary-button">📖 Search in Wörterbuchnetz</a>
+    </div>
+
+<?php elseif ($masterId == 5075) : ?>
+    <!-- Dictionary.com Button for English Synonyms -->
+    <div id="dictionary-container">
+        <a id="dictionary-btn" href="#" target="_blank" class="dictionary-button">🔎 Search on Dictionary.com</a>
+    </div>
+<?php endif; ?>
 
 
 
@@ -192,10 +206,22 @@ function processText($text, $stopwords, $db) {
         <button id="saveComment">Save</button>
         <button id="closeComment">Close</button>
     </div>
+    <input type="hidden" id="masterId" value="<?php echo $masterId; ?>">
+
 </div>
 
 <!-- Load jQuery -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+  var masterId = <?php echo json_encode($masterId); ?>;
+</script>
+
+<script>
+    const masterId = <?= json_encode($masterId); ?>;
+</script>
+
+
 
 <!-- Load external JavaScript files -->
 <script src="assets/js/ui.js"></script>

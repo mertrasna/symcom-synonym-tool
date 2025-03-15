@@ -603,31 +603,33 @@ function addSynonymsToTable(word, synonyms) {
     $("#commentModal").hide();
   });
 
-  // ✅ Allow closing the modal
-  $(document).on("click", ".close-modal, #closeComment", function () {
-    $("#commentModal").hide();
-    $("#notSureCheckbox").prop("checked", false);
-  });
+  // Allow closing the modal
+$(document).on("click", ".close-modal, #closeComment", function () {
+  $("#commentModal").hide();
+  $("#notSureCheckbox").prop("checked", false);
+});
 
-  // Handle double-click to toggle stop word status
-  $(document).on("dblclick", ".synonym-word, .stopword", function (event) {
-    event.preventDefault();
-    let word = $(this).attr("data-word");
-    let isStopword = $(this).hasClass("stopword");
-    let url = isStopword ? "remove_filler_word.php" : "add_filler_word.php";
+// Handle double-click to toggle stopword status (works for both English and German)
+$(document).on("dblclick", ".synonym-word, .stopword", function (event) {
+  event.preventDefault();
+  let element = $(this);
+  let word = element.attr("data-word");
+  let url = element.hasClass("stopword")
+    ? "remove_filler_word.php"
+    : "add_filler_word.php";
 
-    $.ajax({
-      url: url,
-      type: "POST",
-      data: { word: word },
-      success: function (response) {
-        let res = JSON.parse(response);
-        if (res.success) {
-          $(this).toggleClass("synonym-word stopword");
-        }
-      }.bind(this),
-    });
+  $.ajax({
+    url: url,
+    type: "POST",
+    data: { word: word, master_id: masterId },
+    success: function (response) {
+      let res = JSON.parse(response);
+      if (res.success) {
+        element.toggleClass("synonym-word stopword");
+      }
+    },
   });
+});
 
   $(document).on("change", "#synonymTable tbody input[type='checkbox']", function () {
     let row = $(this).closest("tr"); // Find the current row
