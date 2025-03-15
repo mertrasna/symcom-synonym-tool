@@ -4,6 +4,7 @@ require_once './repositories/SynonymRepositoryInterface.php';
 class SynonymService {
     private $synonymRepository;
     private $scraperRepository;
+    
 
     public function __construct(SynonymRepositoryInterface $synonymRepository) {
         $this->synonymRepository = $synonymRepository;

@@ -1,50 +1,29 @@
 <?php
 include '../config/route.php';
 
-// Validate required POST parameters
-if (!isset($_POST['word'], $_POST['master_id'])) {
-    echo json_encode(['success' => false, 'message' => 'Missing parameters']);
-    exit;
-}
+// Get the masterId from POST (or default to 5075 if not provided)
+$masterId = isset($_POST['master_id']) ? intval($_POST['master_id']) : 5075;
 
-$word = trim($_POST['word']);
-$masterId = intval($_POST['master_id']);
+include './repositories/SynonymRepository.php';
+include './services/SynonymService.php';
 
-// Escape the search term
-$wordEscaped = mysqli_real_escape_string($db, $word);
+// Dependency Injection
+$synonymRepo = new SynonymRepository($db, $masterId);
+$synonymService = new SynonymService($synonymRepo);
 
-// Determine the synonym table based on master_id
-if ($masterId === 5072) {
-    $synonymTable = "synonym_de";
-} elseif ($masterId === 5075) {
-    $synonymTable = "synonym_en";
-} else {
-    // Default to English if the master ID is unknown
-    $synonymTable = "synonym_en";
-}
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (isset($_POST['word']) && !empty($_POST['word'])) {
+        $word = $_POST['word'];
 
-$query = "
-    SELECT * FROM $synonymTable 
-    WHERE 
-        word LIKE '%$wordEscaped%' OR
-        synonym LIKE '%$wordEscaped%' OR
-        cross_reference LIKE '%$wordEscaped%' OR 
-        synonym_partial_2 LIKE '%$wordEscaped%' OR
-        generic_term LIKE '%$wordEscaped%' OR
-        sub_term LIKE '%$wordEscaped%' OR
-        synonym_nn LIKE '%$wordEscaped%' OR
-        comment LIKE '%$wordEscaped%'
-";
+        // Process synonym search and update
+        $response = $synonymService->processSynonymSearchAndUpdate($word);
 
-$result = mysqli_query($db, $query);
-$synonyms = [];
-
-if ($result) {
-    while ($row = mysqli_fetch_assoc($result)) {
-        $synonyms[] = $row;
+        // Send response back to the client
+        echo json_encode($response);
+    } else {
+        echo json_encode(['success' => false, 'message' => 'No word provided']);
     }
+} else {
+    echo json_encode(['success' => false, 'message' => 'Invalid request method']);
 }
-
-echo json_encode(['success' => true, 'synonyms' => $synonyms]);
-exit;
 ?>
