@@ -1,14 +1,10 @@
 <?php
 include '../config/route.php';
-
-// Get master_id from POST (default to 5075 for English if not provided)
-$masterId = isset($_POST['master_id']) ? intval($_POST['master_id']) : 5075;
-
 include './repositories/SynonymRepository.php';
 include './services/SynonymService.php';
 
-// Dependency Injection: pass $masterId into the repository constructor
-$synonymRepo = new SynonymRepository($db, $masterId);
+// Dependency Injection
+$synonymRepo = new SynonymRepository($db);
 $synonymService = new SynonymService($synonymRepo);
 
 // Ensure correct character encoding
@@ -32,7 +28,7 @@ try {
             exit;
         }
 
-        // Prepare the data array (include master_id if needed by the service)
+        // Prepare the data array
         $data = [
             'word' => $word,
             'synonym' => $synonym,
@@ -45,11 +41,10 @@ try {
             'non_secure_flag' => $_POST['non_secure_flag'] ?? '1',
             'source_reference_ns' => $_POST['source_reference_ns'] ?? '1',
             'active' => $_POST['active'] ?? '1',
-            'existing_synonym' => $_POST['existing_synonym'] ?? '',
-            'master_id' => $masterId
+            'existing_synonym' => $_POST['existing_synonym'] ?? ''
         ];
 
-        // Call the service method to add/update the synonym
+        // Call the service method to add/update synonym
         $response = $synonymService->processAddOrUpdateSynonym($data);
 
         // Return response back to the client
