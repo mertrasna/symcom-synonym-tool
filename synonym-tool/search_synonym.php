@@ -13,7 +13,8 @@ $synonymService = new SynonymService($synonymRepo);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['word']) && !empty($_POST['word'])) {
-        $word = $_POST['word'];
+        $word = trim($_POST['word']);
+        $word = preg_replace('/[^\w-]/', '', $word); // Remove punctuation
 
         // Process synonym search and update
         $response = $synonymService->processSynonymSearchAndUpdate($word);

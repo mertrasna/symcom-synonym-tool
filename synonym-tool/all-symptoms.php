@@ -83,27 +83,27 @@ function processText($text, $stopwords, $db, $synonymTable) {
 
     foreach ($words as $word) {
         // Clean word for lookup
-        $cleanedWord = strtolower(trim($word, ".,()"));
-        
+        $cleanedWord = strtolower(preg_replace('/[^\w-]/', '', $word)); // Improved cleanup
+
         if (in_array($cleanedWord, $stopwords)) {
             $processedText .= "<span class='stopword' data-word='$word'>$word</span> ";
         } else {
-            $checkQuery = "SELECT isgreen FROM $synonymTable WHERE word LIKE '%" . mysqli_real_escape_string($db, $cleanedWord) . "%' LIMIT 1";
+            $checkQuery = "SELECT isgreen FROM $synonymTable WHERE word = '" . mysqli_real_escape_string($db, $cleanedWord) . "' LIMIT 1";
             $checkResult = mysqli_query($db, $checkQuery);
+
             $isGreen = false;
-            if ($checkResult) {
+            if ($checkResult && mysqli_num_rows($checkResult) > 0) {
                 $checkRow = mysqli_fetch_assoc($checkResult);
-                if ($checkRow && isset($checkRow['isgreen']) && $checkRow['isgreen'] == 1) {
-                    $isGreen = true;
-                }
+                $isGreen = ($checkRow['isgreen'] == 1);
             }
-            
+
             $class = $isGreen ? 'synonym-word green' : 'synonym-word';
             $processedText .= "<span class='$class' data-word='$word'>$word</span> ";
         }
     }
     return trim($processedText);
 }
+
 ?>
 
 <div class="content-wrapper">
