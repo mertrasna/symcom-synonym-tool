@@ -55,7 +55,7 @@ $(document).ready(function () {
                 dataType: "json",
                 success: function (response) {
                     if (response.success && response.synonyms.length > 0) {
-                        let popupContent = "<strong></strong><br><br>";
+                        let popupContent = "<strong></strong>";
 
                         response.synonyms.forEach(info => {
                             popupContent += `
