@@ -45,14 +45,17 @@ class SynonymService {
         }
     }
 
-    public function processSynonymSearchAndUpdate(string $word): array {
+    public function processSynonymSearchAndUpdate(string $word): array
+    {
         $synonyms = $this->synonymRepository->searchSynonym($word);
 
         if (!empty($synonyms)) {
+            $non_secure_flag = 1; // or 0, based on your actual requirements
             if ($this->synonymRepository->updateIsGreen($word)) {
                 return [
                     'success' => true,
                     'synonyms' => $synonyms,
+                    'non_secure_flag' => $non_secure_flag,
                     'message' => 'Synonym updated successfully'
                 ];
             } else {

@@ -11,39 +11,32 @@ include './services/SynonymService.php';
 $synonymRepo = new SynonymRepository($db, $masterId);
 $synonymService = new SynonymService($synonymRepo);
 
-
 // Ensure correct character encoding
 @header('Content-Type: application/json; charset=UTF-8');
 
 try {
     if (isset($_POST['word']) && !empty(trim($_POST['word']))) {
-        // **Sanitize word input (remove extra spaces, commas, and punctuation)**
-        $word = trim($_POST['word'], " ,\t\n\r\0\x0B)");
-        $word = preg_replace('/[^a-zA-Z0-9-]/', '', $word); // Remove special characters except '-'
-
-        // **Sanitize synonym list**
-        $synonym = trim($_POST['synonym'] ?? '', " ,\t\n\r\0\x0B)"); // Remove trailing spaces, commas, and )
+        // Sanitize the word (remove trailing commas, spaces, hidden characters)
+        $word = trim($_POST['word'], " ,\t\n\r\0\x0B"); 
+        
+        // Process the synonyms
+        $synonym = trim($_POST['synonym'] ?? '', " ,\t\n\r\0\x0B"); // Remove trailing spaces & commas
         $synonym = preg_replace('/\d+/', '', $synonym); // Remove numbers
         $synonym = preg_replace('/[\r\n]+/', ', ', $synonym); // Replace newlines with commas
         $synonym = preg_replace('/\./', '', $synonym); // Remove periods
-        $synonym = preg_replace('/[^a-zA-Z0-9,-]/', '', $synonym); // Allow only letters, numbers, hyphens, and commas
+        $synonym = implode(',', array_map('trim', explode(',', $synonym))); // Remove extra spaces
 
-        // **Convert synonym list to array, clean up, and remove duplicates**
-        $synonymsArray = array_unique(array_filter(array_map('trim', explode(',', $synonym))));
-
-        // **Convert array back to string**
-        $cleanedSynonyms = implode(', ', $synonymsArray);
-
-        // **Prevent empty synonym insertion**
-        if (empty($cleanedSynonyms)) {
+        // Prevent empty synonyms from being inserted
+        if (empty($synonym)) {
             echo json_encode(["success" => false, "message" => "Synonym list is empty after processing."]);
             exit;
         }
-
-        // **Prepare data array**
+        
+        
+        // Prepare the data array (include master_id if needed by the service)
         $data = [
             'word' => $word,
-            'synonym' => $cleanedSynonyms,
+            'synonym' => $synonym,
             'cross_reference' => $_POST['cross_reference'] ?? '',
             'synonym_partial_2' => $_POST['synonym_partial_2'] ?? '',
             'generic_term' => $_POST['generic_term'] ?? '',
@@ -57,10 +50,10 @@ try {
             'master_id' => $masterId
         ];
 
-        // **Call service method to add/update the synonym**
+        // Call the service method to add/update the synonym
         $response = $synonymService->processAddOrUpdateSynonym($data);
 
-        // **Return response**
+        // Return response back to the client
         echo json_encode($response);
     } else {
         echo json_encode(["success" => false, "message" => "No valid word provided."]);

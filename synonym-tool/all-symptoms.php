@@ -83,27 +83,27 @@ function processText($text, $stopwords, $db, $synonymTable) {
 
     foreach ($words as $word) {
         // Clean word for lookup
-        $cleanedWord = strtolower(preg_replace('/[^\w-]/', '', $word)); // Improved cleanup
-
+        $cleanedWord = strtolower(trim($word, ".,()"));
+        
         if (in_array($cleanedWord, $stopwords)) {
             $processedText .= "<span class='stopword' data-word='$word'>$word</span> ";
         } else {
-            $checkQuery = "SELECT isgreen FROM $synonymTable WHERE word = '" . mysqli_real_escape_string($db, $cleanedWord) . "' LIMIT 1";
+            $checkQuery = "SELECT isgreen FROM $synonymTable WHERE word LIKE '%" . mysqli_real_escape_string($db, $cleanedWord) . "%' LIMIT 1";
             $checkResult = mysqli_query($db, $checkQuery);
-
             $isGreen = false;
-            if ($checkResult && mysqli_num_rows($checkResult) > 0) {
+            if ($checkResult) {
                 $checkRow = mysqli_fetch_assoc($checkResult);
-                $isGreen = ($checkRow['isgreen'] == 1);
+                if ($checkRow && isset($checkRow['isgreen']) && $checkRow['isgreen'] == 1) {
+                    $isGreen = true;
+                }
             }
-
+            
             $class = $isGreen ? 'synonym-word green' : 'synonym-word';
             $processedText .= "<span class='$class' data-word='$word'>$word</span> ";
         }
     }
     return trim($processedText);
 }
-
 ?>
 
 <div class="content-wrapper">
@@ -185,9 +185,9 @@ function processText($text, $stopwords, $db, $synonymTable) {
                             </tbody>
                         </table>
                         <div>
-                            <input type="checkbox" id="notSureCheckbox"> Not Sure
-                            <!-- The comment section is now removed from here -->
-                        </div>
+    <input type="checkbox" id="notSureCheckbox" name="notSure" value="1"> Not Sure
+</div>
+
                         <button type="submit" id="submitSynonyms">Submit</button>
                     </form>
                 </div>
@@ -221,6 +221,13 @@ function processText($text, $stopwords, $db, $synonymTable) {
     const masterId = <?= json_encode($masterId); ?>;
 </script>
 
+<script>
+  var nonSecureFlag = <?php echo json_encode($non_secure_flag); ?>;
+</script>
+
+
+
+
 
 
 <!-- Load external JavaScript files -->
@@ -229,8 +236,7 @@ function processText($text, $stopwords, $db, $synonymTable) {
 <script src="assets/js/eventListeners.js"></script>
 <script src="assets/js/helpers.js"></script>
 <script src="assets/js/modal.js"></script>
-
-
+<script src="assets/js/hover.js"></script>
 
 
 <?php include '../inc/footer.php';?>

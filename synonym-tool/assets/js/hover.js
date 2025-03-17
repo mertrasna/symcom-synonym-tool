@@ -60,17 +60,11 @@ $(document).ready(function () {
                         response.synonyms.forEach(info => {
                             popupContent += `
                                 <strong>Word:</strong> ${info.word || 'N/A'}<br>
-                                <strong>Root Word:</strong> ${info.root_word || 'N/A'}<br>
                                 <strong>Synonym:</strong> ${info.synonym || 'N/A'}<br>
-                                <strong>Cross Reference:</strong> ${info.cross_reference || 'N/A'}<br>
-                                <strong>Partial Synonym 2:</strong> ${info.synonym_partial_2 || 'N/A'}<br>
-                                <strong>General Synonym:</strong> ${info.generic_term || 'N/A'}<br>
+                                <strong>Cross Reference:</strong> ${info.cross_reference || 'N/A'}<br>    
+                                <strong>Generic term:</strong> ${info.generic_term || 'N/A'}<br>
                                 <strong>Sub-Term:</strong> ${info.sub_term || 'N/A'}<br>
-                                <strong>Synonym NN:</strong> ${info.synonym_nn || 'N/A'}<br>
-                                <strong>Comment:</strong> ${info.comment || 'N/A'}<br>
-                                <strong>Status:</strong> ${info.non_secure_flag == 1 ? 'Active' : 'Inactive'}<br>
-                                <strong>Is Green:</strong> ${info.isgreen == 1 ? 'Yes' : 'No'}<br>
-                                <strong>Created At:</strong> ${info.created_at || 'N/A'}<br><br>
+                                
                             `;
                         });
 

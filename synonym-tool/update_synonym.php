@@ -17,6 +17,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $word     = isset($_POST['word']) ? trim($_POST['word']) : '';
     $rootWord = isset($_POST['root_word']) ? trim($_POST['root_word']) : '';
     $comment  = isset($_POST['comment']) ? trim($_POST['comment']) : '';
+    $notSure = isset($_POST['notSure']) ? 1 : 0;
 
     // 3) Decode 'synonyms' JSON safely
     $selectedSynonyms = [];
@@ -33,7 +34,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     }
 
     // 5) Pass data to service
-    $response = $synonymService->processSynonymUpdate($word, $rootWord, $comment, $selectedSynonyms);
+    $response = $synonymService->processSynonymUpdate($word, $rootWord, $comment, $selectedSynonyms, $notSure);
+
 
     // 6) Output final JSON
     echo json_encode($response);

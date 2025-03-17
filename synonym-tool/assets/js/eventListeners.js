@@ -4,6 +4,11 @@ let selectedWord = "";
 let pendingSynonyms = [];
 
 $(document).ready(function () {
+  if (typeof nonSecureFlag !== "undefined" && nonSecureFlag == 1) {
+    $("#notSureCheckbox").prop("checked", true);
+  }
+
+  
   // Update URL with new offset and reload page
   function updateUrlWithOffset(newOffset) {
     const url = new URL(window.location.href);
@@ -192,9 +197,19 @@ $(document).on("click", ".synonym-word, .stopword", function () {
 
               tableHTML += `</tbody></table>`;
 
-              // Update the table dynamically without refreshing
-              $("#synonymTableContainer").html(tableHTML);
-            },
+              // Update the synonyms table container with the table HTML.
+            // The notSureCheckbox is assumed to be outside of this container and won't be overwritten.
+            $("#synonymTableContainer").html(tableHTML);
+            if (res.non_secure_flag && res.non_secure_flag == 1) {
+              $("#synonymForm #notSureCheckbox").prop("checked", true);
+          } else {
+              $("#synonymForm #notSureCheckbox").prop("checked", false);
+          }
+          
+            console.log("non_secure_flag from response:", res.non_secure_flag);
+
+          },
+
             error: function (xhr, status, error) {
               console.error("AJAX Error (fetch_root_word.php):", status, error);
             },
@@ -210,6 +225,58 @@ $(document).on("click", ".synonym-word, .stopword", function () {
       },
     });
   });
+
+  // Function to wrap the selected text in a single span (combined) with a highlight and return its text
+function linkSelectedWords() {
+  let selection = window.getSelection();
+  if (!selection.rangeCount) return "";
+  let range = selection.getRangeAt(0);
+  let text = selection.toString().trim();
+  
+  // If the selection contains whitespace, remove them to form a single word
+  if (/\s/.test(text)) {
+    text = text.replace(/\s+/g, "");
+  }
+  
+  // Create a span with classes "synonym-word" and "highlighted"
+  let span = document.createElement("span");
+  span.classList.add("synonym-word", "highlighted");
+  span.setAttribute("data-word", text);
+  span.textContent = text;
+  
+  // Replace the selected content with this span
+  range.deleteContents();
+  range.insertNode(span);
+  selection.removeAllRanges();
+  
+  return span.textContent.trim();
+}
+
+
+// Use Ctrl+K or right-click to call processLinkedWords()
+function processLinkedWords() {
+  const linkedText = linkSelectedWords();
+  if (linkedText) {
+    console.log("Linked word:", linkedText);
+    fetchChatGPTSynonyms(linkedText);
+  } else {
+    console.warn("No words selected to link.");
+  }
+}
+
+$(document).keydown(function (event) {
+  if ((event.ctrlKey || event.metaKey) && event.key === "k") {
+    event.preventDefault();
+    processLinkedWords();
+  }
+});
+
+$(document).on("contextmenu", function (event) {
+  if ($(event.target).hasClass("synonym-word")) {
+    event.preventDefault();
+    processLinkedWords();
+  }
+});
 
   function fetchChatGPTSynonyms(selectedWord) {
     console.log(`🔎 Fetching synonyms from ChatGPT for: ${selectedWord}`);
@@ -886,25 +953,26 @@ function fetchSynonymsFromOpenThesaurus(selectedWord) {
     }
   }
 
-  // ✅ Use event delegation so it works for dynamically added elements
-  $(document).on("change", "#notSureCheckbox", function () {
-    if (this.checked) {
-      $("#commentModal").show();
-    } else {
-      $("#commentText").val("");
-    }
-  });
-
-  // ✅ Close modal and keep checkbox checked
-  $(document).on("click", "#saveComment", function () {
-    $("#commentModal").hide();
-  });
-
-  // Allow closing the modal
-$(document).on("click", ".close-modal, #closeComment", function () {
-  $("#commentModal").hide();
-  $("#notSureCheckbox").prop("checked", false);
+ // ✅ Use event delegation so it works for dynamically added elements
+ $(document).on("change", "#notSureCheckbox", function () {
+  if (this.checked) {
+    $("#commentModal").show();
+  } else {
+    $("#commentText").val("");
+  }
 });
+
+// ✅ Close modal and keep checkbox checked
+$(document).on("click", "#saveComment", function () {
+  $("#commentModal").hide();
+});
+
+// Allow closing the modal
+$(document).on("click", ".close-modal, #closeComment", function () {
+$("#commentModal").hide();
+$("#notSureCheckbox").prop("checked", false);
+});
+
 
 // Handle double-click to toggle stopword status (works for both English and German)
 $(document).on("dblclick", ".synonym-word, .stopword", function (event) {
