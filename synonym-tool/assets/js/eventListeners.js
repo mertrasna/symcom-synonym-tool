@@ -477,7 +477,7 @@ function fetchSynonymsFromDictionary(selectedWord) {
   console.log(`🔎 Fetching synonyms from Dictionary.com for: ${selectedWord}`);
   selectedWord = selectedWord.replace(/[.,!?;:]$/, "").trim();
 
-  function fetchWord(word) {
+  function fetchWord(word, originalWord = selectedWord) {
     const targetUrl = `https://www.dictionary.com/browse/${encodeURIComponent(word)}`;
     const proxyUrl = `proxy_dictionary.php?url=${encodeURIComponent(targetUrl)}`;
 
@@ -491,6 +491,7 @@ function fetchSynonymsFromDictionary(selectedWord) {
 
         let synonymList = [];
         let strongElements = doc.querySelectorAll("strong");
+
         strongElements.forEach((el) => {
           if (el.textContent.trim().toLowerCase().includes("synonyms:")) {
             let containerText = el.parentElement.textContent;
@@ -505,84 +506,179 @@ function fetchSynonymsFromDictionary(selectedWord) {
           }
         });
 
-        if (synonymList.length === 0) {
-          let newWord = null;
+        // ✅ If synonyms are found, save them under the original word
+        if (synonymList.length > 0) {
+          console.log("✅ Dictionary.com synonyms found:", synonymList);
+          addSynonymsToTable(originalWord, synonymList);
 
-          if (word.endsWith("s") && word.toLowerCase() !== "is") {
-            newWord = word.slice(0, -1); // Remove trailing 's'
-          } else if (word.endsWith("ing") && word.length > 4) {
-            if (word.endsWith("ling") && word.length > 6) {
-              newWord = word.slice(0, -3) + "e"; // "grumbling" → "grumble"
-            } else {
-              newWord = word.slice(0, -3); // "running" → "run"
-            }
-          } else if (word.endsWith("ed")) {
-            if (word.endsWith("ied")) {
-              newWord = word.slice(0, -3) + "y"; // "studied" → "study"
-            } else {
-              newWord = word.slice(0, -2) + (word[word.length - 3] === "e" ? "" : "e"); // "disposed" → "dispose"
-            }
-          } else if (word.endsWith("d") && word.length > 3) {
-            newWord = word.slice(0, -1) + (word[word.length - 2] === "e" ? "" : "e"); // "loaded" → "load"
-          } else if (word.endsWith("ness") && word.length > 5) {
-            newWord = word.slice(0, -4); // Remove 'ness'
-            if (newWord.endsWith("i")) {
-              newWord = newWord.slice(0, -1) + "y"; // "happiness" → "happy"
-            }
-          }
+          const synonymData = {
+            word: originalWord, // ✅ Always save under the original word
+            synonym: synonymList.join(","),
+            cross_reference: "",
+            synonym_partial_2: "",
+            generic_term: "",
+            sub_term: "",
+            synonym_nn: "",
+            comment: "",
+            non_secure_flag: "0",
+            source_reference_ns: "1",
+            active: "1",
+            master_id: 5075
+          };
 
+          console.log("📤 Sending data to insert_synonym.php:", synonymData);
 
-          if (newWord) {
-            console.log(`🔄 No synonyms for '${word}'. Trying '${newWord}'`);
-            fetchWord(newWord);
+          $.ajax({
+            url: "insert_synonym.php",
+            type: "POST",
+            data: synonymData,
+            dataType: "json",
+            success: function(response) {
+              console.log("✅ Insert Synonym Response:", response);
+            },
+            error: function(xhr, status, error) {
+              console.error("❌ AJAX Error (insert_synonym.php - Dictionary.com):", status, error);
+              console.error("Response Text:", xhr.responseText);
+            }
+          });
+
+        } else {
+          // ❌ No synonyms found, try searching with a transformed word
+          let transformedWord = transformWord(word);
+          if (transformedWord && transformedWord !== word) {
+            console.log(`🔄 No synonyms for '${word}'. Trying '${transformedWord}'`);
+            fetchWord(transformedWord, originalWord); // ✅ Keep the original word for saving
           } else {
             console.log(`ℹ️ No synonyms found for '${word}' on Dictionary.com.`);
           }
-          return;
         }
-
-        console.log("Dictionary.com synonyms found:", synonymList);
-        addSynonymsToTable(word, synonymList);
-
-        const strictSynonym = synonymList.join(",");
-        const synonymData = {
-          word: word,
-          synonym: strictSynonym,
-          cross_reference: "",
-          synonym_partial_2: "",
-          generic_term: "",
-          sub_term: "",
-          synonym_nn: "",
-          comment: "",
-          non_secure_flag: "0",
-          source_reference_ns: "1",
-          active: "1",
-          master_id: 5075
-        };
-
-        console.log("Sending data to insert_synonym.php (Dictionary.com):", synonymData);
-
-        $.ajax({
-          url: "insert_synonym.php",
-          type: "POST",
-          data: synonymData,
-          dataType: "json",
-          success: function(response) {
-            console.log("Insert Synonym Response (Dictionary.com):", response);
-            if (response.success) {
-              console.log("✅ Successfully saved Dictionary.com synonyms for:", word);
-            } else {
-              console.warn("⚠️ Error saving Dictionary.com synonyms:", response.message);
-            }
-          },
-          error: function(xhr, status, error) {
-            console.error("AJAX Error (insert_synonym.php - Dictionary.com):", status, error);
-            console.error("Response Text:", xhr.responseText);
-          }
-        });
       },
       error: function(xhr, status, error) {
-        console.error("AJAX Error (Dictionary.com fetch via proxy):", status, error);
+        console.error("❌ AJAX Error (Dictionary.com fetch via proxy):", status, error);
+      }
+    });
+  }
+
+  fetchWord(selectedWord);
+}
+
+// ✅ Word transformation function: Only changes the word for searching, not saving
+function transformWord(word) {
+  let transformedWord = null;
+
+  if (word.endsWith("s") && word.toLowerCase() !== "is") {
+    transformedWord = word.slice(0, -1); // "runs" → "run"
+  } else if (word.endsWith("ing") && word.length > 5) {
+    if (word.endsWith("ying")) {
+      transformedWord = word.slice(0, -3) + "ie"; // "crying" → "cry"
+    } else if (word.endsWith("eing")) {
+      transformedWord = word.slice(0, -3); // "seeing" → "see"
+    } else if (word.endsWith("ling") && word.length > 6) {
+      transformedWord = word.slice(0, -3) + "e"; // "grumbling" → "grumble"
+    } else {
+      transformedWord = word.slice(0, -3) + "e"; // "choosing" → "choose"
+    }
+  } else if (word.endsWith("ed") && word.length > 4) {
+    if (word.endsWith("ied")) {
+      transformedWord = word.slice(0, -3) + "y"; // "studied" → "study"
+    } else if (word.endsWith("eed")) {
+      transformedWord = word.slice(0, -2); // "freed" → "free"
+    } else {
+      transformedWord = word.slice(0, -2) + (word[word.length - 3] === "e" ? "" : "e");
+    }
+  } else if (word.endsWith("d") && word.length > 3) {
+    transformedWord = word.slice(0, -1) + (word[word.length - 2] === "e" ? "" : "e"); // "loaded" → "load"
+  } else if (word.endsWith("ness") && word.length > 5) {
+    transformedWord = word.slice(0, -4); // "happiness" → "happy"
+    if (transformedWord.endsWith("i")) {
+      transformedWord = transformedWord.slice(0, -1) + "y";
+    }
+  }
+
+  return transformedWord;
+}
+
+
+function fetchSynonymsFromThesaurus(selectedWord) {
+  console.log(`🔎 Fetching synonyms from Thesaurus.com for: ${selectedWord}`);
+  selectedWord = selectedWord.replace(/[.,!?;:]$/, "").trim();
+
+  function fetchWord(word, originalWord = selectedWord) {
+    const targetUrl = `https://www.thesaurus.com/browse/${encodeURIComponent(word)}`;
+    const proxyUrl = `proxy_thesaurus.php?url=${encodeURIComponent(targetUrl)}`;
+
+    $.ajax({
+      url: proxyUrl,
+      type: "GET",
+      dataType: "html",
+      success: function(response) {
+        let parser = new DOMParser();
+        let doc = parser.parseFromString(response, "text/html");
+
+        let synonymList = [];
+        let strongEl = Array.from(doc.querySelectorAll("p.wRiDLzD17ooqYbL7AewD"))
+          .find(el => el.textContent.trim().toLowerCase() === "strongest matches");
+
+        if (strongEl) {
+          let container = strongEl.parentElement;
+          let links = container.querySelectorAll("a");
+          links.forEach(link => {
+            let text = link.textContent.trim();
+            if (text && !synonymList.includes(text)) {
+              synonymList.push(text);
+            }
+          });
+        }
+
+        // ✅ If synonyms are found, save them under the original word
+        if (synonymList.length > 0) {
+          console.log("✅ Thesaurus.com synonyms found:", synonymList);
+          addSynonymsToTable(originalWord, synonymList);
+
+          const synonymData = {
+            word: originalWord, // ✅ Always save under the original word
+            synonym: synonymList.join(","),
+            cross_reference: "",
+            synonym_partial_2: "",
+            generic_term: "",
+            sub_term: "",
+            synonym_nn: "",
+            comment: "",
+            non_secure_flag: "0",
+            source_reference_ns: "1",
+            active: "1",
+            master_id: 5075
+          };
+
+          console.log("📤 Sending data to insert_synonym.php:", synonymData);
+
+          $.ajax({
+            url: "insert_synonym.php",
+            type: "POST",
+            data: synonymData,
+            dataType: "json",
+            success: function(response) {
+              console.log("✅ Insert Synonym Response:", response);
+            },
+            error: function(xhr, status, error) {
+              console.error("❌ AJAX Error (insert_synonym.php - Thesaurus.com):", status, error);
+              console.error("Response Text:", xhr.responseText);
+            }
+          });
+
+        } else {
+          // ❌ No synonyms found, try searching with a transformed word
+          let transformedWord = transformWord(word);
+          if (transformedWord && transformedWord !== word) {
+            console.log(`🔄 No synonyms for '${word}'. Trying '${transformedWord}'`);
+            fetchWord(transformedWord, originalWord); // ✅ Keep the original word for saving
+          } else {
+            console.log(`ℹ️ No synonyms found for '${word}' on Thesaurus.com.`);
+          }
+        }
+      },
+      error: function(xhr, status, error) {
+        console.error("❌ AJAX Error (Thesaurus.com fetch via proxy):", status, error);
       }
     });
   }
