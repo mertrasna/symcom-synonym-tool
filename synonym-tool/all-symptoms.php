@@ -232,4 +232,5 @@ function processText($text, $stopwords, $db, $synonymTable) {
 
 
 
+
 <?php include '../inc/footer.php';?>

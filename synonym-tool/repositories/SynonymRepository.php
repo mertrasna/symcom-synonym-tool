@@ -57,7 +57,7 @@ class SynonymRepository implements SynonymRepositoryInterface {
         $query = "
             SELECT * FROM {$this->tableName} 
             WHERE 
-                word LIKE '%$wordEscaped%'         
+                word LIKE '$wordEscaped'         
         ";
 
         $result = mysqli_query($this->db, $query);
