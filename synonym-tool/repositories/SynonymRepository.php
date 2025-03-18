@@ -36,6 +36,26 @@ class SynonymRepository implements SynonymRepositoryInterface {
         return $success;
     }
 
+    public function insertPhrase(string $word): bool {
+        $wordEscaped = mysqli_real_escape_string($this->db, $word);
+    
+        $insert_query = "
+            INSERT INTO {$this->tableName} (word, isyellow)
+            VALUES ('$wordEscaped', 1)
+            ON DUPLICATE KEY UPDATE isyellow = 1
+        ";
+    
+        error_log("Insert Phrase Query: " . $insert_query);
+        
+        if (!mysqli_query($this->db, $insert_query)) {
+            error_log("Insert Error: " . mysqli_error($this->db));
+            return false;
+        }
+        
+        return true;
+    }
+    
+
     public function updateWord(
         string $word,
         string $rootWord,
@@ -91,22 +111,43 @@ class SynonymRepository implements SynonymRepositoryInterface {
     }
 
     public function updateIsYellow(string $word): bool {
-        $wordEscaped = mysqli_real_escape_string($this->db, $word);
-        $update_query = "
-            UPDATE {$this->tableName} 
-            SET isyellow = 1
-            WHERE 
-                word LIKE '%$wordEscaped%' OR
-                synonym LIKE '%$wordEscaped%' OR
-                cross_reference LIKE '%$wordEscaped%' OR
-                synonym_partial_2 LIKE '%$wordEscaped%' OR
-                generic_term LIKE '%$wordEscaped%' OR
-                sub_term LIKE '%$wordEscaped%' OR
-                synonym_nn LIKE '%$wordEscaped%' OR
-                comment LIKE '%$wordEscaped%'
-        ";
-        return mysqli_query($this->db, $update_query);
+        // Normalize and trim the word
+        $wordEscaped = trim(mysqli_real_escape_string($this->db, $word));
+        
+        // Force update only if the word is a phrase (more than one word)
+        if (str_word_count($wordEscaped) > 1) {
+            // We'll use an exact match (ignoring case) to force the update
+            $updateQuery = "
+                UPDATE {$this->tableName} 
+                SET isyellow = 1, isgreen = 0 
+                WHERE LOWER(word) = LOWER(?)
+            ";
+            
+            $stmt = $this->db->prepare($updateQuery);
+            if ($stmt === false) {
+                error_log("Prepare failed: " . $this->db->error);
+                return false;
+            }
+            
+            $stmt->bind_param("s", $wordEscaped);
+            $success = $stmt->execute();
+            $affectedRows = $stmt->affected_rows;
+            
+            if (!$success) {
+                error_log("Update IsYellow Error: " . $stmt->error);
+                $stmt->close();
+                return false;
+            }
+            
+            error_log("Force updated isyellow for '$wordEscaped' - Rows Affected: $affectedRows");
+            $stmt->close();
+            return true;
+        } else {
+            error_log("Word '$wordEscaped' is not a phrase, skipping isyellow update.");
+            return false;
+        }
     }
+    
     
     
     // Method to scrape synonym data from the website

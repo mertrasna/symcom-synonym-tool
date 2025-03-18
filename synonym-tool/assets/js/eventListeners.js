@@ -84,15 +84,17 @@ $(document).on("click", ".synonym-word, .stopword", function () {
     selectedWord = $(this).attr("data-word").trim();
     console.log("Selected Word:", selectedWord);
 
-    // check if the word is already greem (processed)
-    const isGreen = $(this).hasClass("green");
+    
+    
 
     // Extract master id from URL (or default if needed)
   const urlParams = new URLSearchParams(window.location.search);
   const mid = urlParams.get("mid") || "5075"; // Default to 5075
 
 
-    if (!isGreen) {
+  let isProcessed = $(this).hasClass("green") || $(this).hasClass("yellow-word");
+
+  if (!isProcessed) {
       if (mid === "5075") {
         // For English, use Dictionary.com
         fetchSynonymsFromDictionary(selectedWord);
@@ -303,7 +305,7 @@ $(document).on("contextmenu", function (event) {
           content: `Give me a list of 5 ${language} synonyms for the word "${selectedWord}", separated by commas.`,
         },
       ],
-      max_tokens: 50,
+      max_tokens: 5,
       temperature: 0.7,
     };
   
