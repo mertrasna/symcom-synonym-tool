@@ -85,27 +85,44 @@ function processText($text, $stopwords, $db, $synonymTable) {
     foreach ($words as $word) {
         // Clean word for lookup
         $cleanedWord = strtolower(trim($word, ".,()"));
-        
+
         if (in_array($cleanedWord, $stopwords)) {
+            // ✅ If word is a stopword, mark it accordingly
             $processedText .= "<span class='stopword' data-word='$word'>$word</span> ";
         } else {
-            $checkQuery = "SELECT isgreen FROM $synonymTable WHERE word LIKE '%" . mysqli_real_escape_string($db, $cleanedWord) . "%' LIMIT 1";
+            // ✅ Check if the word/phrase exists in the database
+            $checkQuery = "SELECT isgreen, word FROM $synonymTable WHERE word LIKE '%" . mysqli_real_escape_string($db, $cleanedWord) . "%' LIMIT 1";
             $checkResult = mysqli_query($db, $checkQuery);
             $isGreen = false;
+            $isYellow = false;
+
             if ($checkResult) {
                 $checkRow = mysqli_fetch_assoc($checkResult);
                 if ($checkRow && isset($checkRow['isgreen']) && $checkRow['isgreen'] == 1) {
                     $isGreen = true;
+
+                    // ✅ If the word is a phrase (contains space), make it yellow
+                    if (strpos($checkRow['word'], ' ') !== false) {
+                        $isYellow = true;
+                    }
                 }
             }
-            
-            $class = $isGreen ? 'synonym-word green' : 'synonym-word';
+
+            // ✅ Assign correct class based on condition
+            if ($isYellow) {
+                $class = 'synonym-word yellow-word';
+            } elseif ($isGreen) {
+                $class = 'synonym-word green';
+            } else {
+                $class = 'synonym-word'; // Default to blue
+            }
+
             $processedText .= "<span class='$class' data-word='$word'>$word</span> ";
         }
     }
     return trim($processedText);
 }
-?>
+?> 
 
 
 <div class="content-wrapper">
@@ -236,7 +253,7 @@ function processText($text, $stopwords, $db, $synonymTable) {
 <script src="assets/js/eventListeners.js"></script>
 <script src="assets/js/helpers.js"></script>
 <script src="assets/js/modal.js"></script>
-
+<script src="assets/js/hover.js"></script>
 
 
 <?php include '../inc/footer.php';?>

@@ -226,38 +226,43 @@ $(document).on("click", ".synonym-word, .stopword", function () {
     });
   });
 
-  // Function to wrap the selected text in a single span (combined) with a highlight and return its text
+
+// Function to wrap the selected text as a phrase, preserving spaces
 function linkSelectedWords() {
   let selection = window.getSelection();
   if (!selection.rangeCount) return "";
+
   let range = selection.getRangeAt(0);
   let text = selection.toString().trim();
-  
-  // If the selection contains whitespace, remove them to form a single word
-  if (/\s/.test(text)) {
-    text = text.replace(/\s+/g, "");
+
+  // Ensure the selection contains multiple words (i.e. a phrase)
+  if (text.split(/\s+/).length < 2) {
+    console.warn("Selection must contain multiple words to be a phrase.");
+    return "";
   }
-  
-  // Create a span with classes "synonym-word" and "highlighted"
+
+  // Normalize spaces (convert multiple spaces to a single space)
+  text = text.replace(/\s+/g, " ");
+
+  // Create a span to wrap the whole phrase
   let span = document.createElement("span");
-  span.classList.add("synonym-word", "highlighted");
-  span.setAttribute("data-word", text);
+  span.classList.add("synonym-word", "yellow-word"); // Mark as yellow-word for phrases
+  span.setAttribute("data-word", text); // Store the full phrase as is
   span.textContent = text;
-  
+
   // Replace the selected content with this span
   range.deleteContents();
   range.insertNode(span);
   selection.removeAllRanges();
-  
-  return span.textContent.trim();
-}
 
+  return text;
+}
 
 // Use Ctrl+K or right-click to call processLinkedWords()
 function processLinkedWords() {
   const linkedText = linkSelectedWords();
   if (linkedText) {
-    console.log("Linked word:", linkedText);
+    console.log("Linked phrase:", linkedText);
     fetchChatGPTSynonyms(linkedText);
   } else {
     console.warn("No words selected to link.");
@@ -277,6 +282,7 @@ $(document).on("contextmenu", function (event) {
     processLinkedWords();
   }
 });
+
 
   function fetchChatGPTSynonyms(selectedWord) {
     console.log(`🔎 Fetching synonyms from ChatGPT for: ${selectedWord}`);
@@ -1054,8 +1060,12 @@ $(document).on("submit", "#synonymForm", function (event) {
       console.log("Update response:", res);
       alert(res.message);
 
-      // Mark the selected word as processed
-      $(`.synonym-word[data-word='${selectedWord}']`).addClass("green");
+      // If the selected word contains a space, mark it with yellow-word (phrase); else mark it as green.
+      if (selectedWord.indexOf(" ") !== -1) {
+        $(`.synonym-word[data-word='${selectedWord}']`).addClass("yellow-word");
+      } else {
+        $(`.synonym-word[data-word='${selectedWord}']`).addClass("green");
+      }
 
       // Automatically move to the next word (if any)
       clickNextClickableWord();

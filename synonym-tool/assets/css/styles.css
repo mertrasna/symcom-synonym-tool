@@ -231,3 +231,9 @@
 #synonymTable tbody tr:hover {
   background-color: #f0f0f0;
 }
+
+
+.synonym-word.yellow-word {
+  color: #e6ac00; /* Dark Yellow */
+  background-color: rgba(255, 223, 0, 0.2); /* Light yellow background */
+}
