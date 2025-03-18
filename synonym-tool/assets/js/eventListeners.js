@@ -235,7 +235,7 @@ $(document).ready(function () {
           console.error("AJAX Error (search_synonym.php):", status, error);
         },
       });
-    }, 500);
+    }, 700);
   });
 
   // Function to wrap the selected text in a single span (combined) with a highlight and return its text
