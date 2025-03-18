@@ -8,6 +8,7 @@ include '../inc/sidebar.php';
 
 ?>
 
+
 <link rel="stylesheet" href="assets/css/styles.css">
 
 <?php
@@ -105,6 +106,7 @@ function processText($text, $stopwords, $db, $synonymTable) {
     return trim($processedText);
 }
 ?>
+
 
 <div class="content-wrapper">
     <section class="content-header">
@@ -213,17 +215,15 @@ function processText($text, $stopwords, $db, $synonymTable) {
 <!-- Load jQuery -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-<script>
-  var masterId = <?php echo json_encode($masterId); ?>;
-</script>
 
 <script>
     const masterId = <?= json_encode($masterId); ?>;
 </script>
-
 <script>
-  var nonSecureFlag = <?php echo json_encode($non_secure_flag); ?>;
+  var nonSecureFlag = <?php echo json_encode(isset($non_secure_flag) ? $non_secure_flag : 0); ?>;
 </script>
+
+
 
 
 

@@ -1,6 +1,7 @@
 <?php
 require_once 'SynonymRepositoryInterface.php';
 
+
 class SynonymRepository implements SynonymRepositoryInterface {
     private $db;
     private $tableName;

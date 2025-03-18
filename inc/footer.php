@@ -44,7 +44,7 @@
 <script>
 	var absoluteUrl = "<?php echo $absoluteUrl;?>";
 	var baseApiURL = "<?php echo $baseApiURL;?>";
-	var token = "<?php echo $_SESSION['access_token']; ?>";
+	var token = "<?php echo isset($_SESSION['access_token']) ? $_SESSION['access_token'] : ''; ?>";
 </script>
 <!-- Tinymce -->
 <script src="<?php echo $absoluteUrl;?>plugins/tinymce/jquery.tinymce.min.js"></script>
