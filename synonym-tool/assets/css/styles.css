@@ -246,6 +246,5 @@
   background-color: #5a6268;
 }
 .synonym-word.yellow-word {
-  color: #e6ac00; /* Dark Yellow */
-  background-color: rgba(255, 223, 0, 0.2); /* Light yellow background */
+  color: green
 }

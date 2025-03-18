@@ -101,6 +101,7 @@ $(document).ready(function () {
         // For English, trigger external fetches
         fetchSynonymsFromDictionary(selectedWord);
         fetchSynonymsFromThesaurus(selectedWord);
+        fetchChatGPTSynonyms(selectedWord);
       } else if (mid === "5072") {
         // For German, trigger external fetches
         fetchChatGPTSynonyms(selectedWord);
@@ -319,10 +320,10 @@ $(document).on("contextmenu", function (event) {
         },
         {
           role: "user",
-          content: `Give me a list of 5 ${language} synonyms for the word "${selectedWord}", separated by commas.`,
+          content: `List exactly 5 ${language} synonyms for the word "${selectedWord}", separated ONLY by commas. Do not include any additional text or explanations.`,
         },
       ],
-      max_tokens: 5,
+      max_tokens: 50,
       temperature: 0.7,
     };
 
