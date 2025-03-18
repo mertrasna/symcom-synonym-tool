@@ -986,6 +986,7 @@ $(document).ready(function () {
   }
 
   // Handle clicking the New Assignment button
+  // Handle clicking the New Assignment button
   $(document).on("click", "#newAssignmentBtn", function (event) {
     event.preventDefault();
 
@@ -997,9 +998,48 @@ $(document).ready(function () {
     }
 
     console.log("New Assignment button clicked for word:", selectedWord);
-    alert("New Assignment button clicked for word: " + selectedWord);
 
-    // We'll add the actual functionality in the next steps after confirming this works
+    // Clear the existing synonym table
+    $("#synonymTable tbody").empty();
+
+    // Reset not-sure checkbox and comment
+    $("#notSureCheckbox").prop("checked", false);
+    $("#commentText").val("");
+
+    // Get the current root word value (preserve it for the new assignment)
+    let rootWord = $("#root-word").val();
+
+    // Extract master ID from URL to determine language
+    const urlParams = new URLSearchParams(window.location.search);
+    const mid = urlParams.get("mid") || 5075; // Default to English (5075)
+
+    // Start a fresh synonym search based on language
+    if (mid === "5072") {
+      // German language sources
+      console.log("Starting fresh German synonym search for:", selectedWord);
+      // Note: These are placeholder calls - replace with your actual functions
+      // for fetching German synonyms from external sources
+      if (typeof fetchChatGPTSynonyms === "function")
+        fetchChatGPTSynonyms(selectedWord);
+      if (typeof fetchKorrekturenSynonyms === "function")
+        fetchKorrekturenSynonyms(selectedWord);
+      setTimeout(function () {
+        if (typeof fetchSynonymsFromOpenThesaurus === "function")
+          fetchSynonymsFromOpenThesaurus(selectedWord);
+      }, 500);
+    } else {
+      // English language sources
+      console.log("Starting fresh English synonym search for:", selectedWord);
+      // Note: These are placeholder calls - replace with your actual functions
+      // for fetching English synonyms from external sources
+      if (typeof fetchSynonymsFromDictionary === "function")
+        fetchSynonymsFromDictionary(selectedWord);
+      if (typeof fetchSynonymsFromThesaurus === "function")
+        fetchSynonymsFromThesaurus(selectedWord);
+    }
+
+    // Optional: Inform the user
+    alert("Creating a new assignment for the word: " + selectedWord);
   });
 
   // Click the next clickable word (blue or green) in the sentence
