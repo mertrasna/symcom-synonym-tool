@@ -118,7 +118,7 @@ $(document).ready(function () {
       $.ajax({
         url: "search_synonym.php",
         type: "POST",
-        data: { word: selectedWord },
+        data: { word: selectedWord, master_id: mid },
         dataType: "json",
         success: function (res) {
           console.log("search_synonym.php Response:", res);
