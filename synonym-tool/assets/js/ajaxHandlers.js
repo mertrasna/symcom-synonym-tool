@@ -2,9 +2,9 @@ function fetchSynonyms(selectedWord) {
   $.ajax({
     url: "search_synonym.php",
     type: "POST",
-    data: { 
+    data: {
       word: selectedWord,
-      master_id: masterId // Pass the global masterId to determine language
+      master_id: masterId, // Pass the global masterId to determine language
     },
     dataType: "json",
     success: function (res) {
@@ -37,8 +37,6 @@ function fetchSynonyms(selectedWord) {
   });
 }
 
-
-
 function fetchRootWord(selectedWord, finalSynonyms) {
   // Extract 'mid' from the URL (or set it by some other means)
   const urlParams = new URLSearchParams(window.location.search);
@@ -47,14 +45,14 @@ function fetchRootWord(selectedWord, finalSynonyms) {
   $.ajax({
     url: "fetch_root_word.php",
     type: "POST",
-    data: { 
+    data: {
       word: selectedWord,
-      master_id: mid  // Include master_id so the server queries the correct table
+      master_id: mid, // Include master_id so the server queries the correct table
     },
     dataType: "json",
     success: function (rootRes) {
       console.log("fetch_root_word.php Response:", rootRes);
-      
+
       let rootWordHTML =
         rootRes.success && rootRes.word
           ? `<input type="text" id="root-word" value="${rootRes.word}" 
@@ -79,17 +77,28 @@ function fetchRootWord(selectedWord, finalSynonyms) {
       finalSynonyms.forEach((syn) => {
         tableHTML += `
                   <tr>
-                    <td><input type="checkbox" name="S" value="${syn.word}" ${syn.type === "S" ? "checked" : ""}></td>
-                    <td><input type="checkbox" name="Q" value="${syn.word}" ${syn.type === "Q" ? "checked" : ""}></td>
-                    <td><input type="checkbox" name="O" value="${syn.word}" ${syn.type === "O" ? "checked" : ""}></td>
-                    <td><input type="checkbox" name="U" value="${syn.word}" ${syn.type === "U" ? "checked" : ""}></td>
+                    <td><input type="checkbox" name="S" value="${syn.word}" ${
+          syn.type === "S" ? "checked" : ""
+        }></td>
+                    <td><input type="checkbox" name="Q" value="${syn.word}" ${
+          syn.type === "Q" ? "checked" : ""
+        }></td>
+                    <td><input type="checkbox" name="O" value="${syn.word}" ${
+          syn.type === "O" ? "checked" : ""
+        }></td>
+                    <td><input type="checkbox" name="U" value="${syn.word}" ${
+          syn.type === "U" ? "checked" : ""
+        }></td>
                     <td>${syn.word}</td>
                   </tr>`;
       });
 
       tableHTML += `</tbody></table>
-              <div>
-                <input type="checkbox" id="notSureCheckbox"> Not Sure
+              <div style="display: flex; align-items: center; margin-top: 10px;">
+                <div style="margin-right: 20px;">
+                  <input type="checkbox" id="notSureCheckbox"> Not Sure
+                </div>
+                <button type="button" id="newAssignmentBtn" style="background-color: #6c757d; color: white; border: none; border-radius: 4px; padding: 5px 10px; cursor: pointer;">New Assignment</button>
               </div>
               <button type="submit" id="submitSynonyms">Submit</button>
             </form>
@@ -112,7 +121,6 @@ function fetchRootWord(selectedWord, finalSynonyms) {
     },
   });
 }
-
 
 function submitSynonyms(selectedWord) {
   // 1. Extract `mid` from URL (if needed to decide table: 5075 = English, 5072 = German)
@@ -143,7 +151,7 @@ function submitSynonyms(selectedWord) {
       word: selectedWord,
       root_word: rootWord,
       synonyms: JSON.stringify(synonyms),
-      master_id: mid // Only if your backend needs this to choose the correct table
+      master_id: mid, // Only if your backend needs this to choose the correct table
     },
     dataType: "json", // We want JSON back from the server
     success: function (res) {
@@ -156,7 +164,6 @@ function submitSynonyms(selectedWord) {
     },
   });
 }
-
 
 // Function to toggle stopword status by sending the word and masterId to the backend.
 function toggleStopwordStatus(element) {
@@ -184,7 +191,6 @@ $(document).on("click", ".synonym-word", function () {
   console.log("Selected Word:", selectedWord);
   fetchSynonyms(selectedWord);
 });
-
 
 // Switch to edit mode when the Edit button is clicked.
 $(document).on("click", "#edit-root-word", function () {

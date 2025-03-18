@@ -196,25 +196,28 @@ function processText($text, $stopwords, $db, $synonymTable) {
 
 
 
-                <div id="symptom-details2">
-                    <form id="synonymForm">
-                        <table id="synonymTable" class="styled-table">
-                            <thead>
-                                <tr>
-                                    <th>S</th><th>Q</th><th>O</th><th>U</th><th>Synonym</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <!-- Synonyms will be dynamically inserted here -->
-                            </tbody>
-                        </table>
-                        <div>
-    <input type="checkbox" id="notSureCheckbox" name="notSure" value="1"> Not Sure
-</div>
+<div id="symptom-details2">
+    <form id="synonymForm">
+        <table id="synonymTable" class="styled-table">
+            <thead>
+                <tr>
+                    <th>S</th><th>Q</th><th>O</th><th>U</th><th>Synonym</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Synonyms will be dynamically inserted here -->
+            </tbody>
+        </table>
+        <div style="display: flex; align-items: center; margin-top: 10px;">
+            <div style="margin-right: 20px;">
+                <input type="checkbox" id="notSureCheckbox" name="notSure" value="1"> Not Sure
+            </div>
+            <button type="button" id="newAssignmentBtn" style="background-color: #6c757d; color: white; border: none; border-radius: 4px; padding: 5px 10px; cursor: pointer;">New Assignment</button>
+        </div>
 
-                        <button type="submit" id="submitSynonyms">Submit</button>
-                    </form>
-                </div>
+        <button type="submit" id="submitSynonyms">Submit</button>
+    </form>
+</div>
             </div>
         </div>
     </section>
