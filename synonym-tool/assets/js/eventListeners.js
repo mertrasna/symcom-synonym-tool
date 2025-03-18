@@ -236,7 +236,8 @@ $(document).ready(function () {
         },
       });
     }, 700);
-  });
+});
+
 
   // Function to wrap the selected text in a single span (combined) with a highlight and return its text
   function linkSelectedWords() {
