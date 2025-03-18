@@ -91,12 +91,14 @@ class SynonymService {
         // Check if the word exists in synonym_de table
         if ($this->synonymRepository->checkIfWordExistsInSynonymTable($data['word'])) {
             // Get the existing synonym list, merge with the new ones, and update
-            $existing_synonym = $data['existing_synonym'];
-            $updated_synonym = array_unique(array_merge(
-                explode(',', $existing_synonym),
-                explode(',', $data['synonym'])
-            ));
-            $updated_synonym = implode(',', $updated_synonym);
+            $existingSynonymFromDb = $this->synonymRepository->getSynonym($data['word']);
+
+$updated_synonym = array_unique(array_merge(
+    explode(',', $existingSynonymFromDb),
+    explode(',', $data['synonym'])
+));
+$updated_synonym = implode(',', $updated_synonym);
+
 
             // Update the synonym list
             if ($this->synonymRepository->updateSynonym($data['word'], $updated_synonym)) {

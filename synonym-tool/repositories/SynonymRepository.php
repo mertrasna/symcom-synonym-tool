@@ -155,5 +155,17 @@ class SynonymRepository implements SynonymRepositoryInterface {
                   VALUES ('{$data['word']}', '{$data['synonym']}', '{$data['cross_reference']}', '{$data['synonym_partial_2']}', '{$data['generic_term']}', '{$data['sub_term']}', '{$data['synonym_nn']}', '{$data['comment']}', '{$data['non_secure_flag']}', '{$data['source_reference_ns']}', '{$data['active']}')";
         return mysqli_query($this->db, $query);
     }
+
+    public function getSynonym($word) {
+        $wordEscaped = mysqli_real_escape_string($this->db, $word);
+        $query = "SELECT synonym FROM {$this->tableName} WHERE word = '$wordEscaped'";
+        $result = mysqli_query($this->db, $query);
+        if ($result) {
+            $row = mysqli_fetch_assoc($result);
+            return $row ? $row['synonym'] : '';
+        }
+        return '';
+    }
+    
 }
 ?>
