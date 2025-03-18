@@ -89,6 +89,25 @@ class SynonymRepository implements SynonymRepositoryInterface {
         ";
         return mysqli_query($this->db, $update_query);
     }
+
+    public function updateIsYellow(string $word): bool {
+        $wordEscaped = mysqli_real_escape_string($this->db, $word);
+        $update_query = "
+            UPDATE {$this->tableName} 
+            SET isyellow = 1
+            WHERE 
+                word LIKE '%$wordEscaped%' OR
+                synonym LIKE '%$wordEscaped%' OR
+                cross_reference LIKE '%$wordEscaped%' OR
+                synonym_partial_2 LIKE '%$wordEscaped%' OR
+                generic_term LIKE '%$wordEscaped%' OR
+                sub_term LIKE '%$wordEscaped%' OR
+                synonym_nn LIKE '%$wordEscaped%' OR
+                comment LIKE '%$wordEscaped%'
+        ";
+        return mysqli_query($this->db, $update_query);
+    }
+    
     
     // Method to scrape synonym data from the website
     public function scrapeSynonym(string $word): array {

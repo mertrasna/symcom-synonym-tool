@@ -5,7 +5,10 @@ interface SynonymRepositoryInterface {
     public function updateWord(string $word, string $rootWord, string $strictSynonyms, string $crossReferences, string $hypernyms, string $hyponyms, string $comment, string $non_secure_flag): bool;
 
     public function searchSynonym(string $word): array;
+
     public function updateIsGreen(string $word): bool;
+
+    public function updateIsYellow(string $word): bool;
 
     public function scrapeSynonym(string $word): array;
 

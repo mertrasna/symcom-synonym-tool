@@ -3,6 +3,8 @@ let greenWords = new Set();
 let selectedWord = "";
 let pendingSynonyms = [];
 
+
+
 $(document).ready(function () {
   if (typeof nonSecureFlag !== "undefined" && nonSecureFlag == 1) {
     $("#notSureCheckbox").prop("checked", true);
@@ -290,7 +292,7 @@ $(document).on("contextmenu", function (event) {
     // Determine the language based on masterId (5072 for German, default to English)
     const language = masterId === 5072 ? "German" : "English";
   
-    const apiKey = "key"; // <-- Replace with your API key
+    const apiKey = "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"; // <-- Replace with your API key
   
     const requestBody = {
       model: "gpt-4",
@@ -1093,7 +1095,7 @@ $(document).on("change", "#synonymTable tbody input[type='checkbox']", function 
  * Click the next clickable word (blue or green) in the sentence
  */
 function clickNextClickableWord() {
-  let clickableWords = $(".synonym-word, .synonym-word.green"); // Get all clickable words
+  let clickableWords = $(".synonym-word, .synonym-word.green , .synonym-word.yellow-word"); // Get all clickable words
   let currentIndex = clickableWords.index($(`.synonym-word[data-word='${selectedWord}']`));
 
   if (currentIndex !== -1 && currentIndex < clickableWords.length - 1) {

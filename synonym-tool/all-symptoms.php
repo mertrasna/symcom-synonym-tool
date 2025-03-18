@@ -74,56 +74,61 @@ function processText($text, $stopwords, $db, $synonymTable) {
         return "<span style='color: red;'>[No symptom text found]</span>";
     }
 
-    // Remove HTML tags and decode entities
+    // Remove HTML tags, decode entities, and normalize spaces.
     $text = preg_replace('/<[^>]+>/', '', $text);
     $text = html_entity_decode($text, ENT_QUOTES | ENT_HTML5, 'UTF-8');
     $text = trim(preg_replace('/\s+/', ' ', $text));
 
+    // Split the text into words (this is a simple approach; note that phrases may get split)
     $words = explode(" ", $text);
     $processedText = "";
 
     foreach ($words as $word) {
-        // Clean word for lookup
+        // Clean the word for lookup
         $cleanedWord = strtolower(trim($word, ".,()"));
 
         if (in_array($cleanedWord, $stopwords)) {
-            // ✅ If word is a stopword, mark it accordingly
-            $processedText .= "<span class='stopword' data-word='$word'>$word</span> ";
+            // If the word is a stopword, mark it accordingly.
+            $processedText .= "<span class='stopword' data-word='" . htmlspecialchars($word) . "'>" . htmlspecialchars($word) . "</span> ";
         } else {
-            // ✅ Check if the word/phrase exists in the database
-            $checkQuery = "SELECT isgreen, word FROM $synonymTable WHERE word LIKE '%" . mysqli_real_escape_string($db, $cleanedWord) . "%' LIMIT 1";
+            // Query the database for a synonym record matching this word.
+            $checkQuery = "SELECT isyellow, isgreen FROM $synonymTable 
+                           WHERE word LIKE '%" . mysqli_real_escape_string($db, $cleanedWord) . "%' 
+                           ORDER BY isyellow DESC, isgreen DESC 
+                           LIMIT 1";
             $checkResult = mysqli_query($db, $checkQuery);
+
             $isGreen = false;
             $isYellow = false;
 
             if ($checkResult) {
                 $checkRow = mysqli_fetch_assoc($checkResult);
-                if ($checkRow && isset($checkRow['isgreen']) && $checkRow['isgreen'] == 1) {
-                    $isGreen = true;
-
-                    // ✅ If the word is a phrase (contains space), make it yellow
-                    if (strpos($checkRow['word'], ' ') !== false) {
+                if ($checkRow) {
+                    if (isset($checkRow['isyellow']) && $checkRow['isyellow'] == 1) {
                         $isYellow = true;
+                    }
+                    if (isset($checkRow['isgreen']) && $checkRow['isgreen'] == 1) {
+                        $isGreen = true;
                     }
                 }
             }
 
-            // ✅ Assign correct class based on condition
+            // Prioritize yellow over green
             if ($isYellow) {
-                $class = 'synonym-word yellow-word';
+                $class = 'synonym-word yellow-word';  // Yellow words get priority
             } elseif ($isGreen) {
-                $class = 'synonym-word green';
+                $class = 'synonym-word green';  // Green words if not yellow
             } else {
-                $class = 'synonym-word'; // Default to blue
+                $class = 'synonym-word';  // Default class if not found
             }
 
-            $processedText .= "<span class='$class' data-word='$word'>$word</span> ";
+            $processedText .= "<span class='$class' data-word='" . htmlspecialchars($word) . "'>" . htmlspecialchars($word) . "</span> ";
         }
     }
     return trim($processedText);
 }
-?> 
 
+?>
 
 <div class="content-wrapper">
     <section class="content-header">

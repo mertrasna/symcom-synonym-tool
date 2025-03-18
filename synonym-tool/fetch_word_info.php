@@ -13,7 +13,6 @@ if (!isset($db)) {
     }
 }
 
-// Check if the request method is POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['word']) && !empty($_POST['word'])) {
         // Sanitize the input word
@@ -25,44 +24,67 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Choose the table based on master_id (5072 for German, 5075 for English)
         $table = ($masterId === 5072) ? 'synonym_de' : 'synonym_en';
 
-        // Search in the selected synonym table across relevant columns
-        $query = "
+        // First, query for records where isyellow = 1
+        $queryYellow = "
             SELECT * FROM $table 
-            WHERE 
-                word LIKE '%$word%' OR
-                synonym LIKE '%$word%' OR
-                cross_reference LIKE '%$word%' OR 
-                synonym_partial_2 LIKE '%$word%' OR
-                generic_term LIKE '%$word%' OR
-                sub_term LIKE '%$word%' OR
-                synonym_nn LIKE '%$word%' OR
-                comment LIKE '%$word%'
+            WHERE isyellow = 1 
+              AND (
+                  word LIKE '%$word%' OR
+                  synonym LIKE '%$word%' OR
+                  cross_reference LIKE '%$word%' OR 
+                  synonym_partial_2 LIKE '%$word%' OR
+                  generic_term LIKE '%$word%' OR
+                  sub_term LIKE '%$word%' OR
+                  synonym_nn LIKE '%$word%' OR
+                  comment LIKE '%$word%'
+              )
         ";
-
-        $result = mysqli_query($db, $query);
+        $resultYellow = mysqli_query($db, $queryYellow);
         $synonyms = [];
-
-        if ($result) {
-            while ($row = mysqli_fetch_assoc($result)) {
+        if ($resultYellow && mysqli_num_rows($resultYellow) > 0) {
+            while ($row = mysqli_fetch_assoc($resultYellow)) {
                 $synonyms[] = $row;
             }
-
-            if (!empty($synonyms)) {
-                echo json_encode([
-                    'success' => true, 
-                    'synonyms' => $synonyms, 
-                    'message' => 'Synonym found successfully'
-                ]);
-            } else {
-                echo json_encode([
-                    'success' => false, 
-                    'message' => 'No synonym found'
-                ]);
+            echo json_encode([
+                'success' => true, 
+                'synonyms' => $synonyms, 
+                'message' => 'Yellow synonym(s) found'
+            ]);
+            exit; // Stop here – we do not want to return green records if any yellow exist.
+        }
+        
+        // If no yellow synonyms are found, query for isgreen = 1
+        $queryGreen = "
+            SELECT * FROM $table 
+            WHERE isgreen = 1
+              AND (
+                  word LIKE '%$word%' OR
+                  synonym LIKE '%$word%' OR
+                  cross_reference LIKE '%$word%' OR 
+                  synonym_partial_2 LIKE '%$word%' OR
+                  generic_term LIKE '%$word%' OR
+                  sub_term LIKE '%$word%' OR
+                  synonym_nn LIKE '%$word%' OR
+                  comment LIKE '%$word%'
+              )
+        ";
+        $resultGreen = mysqli_query($db, $queryGreen);
+        if ($resultGreen) {
+            while ($row = mysqli_fetch_assoc($resultGreen)) {
+                $synonyms[] = $row;
             }
+        }
+        
+        if (!empty($synonyms)) {
+            echo json_encode([
+                'success' => true, 
+                'synonyms' => $synonyms, 
+                'message' => 'Green synonym(s) found'
+            ]);
         } else {
             echo json_encode([
                 'success' => false, 
-                'message' => 'Error executing query'
+                'message' => 'No synonym found'
             ]);
         }
     } else {
@@ -77,4 +99,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'message' => 'Invalid request method'
     ]);
 }
+
 ?>
