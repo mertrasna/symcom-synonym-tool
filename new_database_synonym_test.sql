@@ -2568,3 +2568,6 @@ ALTER TABLE synonym_de MODIFY synonym TEXT;
 ALTER TABLE synonym_de MODIFY synonym LONGTEXT;
 ALTER TABLE `synonym_de` ADD COLUMN `isyellow` BOOLEAN NOT NULL DEFAULT FALSE COMMENT 'Indicates if yellow';
 ALTER TABLE `synonym_en`   ADD COLUMN `isyellow` BOOLEAN NOT NULL DEFAULT FALSE COMMENT 'Indicates if yellow';
+ALTER TABLE synonym_en ADD COLUMN root_word VARCHAR(255) NULL AFTER synonym_id;
+ALTER TABLE synonym_en DROP COLUMN reference_id;
+ALTER TABLE synonym_en ADD COLUMN isgreen TINYINT(1) NOT NULL DEFAULT 0 AFTER ersteller_id;
