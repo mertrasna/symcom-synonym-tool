@@ -2566,3 +2566,5 @@ ALTER TABLE `synonym_de`  ADD COLUMN `isgreen` BOOLEAN NOT NULL DEFAULT FALSE CO
 ALTER TABLE synonym_de DROP INDEX synonym;
 ALTER TABLE synonym_de MODIFY synonym TEXT;
 ALTER TABLE synonym_de MODIFY synonym LONGTEXT;
+ALTER TABLE `synonym_de` ADD COLUMN `isyellow` BOOLEAN NOT NULL DEFAULT FALSE COMMENT 'Indicates if yellow';
+ALTER TABLE `synonym_en`   ADD COLUMN `isyellow` BOOLEAN NOT NULL DEFAULT FALSE COMMENT 'Indicates if yellow';
