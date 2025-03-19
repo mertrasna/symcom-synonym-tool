@@ -245,6 +245,47 @@
 #newAssignmentBtn:hover {
   background-color: #5a6268;
 }
+
+#worksheet-controls {
+  display: flex;
+  gap: 10px; /* Adds space between buttons */
+  margin-top: 10px;
+}
+
+#newAssignmentBtn,
+#toggleAllSBtn {
+  background-color: #007bff; 
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  font-size: 14px;
+  margin-right: 10px;
+  font-weight: bold;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.1s ease;
+}
+
+#toggleAllSBtn {
+  background-color: #544f49; /* Orange background */
+}
+
+/* ✅ Hover Effects */
+#newAssignmentBtn:hover {
+  background-color: #0056b3;
+}
+
+#toggleAllSBtn:hover {
+  background-color: #e68a00;
+}
+
+/* ✅ Click Effects */
+#newAssignmentBtn:active,
+#toggleAllSBtn:active {
+  transform: scale(0.98);
+}
+
+
 .synonym-word.yellow-word {
   color: #006400; /* DarkGreen text */
   background-color:lightgrey; /* Light green highlight */
