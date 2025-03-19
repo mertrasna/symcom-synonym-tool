@@ -81,101 +81,113 @@ $(document).on("click", ".synonym-word", function () {
   }
 
   // ✅ Always check the database, even for yellow words
-  setTimeout(function () {
-    $.ajax({
-      url: "search_synonym.php",
-      type: "POST",
-      data: { word: selectedWord, master_id: mid },
-      dataType: "json",
-      success: function (res) {
-        console.log("search_synonym.php Response:", res);
+setTimeout(function () {
+  $.ajax({
+    url: "search_synonym.php",
+    type: "POST",
+    data: { word: selectedWord, master_id: mid },
+    dataType: "json",
+    success: function (res) {
+      console.log("search_synonym.php Response:", res);
 
-        if (res.success && res.synonyms && res.synonyms.length) {
-          var finalSynonyms = [];
-          res.synonyms.forEach(function (syn) {
-            ["synonym", "cross_reference", "generic_term", "sub_term"].forEach(
-              function (key, index) {
-                if (syn[key]) {
-                  syn[key].split(",").forEach(function (s) {
-                    finalSynonyms.push({
-                      type: ["S", "Q", "O", "U"][index],
-                      word: s.trim(),
-                    });
+      if (res.success && res.synonyms && res.synonyms.length) {
+        var finalSynonyms = [];
+        res.synonyms.forEach(function (syn) {
+          ["synonym", "cross_reference", "generic_term", "sub_term"].forEach(
+            function (key, index) {
+              if (syn[key]) {
+                syn[key].split(",").forEach(function (s) {
+                  finalSynonyms.push({
+                    type: ["S", "Q", "O", "U"][index],
+                    word: s.trim(),
                   });
-                }
+                });
               }
-            );
-          });
+            }
+          );
+        });
 
-          // ✅ Build synonym table
-          var tableHTML = `
-            <table id="synonymTable" class="styled-table">
-              <thead>
-                <tr><th>S</th><th>Q</th><th>O</th><th>U</th><th>Synonym</th></tr>
-              </thead>
-              <tbody>
+        // ✅ Build synonym table
+        var tableHTML = `
+          <table id="synonymTable" class="styled-table">
+            <thead>
+              <tr><th>S</th><th>Q</th><th>O</th><th>U</th><th>Synonym</th></tr>
+            </thead>
+            <tbody>
+        `;
+
+        finalSynonyms.forEach(function (syn) {
+          tableHTML += `<tr>
+            <td><input type="checkbox" name="S" value="${syn.word}" ${syn.type === "S" ? "checked" : ""}></td>
+            <td><input type="checkbox" name="Q" value="${syn.word}" ${syn.type === "Q" ? "checked" : ""}></td>
+            <td><input type="checkbox" name="O" value="${syn.word}" ${syn.type === "O" ? "checked" : ""}></td>
+            <td><input type="checkbox" name="U" value="${syn.word}" ${syn.type === "U" ? "checked" : ""}></td>
+            <td>${syn.word}</td>
+          </tr>`;
+        });
+
+        // ✅ Mark the word as processed
+        $clicked.addClass("green");
+        tableHTML += "</tbody></table>";
+
+        $("#synonymTableContainer").html(tableHTML); // ✅ Always Show Table!
+      } else {
+        // ✅ Even if no synonyms, still show a message for yellow words
+        $("#synonymTableContainer").html(
+          `<p style="color:red;">No synonyms found for '${selectedWord}'.</p>`
+        );
+      }
+
+      // ✅ Fetch and display root word
+      $.ajax({
+        url: "fetch_root_word.php",
+        type: "POST",
+        data: { word: selectedWord, master_id: mid },
+        dataType: "json",
+        success: function (rootRes) {
+          console.log("fetch_root_word.php Response:", rootRes);
+
+          var rootWordHTML = rootRes.success
+            ? `<input type="text" id="root-word" value="${rootRes.word}" placeholder="Enter root word..." class="input-box">`
+            : `<input type="text" id="root-word" value="${selectedWord}" placeholder="Enter root word..." class="input-box">`;
+
+          var headerHTML = `
+            <div class="synonym-header">
+              <p><b>Selected Word:</b> <span id="selected-word">${selectedWord}</span></p>
+              <p><b>Root Word:</b> ${rootWordHTML}</p>
+            </div>
           `;
 
-          finalSynonyms.forEach(function (syn) {
-            tableHTML += `<tr>
-              <td><input type="checkbox" name="S" value="${syn.word}" ${syn.type === "S" ? "checked" : ""}></td>
-              <td><input type="checkbox" name="Q" value="${syn.word}" ${syn.type === "Q" ? "checked" : ""}></td>
-              <td><input type="checkbox" name="O" value="${syn.word}" ${syn.type === "O" ? "checked" : ""}></td>
-              <td><input type="checkbox" name="U" value="${syn.word}" ${syn.type === "U" ? "checked" : ""}></td>
-              <td>${syn.word}</td>
-            </tr>`;
-          });
+          // ✅ Insert header before the table
+          $("#synonymTableContainer").prepend(headerHTML);
 
-          tableHTML += "</tbody></table>";
+          // ✅ Mark the word properly (yellow if phrase, green otherwise)
+          if (isYellow) {
+            $clicked.addClass("yellow-word");
+          } else {
+            $clicked.addClass("green");
+          }
 
-          $("#synonymTableContainer").html(tableHTML); // ✅ Always Show Table!
-        } else {
-          // ✅ Even if no synonyms, still show a message for yellow words
-          $("#synonymTableContainer").html(
-            `<p style="color:red;">No synonyms found for '${selectedWord}'.</p>`
-          );
-        }
+          // ✅ Auto-click green element if not already done.
+          if (!$clicked.data("autoClicked")) {
+            $clicked.data("autoClicked", true);
+            console.log("Auto-clicking green element again...");
+            setTimeout(function () {
+              $clicked.trigger("click");
+            }, 500);
+          }
+        },
+        error: function (xhr, status, error) {
+          console.error("AJAX Error (fetch_root_word.php):", status, error);
+        },
+      });
+    },
+    error: function (xhr, status, error) {
+      console.error("AJAX Error (search_synonym.php):", status, error);
+    },
+  });
+}, 700);
 
-        // ✅ Fetch and display root word
-        $.ajax({
-          url: "fetch_root_word.php",
-          type: "POST",
-          data: { word: selectedWord, master_id: mid },
-          dataType: "json",
-          success: function (rootRes) {
-            console.log("fetch_root_word.php Response:", rootRes);
-
-            var rootWordHTML = rootRes.success
-              ? `<input type="text" id="root-word" value="${rootRes.word}" placeholder="Enter root word..." class="input-box">`
-              : `<input type="text" id="root-word" value="${selectedWord}" placeholder="Enter root word..." class="input-box">`;
-
-            var headerHTML = `
-              <div class="synonym-header">
-                <p><b>Selected Word:</b> <span id="selected-word">${selectedWord}</span></p>
-                <p><b>Root Word:</b> ${rootWordHTML}</p>
-              </div>
-            `;
-
-            // ✅ Insert header before the table
-            $("#synonymTableContainer").prepend(headerHTML);
-
-            // ✅ Mark the word properly (yellow if phrase, green otherwise)
-            if (isYellow) {
-              $clicked.addClass("yellow-word");
-            } else {
-              $clicked.addClass("green");
-            }
-          },
-          error: function (xhr, status, error) {
-            console.error("AJAX Error (fetch_root_word.php):", status, error);
-          },
-        });
-      },
-      error: function (xhr, status, error) {
-        console.error("AJAX Error (search_synonym.php):", status, error);
-      },
-    });
-  }, 700);
 });
 
 
