@@ -272,7 +272,7 @@ $(document).ready(function () {
     const language = masterId === 5072 ? "German" : "English";
 
     const apiKey =
-      "key"; // <-- Replace with your API key
+      "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"; // <-- Replace with your API key
 
     const requestBody = {
       model: "gpt-4",

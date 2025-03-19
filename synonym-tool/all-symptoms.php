@@ -75,58 +75,68 @@ function processText($text, $stopwords, $db, $synonymTable) {
     }
 
     // Remove HTML tags, decode entities, and normalize spaces.
-    $text = preg_replace('/<[^>]+>/', '', $text);
+    $text = strip_tags($text);
     $text = html_entity_decode($text, ENT_QUOTES | ENT_HTML5, 'UTF-8');
     $text = trim(preg_replace('/\s+/', ' ', $text));
 
-    // Split the text into words (this is a simple approach; note that phrases may get split)
+    // 1. Retrieve all phrases (multi-word entries) from the synonym table marked as yellow.
+    $query = "SELECT word FROM $synonymTable WHERE isyellow = 1";
+    $result = mysqli_query($db, $query);
+    $phrases = [];
+    if ($result) {
+        while ($row = mysqli_fetch_assoc($result)) {
+            // Only consider entries that are truly phrases (more than one word)
+            if (str_word_count($row['word']) > 1) {
+                $phrases[] = $row['word'];
+            }
+        }
+    }
+
+    // 2. Sort phrases by length (longest first) to avoid partial replacements.
+    usort($phrases, function($a, $b) {
+        return strlen($b) - strlen($a);
+    });
+
+    // 3. Replace each full phrase in the text with a unique placeholder.
+    $placeholders = [];
+    foreach ($phrases as $index => $phrase) {
+        $placeholder = "[[[PHRASE_$index]]]";
+        $placeholders[$placeholder] = $phrase;
+        // Use case-insensitive replacement to replace the entire phrase.
+        $text = str_ireplace($phrase, $placeholder, $text);
+    }
+
+    // 4. Process the remaining text word by word.
     $words = explode(" ", $text);
     $processedText = "";
-
     foreach ($words as $word) {
-        // Clean the word for lookup
+        // If the word is already a placeholder, output it as is.
+        if (strpos($word, "[[[PHRASE_") !== false) {
+            $processedText .= $word . " ";
+            continue;
+        }
+
         $cleanedWord = strtolower(trim($word, ".,()"));
 
         if (in_array($cleanedWord, $stopwords)) {
-            // If the word is a stopword, mark it accordingly.
             $processedText .= "<span class='stopword' data-word='" . htmlspecialchars($word) . "'>" . htmlspecialchars($word) . "</span> ";
         } else {
-            // Query the database for a synonym record matching this word.
-            $checkQuery = "SELECT isyellow, isgreen FROM $synonymTable 
-                           WHERE word LIKE '%" . mysqli_real_escape_string($db, $cleanedWord) . "%' 
-                           ORDER BY isyellow DESC, isgreen DESC 
-                           LIMIT 1";
-            $checkResult = mysqli_query($db, $checkQuery);
-
-            $isGreen = false;
-            $isYellow = false;
-
-            if ($checkResult) {
-                $checkRow = mysqli_fetch_assoc($checkResult);
-                if ($checkRow) {
-                    if (isset($checkRow['isyellow']) && $checkRow['isyellow'] == 1) {
-                        $isYellow = true;
-                    }
-                    if (isset($checkRow['isgreen']) && $checkRow['isgreen'] == 1) {
-                        $isGreen = true;
-                    }
-                }
-            }
-
-            // Prioritize yellow over green
-            if ($isYellow) {
-                $class = 'synonym-word yellow-word';  // Yellow words get priority
-            } elseif ($isGreen) {
-                $class = 'synonym-word green';  // Green words if not yellow
-            } else {
-                $class = 'synonym-word';  // Default class if not found
-            }
-
-            $processedText .= "<span class='$class' data-word='" . htmlspecialchars($word) . "'>" . htmlspecialchars($word) . "</span> ";
+            // For simplicity, output a default span for individual words.
+            // (You can add more logic here for isgreen or other classes if needed.)
+            $processedText .= "<span class='synonym-word' data-word='" . htmlspecialchars($word) . "'>" . htmlspecialchars($word) . "</span> ";
         }
     }
+
+    // 5. Replace placeholders with the corresponding highlighted phrase spans.
+    foreach ($placeholders as $placeholder => $phrase) {
+        $replacement = "<span class='synonym-word yellow-word' data-word='" . htmlspecialchars($phrase) . "'>" . htmlspecialchars($phrase) . "</span>";
+        $processedText = str_replace($placeholder, $replacement, $processedText);
+    }
+
     return trim($processedText);
 }
+
+
 
 ?>
 
