@@ -68,6 +68,7 @@ $(document).on("click", ".synonym-word", function () {
     if (mid === "5075") {
       fetchSynonymsFromDictionary(selectedWord);
       fetchSynonymsFromThesaurus(selectedWord);
+      fetchChatGPTSynonyms(selectedWord);
     } else if (mid === "5072") {
       fetchChatGPTSynonyms(selectedWord);
       fetchKorrekturenSynonyms(selectedWord);
@@ -214,6 +215,7 @@ $(document).on("click", ".synonym-word", function () {
     const linkedText = linkSelectedWords();
     if (linkedText) {
       console.log("Linked phrase:", linkedText);
+      fetchSynonymsFromThesaurus(linkedText)
       fetchChatGPTSynonyms(linkedText);
     } else {
       console.warn("No words selected to link.");
@@ -241,7 +243,7 @@ $(document).on("click", ".synonym-word", function () {
     const language = masterId === 5072 ? "German" : "English";
 
     const apiKey =
-      "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"; // <-- Replace with your API key
+      "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"; // <-- Replace with your API key
 
     const requestBody = {
       model: "gpt-4",
