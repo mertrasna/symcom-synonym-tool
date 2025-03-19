@@ -18,6 +18,8 @@ interface SynonymRepositoryInterface {
     public function checkIfWordExistsInSynonymTable(string $word): bool;
     public function updateSynonym(string $word, string $updatedSynonym): bool;
     public function insertSynonymData(array $data): bool;
+    
+    public function getSynonym($word); 
 
     
 }

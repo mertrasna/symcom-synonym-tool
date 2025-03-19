@@ -3,8 +3,6 @@ let greenWords = new Set();
 let selectedWord = "";
 let pendingSynonyms = [];
 
-
-
 $(document).ready(function () {
   if (typeof nonSecureFlag !== "undefined" && nonSecureFlag == 1) {
     $("#notSureCheckbox").prop("checked", true);
@@ -188,7 +186,11 @@ $(document).ready(function () {
                 }
               },
               error: function (xhr, status, error) {
-                console.error("AJAX Error (fetch_root_word.php):", status, error);
+                console.error(
+                  "AJAX Error (fetch_root_word.php):",
+                  status,
+                  error
+                );
               },
             });
           } else {
@@ -205,50 +207,49 @@ $(document).ready(function () {
         },
       });
     }, 700);
-});
+  });
 
+  // Function to wrap the selected text as a phrase, preserving spaces
+  function linkSelectedWords() {
+    let selection = window.getSelection();
+    if (!selection.rangeCount) return "";
 
-// Function to wrap the selected text as a phrase, preserving spaces
-function linkSelectedWords() {
-  let selection = window.getSelection();
-  if (!selection.rangeCount) return "";
+    let range = selection.getRangeAt(0);
+    let text = selection.toString().trim();
 
-  let range = selection.getRangeAt(0);
-  let text = selection.toString().trim();
+    // Ensure the selection contains multiple words (i.e. a phrase)
+    if (text.split(/\s+/).length < 2) {
+      console.warn("Selection must contain multiple words to be a phrase.");
+      return "";
+    }
 
-  // Ensure the selection contains multiple words (i.e. a phrase)
-  if (text.split(/\s+/).length < 2) {
-    console.warn("Selection must contain multiple words to be a phrase.");
-    return "";
+    // Normalize spaces (convert multiple spaces to a single space)
+    text = text.replace(/\s+/g, " ");
+
+    // Create a span to wrap the whole phrase
+    let span = document.createElement("span");
+    span.classList.add("synonym-word", "yellow-word"); // Mark as yellow-word for phrases
+    span.setAttribute("data-word", text); // Store the full phrase as is
+    span.textContent = text;
+
+    // Replace the selected content with this span
+    range.deleteContents();
+    range.insertNode(span);
+    selection.removeAllRanges();
+
+    return text;
   }
 
-  // Normalize spaces (convert multiple spaces to a single space)
-  text = text.replace(/\s+/g, " ");
-
-  // Create a span to wrap the whole phrase
-  let span = document.createElement("span");
-  span.classList.add("synonym-word", "yellow-word"); // Mark as yellow-word for phrases
-  span.setAttribute("data-word", text); // Store the full phrase as is
-  span.textContent = text;
-
-  // Replace the selected content with this span
-  range.deleteContents();
-  range.insertNode(span);
-  selection.removeAllRanges();
-
-  return text;
-}
-
-// Use Ctrl+K or right-click to call processLinkedWords()
-function processLinkedWords() {
-  const linkedText = linkSelectedWords();
-  if (linkedText) {
-    console.log("Linked phrase:", linkedText);
-    fetchChatGPTSynonyms(linkedText);
-  } else {
-    console.warn("No words selected to link.");
+  // Use Ctrl+K or right-click to call processLinkedWords()
+  function processLinkedWords() {
+    const linkedText = linkSelectedWords();
+    if (linkedText) {
+      console.log("Linked phrase:", linkedText);
+      fetchChatGPTSynonyms(linkedText);
+    } else {
+      console.warn("No words selected to link.");
+    }
   }
-}
 
   $(document).keydown(function (event) {
     if ((event.ctrlKey || event.metaKey) && event.key === "k") {
@@ -257,13 +258,12 @@ function processLinkedWords() {
     }
   });
 
-$(document).on("contextmenu", function (event) {
-  if ($(event.target).hasClass("synonym-word")) {
-    event.preventDefault();
-    processLinkedWords();
-  }
-});
-
+  $(document).on("contextmenu", function (event) {
+    if ($(event.target).hasClass("synonym-word")) {
+      event.preventDefault();
+      processLinkedWords();
+    }
+  });
 
   function fetchChatGPTSynonyms(selectedWord) {
     console.log(`🔎 Fetching synonyms from ChatGPT for: ${selectedWord}`);
@@ -271,7 +271,8 @@ $(document).on("contextmenu", function (event) {
     // Determine the language based on masterId (5072 for German, default to English)
     const language = masterId === 5072 ? "German" : "English";
 
-    const apiKey = "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"; // <-- Replace with your API key
+    const apiKey =
+      "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"; // <-- Replace with your API key
 
     const requestBody = {
       model: "gpt-4",
@@ -1095,6 +1096,9 @@ $(document).on("submit", "#synonymForm", function (event) {
     return;
   }
 
+  // Remove any trailing commas that might cause issues
+  selectedWord = selectedWord.replace(/,+$/, "");
+
   // 2) Extract 'mid' from the URL (if needed to decide the correct table)
   const urlParams = new URLSearchParams(window.location.search);
   const mid = urlParams.get("mid") || 5075; // Default to 5075 (English)
@@ -1105,6 +1109,9 @@ $(document).on("submit", "#synonymForm", function (event) {
     $("#root-word-container #root-word-display").text().trim() ||
     $("#root-word").val() ||
     $("#root-word").text().trim();
+
+  // Remove any trailing commas from root word
+  rootWord = rootWord.replace(/,+$/, "");
 
   // 4) Use Sets to prevent duplicate synonyms in each category (S, Q, O, U)
   let synonyms = {
@@ -1140,6 +1147,14 @@ $(document).on("submit", "#synonymForm", function (event) {
   let comment = $("#notSureCheckbox").prop("checked")
     ? $("#commentText").val().trim()
     : "";
+
+  console.log("Submitting synonym data:", {
+    word: selectedWord,
+    root_word: rootWord,
+    synonyms: synonyms,
+    comment: comment,
+    master_id: mid,
+  });
 
   // 8) Send the data to the server via AJAX
   $.ajax({
@@ -1190,8 +1205,12 @@ $(document).on(
  * Click the next clickable word (blue or green) in the sentence
  */
 function clickNextClickableWord() {
-  let clickableWords = $(".synonym-word, .synonym-word.green , .synonym-word.yellow-word"); // Get all clickable words
-  let currentIndex = clickableWords.index($(`.synonym-word[data-word='${selectedWord}']`));
+  let clickableWords = $(
+    ".synonym-word, .synonym-word.green , .synonym-word.yellow-word"
+  ); // Get all clickable words
+  let currentIndex = clickableWords.index(
+    $(`.synonym-word[data-word='${selectedWord}']`)
+  );
 
   if (currentIndex !== -1 && currentIndex < clickableWords.length - 1) {
     clickableWords.eq(currentIndex + 1).trigger("click"); // Click the next word

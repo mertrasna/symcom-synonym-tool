@@ -66,9 +66,59 @@ class SynonymRepository implements SynonymRepositoryInterface {
         string $comment,
         string $non_secure_flag
     ): bool {
-        $stmt = $this->db->prepare("UPDATE {$this->tableName} SET root_word = ?, synonym = ?, cross_reference = ?, generic_term = ?, sub_term = ?, comment = ?, non_secure_flag = ? WHERE LOWER(word) = LOWER(?)");
-        $stmt->bind_param("ssssssss", $rootWord, $strictSynonyms, $crossReferences, $hypernyms, $hyponyms, $comment, $non_secure_flag, $word);
+        // Log the actual values being sent to the database
+        error_log("Updating word in database: " . $word);
+        error_log("Root word: " . $rootWord);
+        error_log("Synonyms: " . $strictSynonyms);
+        error_log("Cross-references: " . $crossReferences);
+        error_log("Generic terms: " . $hypernyms);
+        error_log("Sub-terms: " . $hyponyms);
+        
+        // Remove trailing commas from the word to be updated
+        $word = rtrim(trim($word), ',');
+        
+        // Prepare the update query
+        $query = "UPDATE {$this->tableName} SET 
+                  root_word = ?, 
+                  synonym = ?, 
+                  cross_reference = ?, 
+                  generic_term = ?, 
+                  sub_term = ?, 
+                  comment = ?, 
+                  non_secure_flag = ?,
+                  isgreen = ?
+                  WHERE LOWER(word) = LOWER(?)";
+                  
+        // Set isgreen to 1 for single words
+        $isGreen = (strpos($word, ' ') === false) ? 1 : 0;
+        
+        // Prepare and execute the statement
+        $stmt = $this->db->prepare($query);
+        
+        if (!$stmt) {
+            error_log("Prepare failed: " . $this->db->error);
+            return false;
+        }
+        
+        $stmt->bind_param("sssssssis", 
+                         $rootWord, 
+                         $strictSynonyms, 
+                         $crossReferences, 
+                         $hypernyms, 
+                         $hyponyms, 
+                         $comment, 
+                         $non_secure_flag,
+                         $isGreen,
+                         $word);
+                         
         $success = $stmt->execute();
+        
+        if (!$success) {
+            error_log("Execute failed: " . $stmt->error);
+        } else {
+            error_log("Update successful. Affected rows: " . $stmt->affected_rows);
+        }
+        
         $stmt->close();
         return $success;
     }

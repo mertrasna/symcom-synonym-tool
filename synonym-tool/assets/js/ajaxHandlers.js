@@ -1,30 +1,41 @@
 function fetchSynonyms(selectedWord) {
+  // Show loading indicator
+  $("#symptom-details2").html("<p>Loading synonyms...</p>");
+
+  // Get master ID from URL
+  const urlParams = new URLSearchParams(window.location.search);
+  const mid = urlParams.get("mid") || 5075; // Default to English
+
   $.ajax({
     url: "search_synonym.php",
     type: "POST",
     data: {
       word: selectedWord,
-      master_id: masterId, // Pass the global masterId to determine language
+      master_id: mid,
     },
     dataType: "json",
     success: function (res) {
-      if (res.success) {
+      console.log("Synonym search response:", res);
+
+      if (res.success && res.synonyms && res.synonyms.length > 0) {
+        // Use our new deduplication function instead of direct processing
         let finalSynonyms = [];
+
         res.synonyms.forEach((syn) => {
-          ["synonym", "cross_reference", "generic_term", "sub_term"].forEach(
-            (key, index) => {
-              if (syn[key]) {
-                syn[key].split(",").forEach((s) => {
-                  finalSynonyms.push({
-                    type: ["S", "Q", "O", "U"][index],
-                    word: s.trim(),
-                  });
-                });
-              }
-            }
-          );
+          // Apply deduplication to each synonym record
+          const processedSynonyms = processSynonymsWithDeduplication(syn);
+          finalSynonyms = finalSynonyms.concat(processedSynonyms);
         });
+
+        // Fetch root word after synonym search succeeds
         fetchRootWord(selectedWord, finalSynonyms);
+
+        // Check if word has a Not Sure flag
+        if (res.non_secure_flag == 1) {
+          $("#notSureCheckbox").prop("checked", true);
+        } else {
+          $("#notSureCheckbox").prop("checked", false);
+        }
       } else {
         $("#symptom-details2").html(
           `<p style='color:red;'>No synonyms found for ${selectedWord}.</p>`
@@ -33,8 +44,47 @@ function fetchSynonyms(selectedWord) {
     },
     error: function (xhr, status, error) {
       console.error("AJAX Error (search_synonym.php):", status, error);
+      $("#symptom-details2").html(
+        `<p style='color:red;'>Error fetching synonyms: ${error}</p>`
+      );
     },
   });
+}
+
+/**
+ * Process synonyms from the backend response and prevent duplicates across categories
+ * @param {Object} synonymData - The synonym data from the response
+ * @return {Array} - Processed array of synonym objects with deduplication
+ */
+function processSynonymsWithDeduplication(synonymData) {
+  let finalSynonyms = [];
+  let seenWords = new Set(); // Track words we've already processed
+
+  const categories = [
+    { key: "synonym", type: "S" },
+    { key: "cross_reference", type: "Q" },
+    { key: "generic_term", type: "O" },
+    { key: "sub_term", type: "U" },
+  ];
+
+  // Process categories in order of priority (S, Q, O, U)
+  categories.forEach((category) => {
+    if (synonymData[category.key]) {
+      synonymData[category.key].split(",").forEach((word) => {
+        const trimmedWord = word.trim();
+        // Only add the word if we haven't seen it before
+        if (trimmedWord && !seenWords.has(trimmedWord.toLowerCase())) {
+          seenWords.add(trimmedWord.toLowerCase());
+          finalSynonyms.push({
+            type: category.type,
+            word: trimmedWord,
+          });
+        }
+      });
+    }
+  });
+
+  return finalSynonyms;
 }
 
 function fetchRootWord(selectedWord, finalSynonyms) {

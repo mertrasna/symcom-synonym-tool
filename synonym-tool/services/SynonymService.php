@@ -5,24 +5,42 @@ class SynonymService {
     private $synonymRepository;
     private $scraperRepository;
     
-
     public function __construct(SynonymRepositoryInterface $synonymRepository) {
         $this->synonymRepository = $synonymRepository;
     }
 
-    // Move removeDuplicates out of the method
+    // Improved removeDuplicates function to handle both arrays and strings
     private function removeDuplicates($synonyms) {
-        return implode(", ", array_unique(array_map(function($item) { return trim($item['word']); }, $synonyms ?? [])));
-
+        if (is_array($synonyms)) {
+            // Convert array of objects to array of strings
+            $wordArray = array_map(function($item) {
+                return is_array($item) && isset($item['word']) ? trim($item['word']) : trim($item);
+            }, $synonyms);
+            
+            // Filter out empty entries and get unique values
+            $wordArray = array_filter(array_unique($wordArray), function($word) {
+                return !empty($word);
+            });
+            
+            return implode(", ", $wordArray);
+        } else if (is_string($synonyms)) {
+            // Handle if a string is passed
+            $words = array_map('trim', explode(',', $synonyms));
+            $words = array_filter(array_unique($words));
+            return implode(", ", $words);
+        }
+        
+        return ""; // Return empty string for invalid input
     }
 
     public function processSynonymUpdate($word, $rootWord, $comment, $selectedSynonyms) {
+        // Trim any trailing commas from word and root_word
+        $word = rtrim(trim(strtolower($word)), ',');
+        $rootWord = rtrim(trim(strtolower($rootWord)), ',');
+        
         if (empty($word) || empty($rootWord)) {
             return ["success" => false, "message" => "Error: Selected word and root word are required."];
         }
-
-        $word = strtolower($word);
-        $rootWord = strtolower($rootWord);
 
         $existingWord = $this->synonymRepository->findRootWord($word);
 
@@ -32,82 +50,94 @@ class SynonymService {
             }
         }
 
+        // Process each category of synonyms
         $strictSynonyms = $this->removeDuplicates($selectedSynonyms['S'] ?? []);
         $crossReferences = $this->removeDuplicates($selectedSynonyms['Q'] ?? []);
         $hypernyms = $this->removeDuplicates($selectedSynonyms['O'] ?? []);
         $hyponyms = $this->removeDuplicates($selectedSynonyms['U'] ?? []);
         $non_secure_flag = !empty($comment) ? '1' : '0';
 
+        // Debug output
+        error_log("Updating synonyms for word: $word");
+        error_log("S (synonyms): $strictSynonyms");
+        error_log("Q (cross-references): $crossReferences");
+        error_log("O (generic terms): $hypernyms");
+        error_log("U (sub-terms): $hyponyms");
+
         if ($this->synonymRepository->updateWord($word, $rootWord, $strictSynonyms, $crossReferences, $hypernyms, $hyponyms, $comment, $non_secure_flag)) {
-            return ["success" => true, "message" => "Root word, synonyms, and comment updated successfully without duplicates."];
+            return [
+                "success" => true, 
+                "message" => "Root word, synonyms, and comment updated successfully.",
+                "word" => $word,
+                "root_word" => $rootWord,
+                "synonyms" => [
+                    "S" => $strictSynonyms,
+                    "Q" => $crossReferences,
+                    "O" => $hypernyms,
+                    "U" => $hyponyms
+                ]
+            ];
         } else {
             return ["success" => false, "message" => "Database update failed."];
         }
     }
 
-    public function processSynonymSearchAndUpdate(string $word): array
-{
-    error_log("Processing word: " . $word);
+    public function processSynonymSearchAndUpdate(string $word): array {
+        error_log("Processing word: " . $word);
 
-    // Check if the word is a phrase
-    $isPhrase = $this->isPhrase($word);
+        // Check if the word is a phrase
+        $isPhrase = $this->isPhrase($word);
 
-    // Fetch synonyms before updating
-    $synonyms = $this->synonymRepository->searchSynonym($word);
+        // Fetch synonyms before updating
+        $synonyms = $this->synonymRepository->searchSynonym($word);
 
-    if (!empty($synonyms)) {
-        $non_secure_flag = isset($synonyms[0]['non_secure_flag']) ? intval($synonyms[0]['non_secure_flag']) : 0;
+        if (!empty($synonyms)) {
+            $non_secure_flag = isset($synonyms[0]['non_secure_flag']) ? intval($synonyms[0]['non_secure_flag']) : 0;
 
+            if ($isPhrase) {
+                error_log("Detected phrase, updating isyellow...");
+                $yellowUpdated = $this->synonymRepository->updateIsYellow($word);
+                $greenUpdated = false; // Make sure green is set to false in the database
+            } else {
+                error_log("Detected single word, updating isgreen...");
+                $greenUpdated = $this->synonymRepository->updateIsGreen($word);
+                $yellowUpdated = false; // Make sure yellow is set to false in the database
+            }
 
-        if ($isPhrase) {
-            error_log("Detected phrase, updating isyellow...");
-            $yellowUpdated = $this->synonymRepository->updateIsYellow($word);
-            $greenUpdated = false; // Make sure green is set to false in the database
-        } else {
-            error_log("Detected single word, updating isgreen...");
-            $greenUpdated = $this->synonymRepository->updateIsGreen($word);
-            $yellowUpdated = false; // Make sure yellow is set to false in the database
+            return [
+                'success' => ($yellowUpdated || $greenUpdated),
+                'synonyms' => $synonyms,
+                'non_secure_flag' => $non_secure_flag,
+                'message' => ($yellowUpdated || $greenUpdated) ? 'Synonym updated successfully' : 'Failed to update synonym'
+            ];
         }
 
         return [
-            'success' => ($yellowUpdated || $greenUpdated),
-            'synonyms' => $synonyms,
-            'non_secure_flag' => $non_secure_flag,
-            'message' => ($yellowUpdated || $greenUpdated) ? 'Synonym updated successfully' : 'Failed to update synonym'
+            'success' => false,
+            'message' => 'No synonym found'
         ];
     }
 
-    return [
-        'success' => false,
-        'message' => 'No synonym found'
-    ];
-}
+    /**
+     * Determines if a given word is a phrase (multiple words).
+     *
+     * @param string $word The input word or phrase.
+     * @return bool Returns true if it is a phrase, false otherwise.
+     */
+    private function isPhrase(string $word): bool {
+        // Normalize spaces and trim input
+        $trimmedWord = trim(preg_replace('/\s+/', ' ', $word));
 
-/**
- * Determines if a given word is a phrase (multiple words).
- *
- * @param string $word The input word or phrase.
- * @return bool Returns true if it is a phrase, false otherwise.
- */
-private function isPhrase(string $word): bool {
-    // Normalize spaces and trim input
-    $trimmedWord = trim(preg_replace('/\s+/', ' ', $word));
+        // Count words using regex (to handle spaces properly)
+        $wordCount = preg_match_all('/\b\w+\b/u', $trimmedWord);
 
-    // Count words using regex (to handle spaces properly)
-    $wordCount = preg_match_all('/\b\w+\b/u', $trimmedWord);
+        // Debugging log
+        error_log("Checking phrase detection: '$trimmedWord' - Word count: " . $wordCount);
 
-    // Debugging log
-    error_log("Checking phrase detection: '$trimmedWord' - Word count: " . $wordCount);
-
-    return $wordCount > 1;
-}
-
-
-
-    
+        return $wordCount > 1;
+    }
 
     public function processScrapeSynonym(string $word): array {
-        
         return $this->synonymRepository->scrapeSynonym($word);
     }
 
@@ -152,6 +182,4 @@ private function isPhrase(string $word): bool {
             return ["success" => false, "message" => "Error updating/inserting synonym."];
         }
     }
-}    
-
-?>
+}
