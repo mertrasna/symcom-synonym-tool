@@ -149,6 +149,7 @@ function fetchRootWord(selectedWord, finalSynonyms) {
                   <input type="checkbox" id="notSureCheckbox"> Not Sure
                 </div>
                 <button type="button" id="newAssignmentBtn" style="background-color: #6c757d; color: white; border: none; border-radius: 4px; padding: 5px 10px; cursor: pointer;">New Assignment</button>
+                <button id="toggleAllSBtn" type="button">Toggle All S</button>
               </div>
               <button type="submit" id="submitSynonyms">Submit</button>
             </form>

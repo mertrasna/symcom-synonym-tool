@@ -1201,6 +1201,23 @@ $(document).on(
   }
 );
 
+$(document).on("click", "#toggleAllSBtn", function () {
+  console.log("🔄 Toggling all 'S' checkboxes.");
+
+  let checkboxes = $("#synonymTable tbody input[type='checkbox'][name='S']");
+  let allChecked = checkboxes.length > 0 && checkboxes.filter(":checked").length === checkboxes.length;
+
+  if (allChecked) {
+      checkboxes.prop("checked", false); // Uncheck all
+      console.log("✅ All 'S' checkboxes unchecked.");
+  } else {
+      checkboxes.prop("checked", true); // Check all
+      console.log("✅ All 'S' checkboxes checked.");
+  }
+});
+
+
+
 /**
  * Click the next clickable word (blue or green) in the sentence
  */
