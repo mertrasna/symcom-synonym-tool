@@ -45,6 +45,12 @@ $(document).ready(function () {
     let hoverTimeout;
     let lastWord = null;
 
+    // ✅ Retrieve master_id from URL parameters
+    function getMasterId() {
+        let urlParams = new URLSearchParams(window.location.search);
+        return urlParams.has("mid") ? parseInt(urlParams.get("mid")) : 5075; // Default to 5075 if not found
+    }
+
     $(document).on("mouseenter", ".synonym-word, .stopword", function (event) {
         let $this = $(this);
         let word = $this.attr("data-word");
@@ -60,17 +66,24 @@ $(document).ready(function () {
 
             $popup.html("<em>Loading...</em>").fadeIn(200);
 
+            // ✅ Fetch master_id dynamically
+            let masterId = getMasterId();
+            console.log("🔍 Fetching synonyms for:", word, "📌 Master ID:", masterId);
+
             $.ajax({
                 url: "fetch_word_info.php",
                 type: "POST",
-                data: { word: word },
+                data: { 
+                    word: word,
+                    master_id: masterId  // ✅ Ensure master_id is passed correctly
+                },
                 dataType: "json",
                 success: function (response) {
+                    console.log("🔄 Server Response:", response);
                     if (response.success && response.synonyms.length > 0) {
-                        let popupContent = "<strong></strong><br>";
+                        let popupContent = `<strong>Word:</strong> ${word}<br>`;
                         response.synonyms.forEach(info => {
                             popupContent += `
-                                <strong>Word:</strong> ${info.word || 'N/A'}<br>
                                 <strong>Synonym:</strong> ${info.synonym || 'N/A'}<br>
                                 <strong>Cross Ref:</strong> ${info.cross_reference || 'N/A'}<br>
                                 <strong>Generic:</strong> ${info.generic_term || 'N/A'}<br>
@@ -83,6 +96,7 @@ $(document).ready(function () {
                     }
                 },
                 error: function () {
+                    console.error("❌ Error fetching data.");
                     $popup.html("<span style='color: red;'>Error fetching data.</span>");
                 },
                 complete: function () {
