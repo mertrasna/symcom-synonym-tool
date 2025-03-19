@@ -241,7 +241,7 @@ class SynonymRepository implements SynonymRepositoryInterface {
 
     public function checkIfWordExistsInStopWords(string $word): bool {
         $wordEscaped = mysqli_real_escape_string($this->db, $word);
-        $query = "SELECT * FROM stop_words WHERE name = '$wordEscaped'";
+        $query = "SELECT * FROM stop_words WHERE name = '$wordEscaped' AND active = 1";
         $result = mysqli_query($this->db, $query);
         return mysqli_num_rows($result) > 0;
     }

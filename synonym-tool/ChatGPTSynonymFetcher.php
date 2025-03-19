@@ -18,7 +18,7 @@ class ChatGPTSynonymFetcher
         "model" => "gpt-4",
         "messages" => [
             ["role" => "system", "content" => "You are a helpful assistant."],
-            ["role" => "user", "content" => "Give me a list of 5 German synonyms for the word \"$word\""]
+            ["role" => "user", "content" => "Give me a list of 5 English synonyms for the word \"$word\""]
         ],
         "max_tokens" => 50,
         "temperature" => 0.7,

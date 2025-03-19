@@ -121,7 +121,7 @@ source ~/.zshrc
 use the following command lines below to run tests:
 
 ```bash
-vendor/bin/phpunit --bootstrap vendor/autoload.php synonym-tool/tests/ChatGPT1.php    
+  
 vendor/bin/phpunit --bootstrap vendor/autoload.php synonym-tool/tests/ChatGPT2.php              
 vendor/bin/phpunit --bootstrap vendor/autoload.php synonym-tool/tests/FetchWordInfoTest.php
 ```

@@ -29,14 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             SELECT * FROM $table 
             WHERE isyellow = 1 
               AND (
-                  word LIKE '%$word%' OR
-                  synonym LIKE '%$word%' OR
-                  cross_reference LIKE '%$word%' OR 
-                  synonym_partial_2 LIKE '%$word%' OR
-                  generic_term LIKE '%$word%' OR
-                  sub_term LIKE '%$word%' OR
-                  synonym_nn LIKE '%$word%' OR
-                  comment LIKE '%$word%'
+                  word LIKE '$word'
               )
         ";
         $resultYellow = mysqli_query($db, $queryYellow);
@@ -58,14 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             SELECT * FROM $table 
             WHERE isgreen = 1
               AND (
-                  word LIKE '%$word%' OR
-                  synonym LIKE '%$word%' OR
-                  cross_reference LIKE '%$word%' OR 
-                  synonym_partial_2 LIKE '%$word%' OR
-                  generic_term LIKE '%$word%' OR
-                  sub_term LIKE '%$word%' OR
-                  synonym_nn LIKE '%$word%' OR
-                  comment LIKE '%$word%'
+                  word LIKE '%$word%' 
               )
         ";
         $resultGreen = mysqli_query($db, $queryGreen);
