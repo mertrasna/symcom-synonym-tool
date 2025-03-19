@@ -56,7 +56,8 @@ class SynonymService {
     $synonyms = $this->synonymRepository->searchSynonym($word);
 
     if (!empty($synonyms)) {
-        $non_secure_flag = 1; 
+        $non_secure_flag = isset($synonyms[0]['non_secure_flag']) ? intval($synonyms[0]['non_secure_flag']) : 0;
+
 
         if ($isPhrase) {
             error_log("Detected phrase, updating isyellow...");
