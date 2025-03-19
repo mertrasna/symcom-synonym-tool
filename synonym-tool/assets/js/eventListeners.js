@@ -271,7 +271,7 @@ $(document).on("contextmenu", function (event) {
     // Determine the language based on masterId (5072 for German, default to English)
     const language = masterId === 5072 ? "German" : "English";
 
-    const apiKey = "key"; // <-- Replace with your API key
+    const apiKey = "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"; // <-- Replace with your API key
 
     const requestBody = {
       model: "gpt-4",

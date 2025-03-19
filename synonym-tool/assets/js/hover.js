@@ -1,52 +1,64 @@
 $(document).ready(function () {
-    // Injecting CSS dynamically for the popup box
+    // Inject CSS dynamically for the popup box
     $("head").append(`
         <style>
             #popup-box {
                 display: none;
                 position: absolute;
-                background-color: #fff;
-                border: 2px solid #007BFF; /* Blue border */
+                background-color: #ffffff;
+                border: 1px solid #007BFF;
                 padding: 10px;
-                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Soft shadow */
-                border-radius: 10px; /* Rounded corners */
-                max-width: 300px; /* Set max width */
-                word-wrap: break-word; /* Prevent text overflow */
-                font-family: Arial, sans-serif; /* Clean font */
-                font-size: 14px; /* Adjust font size */
-                color: #333; /* Dark text color for better readability */
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+                border-radius: 8px;
+                max-width: 320px;
+                word-wrap: break-word;
+                font-family: Arial, sans-serif;
+                font-size: 14px;
+                color: #333;
+                z-index: 9999;
+                transition: opacity 0.3s ease, transform 0.2s ease;
             }
 
             #popup-box strong {
-                color: #007BFF; /* Blue color for labels */
+                color: #007BFF;
+                font-weight: bold;
+            }
+
+            .synonym-word, .stopword {
+                cursor: pointer;
+                position: relative;
+                transition: all 0.2s ease-in-out;
+            }
+
+            .synonym-word:hover, .stopword:hover {
+                background-color: rgba(0, 123, 255, 0.1);
+                border-radius: 5px;
+                padding: 2px 5px;
             }
         </style>
     `);
 
-    // Create and append a popup element to the body
-    let $popup = $("<div id='popup-box' style='display:none; position:absolute;'></div>");
-    $("body").append($popup);
+    // Create and append popup element to body
+    let $popup = $("<div id='popup-box'></div>").appendTo("body");
 
-    let isLoading = false; // Prevent multiple AJAX requests
-    let hoverTimeout; // Timeout for debounce
-    let lastWord = null; // Avoid redundant requests for the same word
+    let isLoading = false;
+    let hoverTimeout;
+    let lastWord = null;
 
     $(document).on("mouseenter", ".synonym-word, .stopword", function (event) {
         let $this = $(this);
         let word = $this.attr("data-word");
 
-        if (!word || word === lastWord) return; // Skip if no word or same word already requested
-        lastWord = word; // Update last requested word
+        if (!word || word === lastWord) return;
+        lastWord = word;
 
-        console.log("Hovered Word:", word);
-        
-        clearTimeout(hoverTimeout); // Clear any previous timeout to prevent excessive AJAX calls
+        clearTimeout(hoverTimeout);
 
         hoverTimeout = setTimeout(() => {
-            if (isLoading) return; // Prevent multiple AJAX calls
+            if (isLoading) return;
             isLoading = true;
 
-            $popup.text("Loading...").fadeIn(200);
+            $popup.html("<em>Loading...</em>").fadeIn(200);
 
             $.ajax({
                 url: "fetch_word_info.php",
@@ -55,26 +67,22 @@ $(document).ready(function () {
                 dataType: "json",
                 success: function (response) {
                     if (response.success && response.synonyms.length > 0) {
-                        let popupContent = "<strong></strong>";
-
+                        let popupContent = "<strong></strong><br>";
                         response.synonyms.forEach(info => {
                             popupContent += `
                                 <strong>Word:</strong> ${info.word || 'N/A'}<br>
                                 <strong>Synonym:</strong> ${info.synonym || 'N/A'}<br>
-                                <strong>Cross Reference:</strong> ${info.cross_reference || 'N/A'}<br>    
-                                <strong>Generic term:</strong> ${info.generic_term || 'N/A'}<br>
+                                <strong>Cross Ref:</strong> ${info.cross_reference || 'N/A'}<br>
+                                <strong>Generic:</strong> ${info.generic_term || 'N/A'}<br>
                                 <strong>Sub-Term:</strong> ${info.sub_term || 'N/A'}<br>
-                                
                             `;
                         });
-
                         $popup.html(popupContent);
                     } else {
                         $popup.html(`<span style="color: red;">No synonyms found.</span>`);
                     }
                 },
-                error: function (xhr, status, error) {
-                    console.error("AJAX Error:", status, error);
+                error: function () {
                     $popup.html("<span style='color: red;'>Error fetching data.</span>");
                 },
                 complete: function () {
@@ -82,20 +90,19 @@ $(document).ready(function () {
                 }
             });
 
-            // Position the popup
             positionPopup($this);
-        }, 200); // Debounce for 200ms to prevent rapid AJAX calls
+        }, 250);
     });
 
     $(document).on("mouseleave", ".synonym-word, .stopword", function () {
-        clearTimeout(hoverTimeout); // Clear pending requests when the mouse leaves
+        clearTimeout(hoverTimeout);
         $popup.fadeOut(200);
-        lastWord = null; // Reset last word
+        lastWord = null;
     });
 
     function positionPopup($element) {
         let offset = $element.offset();
-        let top = offset.top + $element.outerHeight() + 5;
+        let top = offset.top + $element.outerHeight() + 8;
         let left = offset.left;
         let popupWidth = $popup.outerWidth();
         let popupHeight = $popup.outerHeight();
@@ -106,9 +113,14 @@ $(document).ready(function () {
             left = windowWidth - popupWidth - 10;
         }
         if (top + popupHeight > windowHeight) {
-            top = offset.top - popupHeight - 5;
+            top = offset.top - popupHeight - 8;
         }
 
-        $popup.css({ top: top, left: left }).fadeIn(200);
+        $popup.css({
+            top: top,
+            left: left,
+            opacity: 1,
+            transform: "scale(1)"
+        }).fadeIn(200);
     }
 });
