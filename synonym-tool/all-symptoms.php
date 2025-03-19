@@ -73,12 +73,12 @@ function processText($text, $stopwords, $db, $synonymTable) {
     if (empty($text)) {
         return "<span style='color: red;'>[No symptom text found]</span>";
     }
-    
+
     // Normalize text: Remove HTML tags, decode entities, collapse extra spaces.
     $text = strip_tags($text);
     $text = html_entity_decode($text, ENT_QUOTES | ENT_HTML5, 'UTF-8');
     $text = trim(preg_replace('/\s+/', ' ', $text));
-    
+
     // 1. Retrieve all phrases (multi-word entries) marked as yellow.
     $query = "SELECT word FROM $synonymTable WHERE isyellow = 1";
     $result = mysqli_query($db, $query);
@@ -90,23 +90,23 @@ function processText($text, $stopwords, $db, $synonymTable) {
             }
         }
     }
-    
+
     // 2. Sort phrases by length (longest first) to ensure we highlight the largest phrase.
-    usort($phrases, function($a, $b) {
+    usort($phrases, function ($a, $b) {
         return strlen($b) - strlen($a);
     });
 
-    // 3. Replace each full phrase in the text with a unique placeholder.
+    // 3. Replace each full phrase in the text with a placeholder.
     $placeholderMapping = [];
     foreach ($phrases as $index => $phrase) {
         $placeholder = "[[[PHRASE_$index]]]";
         $placeholderMapping[$placeholder] = $phrase;
-        
+
         // Use strict matching to ensure exact phrase replacement
         $pattern = '/\b' . preg_quote($phrase, '/') . '\b/i';
         $text = preg_replace($pattern, $placeholder, $text);
     }
-    
+
     // 4. Process the remaining text word by word.
     $words = explode(" ", $text);
     $processedWords = [];
@@ -115,7 +115,7 @@ function processText($text, $stopwords, $db, $synonymTable) {
             $processedWords[] = $word; // Leave placeholders untouched
             continue;
         }
-    
+
         $cleaned = strtolower(trim($word, ".,()"));
 
         if (in_array($cleaned, $stopwords)) {
@@ -154,15 +154,19 @@ function processText($text, $stopwords, $db, $synonymTable) {
             $processedWords[] = "<span class='$class' data-word='" . htmlspecialchars($word) . "'>" . htmlspecialchars($word) . "</span>";
         }
     }
-    
-    // 5. Replace placeholders with fully highlighted phrases.
+
+    // 5. Convert processed words array back to a string
+    $processedText = implode(" ", $processedWords);
+
+    // 6. Replace placeholders with their full highlighted versions.
     foreach ($placeholderMapping as $placeholder => $phrase) {
         $replacement = "<span class='synonym-word yellow-word' data-word='" . htmlspecialchars($phrase) . "'>" . htmlspecialchars($phrase) . "</span>";
-        $processedText = str_replace($placeholder, $replacement, implode(" ", $processedWords));
+        $processedText = str_replace($placeholder, $replacement, $processedText);
     }
 
     return trim($processedText);
 }
+
 
 
 
