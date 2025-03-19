@@ -73,64 +73,92 @@ function processText($text, $stopwords, $db, $synonymTable) {
     if (empty($text)) {
         return "<span style='color: red;'>[No symptom text found]</span>";
     }
-
-    // Remove HTML tags, decode entities, and normalize spaces.
+    
+    // Normalize text: Remove HTML tags, decode entities, collapse extra spaces.
     $text = strip_tags($text);
     $text = html_entity_decode($text, ENT_QUOTES | ENT_HTML5, 'UTF-8');
     $text = trim(preg_replace('/\s+/', ' ', $text));
-
-    // 1. Retrieve all phrases (multi-word entries) from the synonym table marked as yellow.
+    
+    // 1. Retrieve all phrases (multi-word entries) marked as yellow.
     $query = "SELECT word FROM $synonymTable WHERE isyellow = 1";
     $result = mysqli_query($db, $query);
     $phrases = [];
     if ($result) {
         while ($row = mysqli_fetch_assoc($result)) {
-            // Only consider entries that are truly phrases (more than one word)
-            if (str_word_count($row['word']) > 1) {
+            if (str_word_count($row['word']) > 1) { // Keep only actual phrases
                 $phrases[] = $row['word'];
             }
         }
     }
-
-    // 2. Sort phrases by length (longest first) to avoid partial replacements.
+    
+    // 2. Sort phrases by length (longest first) to ensure we highlight the largest phrase.
     usort($phrases, function($a, $b) {
         return strlen($b) - strlen($a);
     });
 
     // 3. Replace each full phrase in the text with a unique placeholder.
-    $placeholders = [];
+    $placeholderMapping = [];
     foreach ($phrases as $index => $phrase) {
         $placeholder = "[[[PHRASE_$index]]]";
-        $placeholders[$placeholder] = $phrase;
-        // Use case-insensitive replacement to replace the entire phrase.
-        $text = str_ireplace($phrase, $placeholder, $text);
+        $placeholderMapping[$placeholder] = $phrase;
+        
+        // Use strict matching to ensure exact phrase replacement
+        $pattern = '/\b' . preg_quote($phrase, '/') . '\b/i';
+        $text = preg_replace($pattern, $placeholder, $text);
     }
-
+    
     // 4. Process the remaining text word by word.
     $words = explode(" ", $text);
-    $processedText = "";
+    $processedWords = [];
     foreach ($words as $word) {
-        // If the word is already a placeholder, output it as is.
-        if (strpos($word, "[[[PHRASE_") !== false) {
-            $processedText .= $word . " ";
+        if (strpos($word, '[[[PHRASE_') !== false) {
+            $processedWords[] = $word; // Leave placeholders untouched
             continue;
         }
+    
+        $cleaned = strtolower(trim($word, ".,()"));
 
-        $cleanedWord = strtolower(trim($word, ".,()"));
-
-        if (in_array($cleanedWord, $stopwords)) {
-            $processedText .= "<span class='stopword' data-word='" . htmlspecialchars($word) . "'>" . htmlspecialchars($word) . "</span> ";
+        if (in_array($cleaned, $stopwords)) {
+            $processedWords[] = "<span class='stopword' data-word='" . htmlspecialchars($word) . "'>" . htmlspecialchars($word) . "</span>";
         } else {
-            // For simplicity, output a default span for individual words.
-            // (You can add more logic here for isgreen or other classes if needed.)
-            $processedText .= "<span class='synonym-word' data-word='" . htmlspecialchars($word) . "'>" . htmlspecialchars($word) . "</span> ";
+            // Query the database for isyellow and isgreen status.
+            $checkQuery = "SELECT isyellow, isgreen FROM $synonymTable 
+                           WHERE word = '" . mysqli_real_escape_string($db, $cleaned) . "' 
+                           ORDER BY isyellow DESC, isgreen DESC 
+                           LIMIT 1";
+            $checkResult = mysqli_query($db, $checkQuery);
+            $isGreen = false;
+            $isYellow = false;
+
+            if ($checkResult) {
+                $checkRow = mysqli_fetch_assoc($checkResult);
+                if ($checkRow) {
+                    if (!empty($checkRow['isyellow']) && $checkRow['isyellow'] == 1) {
+                        $isYellow = true;
+                    }
+                    if (!empty($checkRow['isgreen']) && $checkRow['isgreen'] == 1) {
+                        $isGreen = true;
+                    }
+                }
+            }
+
+            // Assign class based on priority: Yellow (phrase) > Green (single word)
+            if ($isYellow) {
+                $class = 'synonym-word yellow-word';
+            } elseif ($isGreen) {
+                $class = 'synonym-word green';
+            } else {
+                $class = 'synonym-word';
+            }
+
+            $processedWords[] = "<span class='$class' data-word='" . htmlspecialchars($word) . "'>" . htmlspecialchars($word) . "</span>";
         }
     }
-
-    // 5. Replace placeholders with the corresponding highlighted phrase spans.
-    foreach ($placeholders as $placeholder => $phrase) {
+    
+    // 5. Replace placeholders with fully highlighted phrases.
+    foreach ($placeholderMapping as $placeholder => $phrase) {
         $replacement = "<span class='synonym-word yellow-word' data-word='" . htmlspecialchars($phrase) . "'>" . htmlspecialchars($phrase) . "</span>";
-        $processedText = str_replace($placeholder, $replacement, $processedText);
+        $processedText = str_replace($placeholder, $replacement, implode(" ", $processedWords));
     }
 
     return trim($processedText);
