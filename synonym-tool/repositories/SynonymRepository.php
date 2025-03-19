@@ -179,12 +179,11 @@ class SynonymRepository implements SynonymRepositoryInterface {
 
     // Stop word methods remain language agnostic if your stop_words table is shared
     public function deleteStopWord(string $word): array {
-        // Use $this->db instead of global $db
         $wordEscaped = mysqli_real_escape_string($this->db, $word);
-        $query = "DELETE FROM stop_words WHERE name = '$wordEscaped' AND active = 1";
-
+        $query = "UPDATE stop_words SET active = 0 WHERE name = '$wordEscaped'";
+    
         if (mysqli_query($this->db, $query)) {
-            return ["success" => true];
+            return ["success" => true, "message" => "Stop word deactivated."];
         } else {
             return ["success" => false, "message" => "Error: " . mysqli_error($this->db)];
         }
