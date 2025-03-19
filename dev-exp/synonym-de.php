@@ -70,6 +70,7 @@
                             <th style="width: 5%;">Cross Reference</th>
                             <th style="width: 5%;">Generic Term</th>
                             <th style="width: 5%;">Sub Term</th>
+                            <th style="width: 5%;">Comment</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -83,6 +84,7 @@
                                     <td><?php echo $row['cross_reference']; ?></td>
                                     <td><?php echo $row['generic_term']; ?></td>
                                     <td><?php echo $row['sub_term']; ?></td>
+                                    <td><?php echo $row['comment']; ?></td>
                                 </tr>
 
                                 <?php
