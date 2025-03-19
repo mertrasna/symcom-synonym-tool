@@ -37,23 +37,24 @@ class SynonymRepository implements SynonymRepositoryInterface {
     }
 
     public function insertPhrase(string $word): bool {
-        $wordEscaped = mysqli_real_escape_string($this->db, $word);
+        $wordEscaped = mysqli_real_escape_string($this->db, trim($word));
     
         $insert_query = "
-            INSERT INTO {$this->tableName} (word, isyellow)
-            VALUES ('$wordEscaped', 1)
+            INSERT INTO {$this->tableName} (word, isyellow) 
+            VALUES ('$wordEscaped', 1) 
             ON DUPLICATE KEY UPDATE isyellow = 1
         ";
     
-        error_log("Insert Phrase Query: " . $insert_query);
-        
+        error_log("🔹 Insert Phrase Query: " . $insert_query);
+    
         if (!mysqli_query($this->db, $insert_query)) {
-            error_log("Insert Error: " . mysqli_error($this->db));
+            error_log("❌ Insert Error: " . mysqli_error($this->db));
             return false;
         }
-        
+    
         return true;
     }
+    
     
 
     public function updateWord(
@@ -124,24 +125,32 @@ class SynonymRepository implements SynonymRepositoryInterface {
     }
 
     public function searchSynonym(string $word): array {
-        $wordEscaped = mysqli_real_escape_string($this->db, $word);
-        $query = "
-            SELECT * FROM {$this->tableName} 
-            WHERE 
-                word LIKE '$wordEscaped'         
-        ";
-
+        $wordEscaped = trim(mysqli_real_escape_string($this->db, $word));
+    
+        $query = "SELECT * FROM {$this->tableName} 
+                  WHERE LOWER(TRIM(word)) = LOWER(TRIM('$wordEscaped'))
+                  OR LOWER(TRIM(word)) LIKE LOWER('%$wordEscaped%')
+                  AND isyellow = 1";
+    
+        error_log("Executing Query: " . $query); // ✅ Log query
+    
         $result = mysqli_query($this->db, $query);
-        $synonyms = [];
-
-        if ($result) {
-            while ($row = mysqli_fetch_assoc($result)) {
-                $synonyms[] = $row;
-            }
+        
+        if (!$result) {
+            error_log("MySQL Error: " . mysqli_error($this->db));
+            return [];
         }
+    
+        $synonyms = [];
+        while ($row = mysqli_fetch_assoc($result)) {
+            $synonyms[] = $row;
+        }
+    
         return $synonyms;
     }
-
+    
+    
+    
     public function updateIsGreen(string $word): bool {
         $wordEscaped = mysqli_real_escape_string($this->db, $word);
         $update_query = "
@@ -241,7 +250,7 @@ class SynonymRepository implements SynonymRepositoryInterface {
 
     public function checkIfWordExistsInStopWords(string $word): bool {
         $wordEscaped = mysqli_real_escape_string($this->db, $word);
-        $query = "SELECT * FROM stop_words WHERE name = '$wordEscaped' AND active = 1";
+       $query = "SELECT * FROM stop_words WHERE name = '$wordEscaped' AND active = 1";
         $result = mysqli_query($this->db, $query);
         return mysqli_num_rows($result) > 0;
     }

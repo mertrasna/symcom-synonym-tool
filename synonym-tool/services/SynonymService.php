@@ -83,41 +83,48 @@ class SynonymService {
     }
 
     public function processSynonymSearchAndUpdate(string $word): array {
-        error_log("Processing word: " . $word);
-
+        error_log("🔍 Processing word: " . $word);
+    
         // Check if the word is a phrase
         $isPhrase = $this->isPhrase($word);
-
-        // Fetch synonyms before updating
+    
+        // Fetch synonyms explicitly checking for yellow words
         $synonyms = $this->synonymRepository->searchSynonym($word);
-
+    
         if (!empty($synonyms)) {
             $non_secure_flag = isset($synonyms[0]['non_secure_flag']) ? intval($synonyms[0]['non_secure_flag']) : 0;
-
-            if ($isPhrase) {
-                error_log("Detected phrase, updating isyellow...");
+            $isYellowDB = isset($synonyms[0]['isyellow']) ? intval($synonyms[0]['isyellow']) : 0;
+    
+            error_log("🟡 Phrase Detected: " . ($isPhrase ? "Yes" : "No"));
+            error_log("🟡 Database says isyellow = " . $isYellowDB);
+    
+            if ($isPhrase || $isYellowDB) {
+                error_log("🟡 Updating isyellow for phrase...");
                 $yellowUpdated = $this->synonymRepository->updateIsYellow($word);
-                $greenUpdated = false; // Make sure green is set to false in the database
+                $greenUpdated = false; // Ensure it does not get marked as green
             } else {
-                error_log("Detected single word, updating isgreen...");
+                error_log("✅ Updating isgreen for single word...");
                 $greenUpdated = $this->synonymRepository->updateIsGreen($word);
-                $yellowUpdated = false; // Make sure yellow is set to false in the database
+                $yellowUpdated = false; 
             }
-
+    
             return [
                 'success' => ($yellowUpdated || $greenUpdated),
                 'synonyms' => $synonyms,
+                'isYellow' => ($isPhrase || $isYellowDB),
                 'non_secure_flag' => $non_secure_flag,
                 'message' => ($yellowUpdated || $greenUpdated) ? 'Synonym updated successfully' : 'Failed to update synonym'
             ];
         }
-
+    
+        error_log("⚠️ No synonyms found for '$word'!");
+    
         return [
             'success' => false,
             'message' => 'No synonym found'
         ];
     }
-
+    
     /**
      * Determines if a given word is a phrase (multiple words).
      *
@@ -128,13 +135,8 @@ class SynonymService {
         // Normalize spaces and trim input
         $trimmedWord = trim(preg_replace('/\s+/', ' ', $word));
 
-        // Count words using regex (to handle spaces properly)
-        $wordCount = preg_match_all('/\b\w+\b/u', $trimmedWord);
+        return str_word_count($trimmedWord) > 1;
 
-        // Debugging log
-        error_log("Checking phrase detection: '$trimmedWord' - Word count: " . $wordCount);
-
-        return $wordCount > 1;
     }
 
     public function processScrapeSynonym(string $word): array {
