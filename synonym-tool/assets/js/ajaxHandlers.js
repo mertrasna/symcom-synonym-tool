@@ -105,11 +105,13 @@ function fetchRootWord(selectedWord, finalSynonyms) {
 
       let rootWordHTML =
         rootRes.success && rootRes.word
-          ? `<input type="text" id="root-word" value="${rootRes.word}" 
-                placeholder="Enter root word..." style="padding:5px; border:1px solid #ccc; border-radius:5px; width:200px;">`
-          : `<input type="text" id="root-word" value="${selectedWord}" 
-                placeholder="Enter root word..." style="padding:5px; border:1px solid #ccc; border-radius:5px; width:200px;">`;
-
+        ? '<input type="text" id="root-word" value="' +
+        rootRes.word.replace(/[^\w\s]/g, "") + // Removes punctuation
+        '" placeholder="Enter root word..." style="padding:5px; border:1px solid #ccc; border-radius:5px; width:200px;">'
+      : '<input type="text" id="root-word" value="' +
+        selectedWord.replace(/[^\w\s]/g, "") + // Removes punctuation
+        '" placeholder="Enter root word..." style="padding:5px; border:1px solid #ccc; border-radius:5px; width:200px;">';
+        
       let tableHTML = `
             <div style="display: flex; align-items: center; justify-content: space-between; width: 100%; margin-bottom: 10px;">
                 <p><b>Selected Word:</b> <span id="selected-word">${selectedWord}</span></p>
