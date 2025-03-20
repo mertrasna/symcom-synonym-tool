@@ -21,7 +21,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // ✅ Ensure master_id is retrieved correctly
-    $word = trim(mysqli_real_escape_string($db, $_POST['word']));
+    $word = trim(mysqli_real_escape_string($db, $_POST['word']), " \t\n\r\0\x0B.,!?");
+
     $masterId = isset($_POST['master_id']) ? intval($_POST['master_id']) : 5075;
 
     // ✅ Allow only predefined master IDs
