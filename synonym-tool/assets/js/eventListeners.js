@@ -276,7 +276,7 @@ class ChatGPTObservable {
     // Determine the language based on masterId (5072 for German, default to English)
     const language = masterId === 5072 ? "German" : "English";
 
-    const apiKey = "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"; // Replace with your API key
+    const apiKey = "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"; // Replace with your API key
 
     const requestBody = {
       model: "gpt-4",
@@ -325,7 +325,8 @@ class ChatGPTObservable {
         console.log("✅ ChatGPT synonyms found:", synonyms);
 
         // Notify all observers with the fetched synonyms
-        this.notify({ word: selectedWord, synonyms });
+        this.notify({ word: selectedWord, synonyms, master_id: masterId });
+
       })
       .catch(error => {
         console.error("❌ OpenAI API Error:", error);
@@ -399,7 +400,7 @@ class SynonymDatabaseObserver {
       non_secure_flag: "0",
       source_reference_ns: "1",
       active: "1",
-      master_id: "5075",
+      master_id: data.master_id,
     };
 
     console.log("📤 Sending data to insert_synonym.php:", synonymData);
