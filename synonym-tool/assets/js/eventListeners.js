@@ -130,7 +130,13 @@ setTimeout(function () {
         $clicked.addClass("green");
         tableHTML += "</tbody></table>";
 
-        $("#synonymTableContainer").html(tableHTML); // ✅ Always Show Table!
+        $("#synonymTableContainer").html(tableHTML);
+        if (res.non_secure_flag && res.non_secure_flag == 1) {
+          $("#synonymForm #notSureCheckbox").prop("checked", true);
+        } else {
+          $("#synonymForm #notSureCheckbox").prop("checked", false);
+        }
+
       } else {
         // ✅ Even if no synonyms, still show a message for yellow words
         $("#synonymTableContainer").html(
