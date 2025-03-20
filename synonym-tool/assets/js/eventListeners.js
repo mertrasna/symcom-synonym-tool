@@ -193,7 +193,7 @@ $(document).on("click", ".synonym-word", function () {
                               console.log("Auto-clicking processed element again...");
                               setTimeout(function () {
                                   $clicked.trigger("click");
-                              }, 500);
+                              }, 900);
                           }
                       },
                       error: function (xhr, status, error) {
@@ -293,7 +293,7 @@ $(document).on("click", ".synonym-word", function () {
       const language = masterId === 5072 ? "German" : "English";
 
       const apiKey =
-        "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"; // Replace with your API key
+        "key"; // Replace with your API key
 
       const requestBody = {
         model: "gpt-4",
