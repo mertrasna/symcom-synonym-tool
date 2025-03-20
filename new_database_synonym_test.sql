@@ -2145,6 +2145,20 @@ INSERT INTO `synonym_de` (`synonym_id`, `word`, `synonym`, `cross_reference`, `s
 -- --------------------------------------------------------
 
 --
+ -- Table structure for table `synonym_de_notes`
+ --
+ 
+ CREATE TABLE `synonym_de_notes` (
+   `note_id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+   `synonym_id` int(11) UNSIGNED NOT NULL,
+   `note` TEXT COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+   `updated_at` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+   PRIMARY KEY (`note_id`),
+   KEY `idx_synonym_id` (`synonym_id`)
+ ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
 -- Table structure for table `synonym_de_synonym_reference`
 --
 
@@ -2209,6 +2223,21 @@ INSERT INTO `synonym_en` (`synonym_id`, `word`, `synonym`, `cross_reference`, `s
 (18, 'head', 'forehead a', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '0', '0', 1, '127.0.0.1', '2025-01-13 07:39:09', 100, '2022-11-16 07:39:03', NULL);
 
 -- --------------------------------------------------------
+
+--
+ -- Table structure for table `synonym_en_notes`
+ --
+ 
+ CREATE TABLE `synonym_en_notes` (
+   `note_id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+   `synonym_id` int(11) UNSIGNED NOT NULL,
+   `note` TEXT COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+   `updated_at` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+   PRIMARY KEY (`note_id`),
+   KEY `idx_synonym_id` (`synonym_id`)
+ ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 
 --
 -- Table structure for table `synonym_en_synonym_reference`
