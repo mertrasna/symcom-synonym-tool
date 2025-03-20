@@ -263,6 +263,21 @@ $(document).ready(function () {
     }
   });
 
+  // function to fetch the API key securely
+  async function getApiKey() {
+    try {
+      const response = await fetch("/get-api-key.php"); // Fetch from backend
+      const data = await response.json();
+      if (!data.key) {
+        throw new Error("API key is missing from server response");
+      }
+      return data.key;
+    } catch (error) {
+      console.error("Error fetching API key:", error);
+      return null;
+    }
+  }
+
   // ✅ ChatGPT Observable (Publisher)
   class ChatGPTObservable {
     constructor() {
@@ -277,14 +292,19 @@ $(document).ready(function () {
       this.observers.forEach((observer) => observer.update(data));
     }
 
-    fetchSynonyms(selectedWord) {
+    async fetchSynonyms(selectedWord) {
       console.log(`🔎 Fetching synonyms from ChatGPT for: ${selectedWord}`);
 
       // Determine the language based on masterId (5072 for German, default to English)
       const language = masterId === 5072 ? "German" : "English";
 
-      const apiKey =
-        "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"; // Replace with your API key
+      // Fetch API key securely
+      const apiKey = await getApiKey();
+
+      if (!apiKey) {
+        console.error("❌ API key retrieval failed. Aborting request.");
+        return;
+      }
 
       const requestBody = {
         model: "gpt-4",
