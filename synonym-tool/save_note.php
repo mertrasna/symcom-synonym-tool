@@ -49,7 +49,7 @@ try {
     if (mysqli_num_rows($wordResult) > 0) {
         $wordRow = mysqli_fetch_assoc($wordResult);
         
-        // Try to find ID field (could be 'id', 'synonym_id', etc.)
+        // Try to find ID field 
         if (isset($wordRow['id'])) {
             $synonymId = $wordRow['id'];
         } elseif (isset($wordRow['synonym_id'])) {

@@ -60,39 +60,50 @@
             ?>
             <h2>Synonym EN</h2>   
             <div class="spacer"></div>      
-            <div class="">          
-                <table class="table table-bordered table-sticky-head table-hover">
-                    <thead>
-                        <tr>
-                            <th style="width:5%;">Word</th>
-                            <th style="width:5%;">Synonym</th>
-                            <th style="width: 5%;">Cross Reference</th>
-                            <th style="width: 5%;">Generic Term</th>
-                            <th style="width: 5%;">Sub Term</th>
-                            <th style="width: 5%;">Comment</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php                                                               
-                            $result = mysqli_query($db,"SELECT * FROM synonym_en ORDER BY synonym_id DESC"); 
-                            while($row = mysqli_fetch_array($result)){   
-                                ?>
-                                <tr class="<?php echo ($row['non_secure_flag'] == 1) ? 'highlight-row' : ''; ?>">
-                                    <td><?php echo $row['word']; ?></td>
-                                    <td><?php echo $row['synonym']; ?></td>
-                                    <td><?php echo $row['cross_reference']; ?></td>
-                                    <td><?php echo $row['generic_term']; ?></td>
-                                    <td><?php echo $row['sub_term']; ?></td>
-                                    <td><?php echo $row['comment']; ?></td>
-                                </tr>
-                                <?php
-                            }
-                        ?>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
+            <?php
+    $query = "
+        SELECT se.*, sen.note 
+        FROM synonym_en se
+        LEFT JOIN synonym_en_notes sen ON se.synonym_id = sen.synonym_id
+        ORDER BY se.synonym_id DESC
+    ";
+
+    $result = mysqli_query($db, $query); 
+?>
+
+<div class="">          
+    <table class="table table-bordered table-sticky-head table-hover">
+        <thead>
+            <tr>
+                <th style="width:5%;">Word</th>
+                <th style="width:5%;">Synonym</th>
+                <th style="width:5%;">Cross Reference</th>
+                <th style="width:5%;">Generic Term</th>
+                <th style="width:5%;">Sub Term</th>
+                <th style="width:5%;">Comment</th>
+                <th style="width:5%;">Note</th> <!-- Added Note Column -->
+            </tr>
+        </thead>
+        <tbody>
+            <?php                                                               
+                while ($row = mysqli_fetch_array($result)) {   
+            ?>
+                    <tr class="<?php echo ($row['non_secure_flag'] == 1) ? 'highlight-row' : ''; ?>">
+                        <td><?php echo htmlspecialchars($row['word']); ?></td>
+                        <td><?php echo htmlspecialchars($row['synonym']); ?></td>
+                        <td><?php echo htmlspecialchars($row['cross_reference']); ?></td>
+                        <td><?php echo htmlspecialchars($row['generic_term']); ?></td>
+                        <td><?php echo htmlspecialchars($row['sub_term']); ?></td>
+                        <td><?php echo htmlspecialchars($row['comment']); ?></td>
+                        <td><?php echo htmlspecialchars($row['note'] ?? ''); ?></td> <!-- Display Note -->
+                    </tr>
+            <?php
+                }
+            ?>
+        </tbody>
+    </table>
+</div>
+
             
 </div>
 <!-- Add symptom edit modal end -->
@@ -172,4 +183,3 @@
 </script>
 </body>
 </html>
-

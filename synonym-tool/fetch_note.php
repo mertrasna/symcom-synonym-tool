@@ -41,7 +41,7 @@ $masterId = isset($_POST['master_id']) ? intval($_POST['master_id']) : 5075;
 $synonymTable = ($masterId === 5072) ? 'synonym_de' : 'synonym_en';
 $notesTable = ($masterId === 5072) ? 'synonym_de_notes' : 'synonym_en_notes';
 
-// Log what we're doing (for debugging)
+// Log what we're doing
 error_log("fetch_note.php: Searching for notes for word '$word' in $synonymTable");
 
 try {
