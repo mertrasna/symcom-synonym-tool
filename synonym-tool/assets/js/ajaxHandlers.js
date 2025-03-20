@@ -90,14 +90,14 @@ function processSynonymsWithDeduplication(synonymData) {
 function fetchRootWord(selectedWord, finalSynonyms) {
   // Extract 'mid' from the URL (or set it by some other means)
   const urlParams = new URLSearchParams(window.location.search);
-  const mid = urlParams.get("mid") || 5075; // This will be "5072" for German if in URL
+  const mid = urlParams.get("mid") || 5075;
 
   $.ajax({
     url: "fetch_root_word.php",
     type: "POST",
     data: {
       word: selectedWord,
-      master_id: mid, // Include master_id so the server queries the correct table
+      master_id: mid,
     },
     dataType: "json",
     success: function (rootRes) {
@@ -149,6 +149,7 @@ function fetchRootWord(selectedWord, finalSynonyms) {
                   <input type="checkbox" id="notSureCheckbox"> Not Sure
                 </div>
                 <button type="button" id="newAssignmentBtn" style="background-color: #6c757d; color: white; border: none; border-radius: 4px; padding: 5px 10px; cursor: pointer;">New Assignment</button>
+                <button type="button" id="addNoteBtn" style="background-color: #28a745; color: white; border: none; border-radius: 4px; padding: 5px 10px; margin-left: 10px; cursor: pointer;">Add Note</button>
                 <button id="toggleAllSBtn" type="button">Toggle All S</button>
               </div>
               <button type="submit" id="submitSynonyms">Submit</button>

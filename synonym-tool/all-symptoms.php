@@ -255,6 +255,7 @@ function processText($text, $stopwords, $db, $synonymTable) {
                 <input type="checkbox" id="notSureCheckbox" name="notSure" value="1"> Not Sure
             </div>
             <button type="button" id="newAssignmentBtn" style="background-color: #6c757d; color: white; border: none; border-radius: 4px; padding: 5px 10px; cursor: pointer;">New Assignment</button>
+            <button type="button" id="addNoteBtn" style="background-color: #28a745; color: white; border: none; border-radius: 4px; padding: 5px 10px; margin-left: 10px; cursor: pointer;">Add Note</button>
         </div>
 
         <button type="submit" id="submitSynonyms">Submit</button>
@@ -277,6 +278,18 @@ function processText($text, $stopwords, $db, $synonymTable) {
     </div>
     <input type="hidden" id="masterId" value="<?php echo $masterId; ?>">
 
+</div>
+
+<!-- Note Modal -->
+<div id="noteModal" class="modal" style="display:none;">
+    <div class="modal-content" style="position: relative; margin: 10% auto; padding: 20px; border: 1px solid #888; width: 400px; background: #fff;">
+        <span class="close-note-modal" style="position: absolute; right: 10px; top: 5px; cursor: pointer; font-size: 20px;">&times;</span>
+        <h3>Add Note for Synonym</h3>
+        <textarea id="noteText" placeholder="Enter your note about this synonym..." rows="5" cols="40"></textarea>
+        <br>
+        <button id="saveNote" style="background-color: #28a745; color: white; border: none; border-radius: 4px; padding: 5px 10px; margin-top: 10px; cursor: pointer;">Save Note</button>
+        <button id="closeNote" style="background-color: #6c757d; color: white; border: none; border-radius: 4px; padding: 5px 10px; margin-top: 10px; margin-left: 10px; cursor: pointer;">Cancel</button>
+    </div>
 </div>
 
 <!-- Load jQuery -->
@@ -304,6 +317,7 @@ function processText($text, $stopwords, $db, $synonymTable) {
 <script src="assets/js/helpers.js"></script>
 <script src="assets/js/modal.js"></script>
 <script src="assets/js/hover.js"></script>
+<script src="assets/js/note.js"></script>
 
 
 <?php include '../inc/footer.php';?>
