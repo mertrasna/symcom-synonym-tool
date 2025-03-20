@@ -549,9 +549,8 @@ $(document).ready(function () {
       const targetUrl = `https://www.dictionary.com/browse/${encodeURIComponent(
         word
       )}`;
-      const proxyUrl = `proxy_dictionary.php?url=${encodeURIComponent(
-        targetUrl
-      )}`;
+      const proxyUrl = `proxy_facade.php?type=dictionary&targetUrl=${encodeURIComponent(targetUrl)}`;
+
 
       $.ajax({
         url: proxyUrl,
@@ -691,9 +690,7 @@ $(document).ready(function () {
       const targetUrl = `https://www.thesaurus.com/browse/${encodeURIComponent(
         word
       )}`;
-      const proxyUrl = `proxy_thesaurus.php?url=${encodeURIComponent(
-        targetUrl
-      )}`;
+      const proxyUrl = `proxy_facade.php?type=thesaurus&targetUrl=${encodeURIComponent(targetUrl)}`;
 
       $.ajax({
         url: proxyUrl,
