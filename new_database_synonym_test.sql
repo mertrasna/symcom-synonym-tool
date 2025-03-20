@@ -2600,3 +2600,11 @@ ALTER TABLE `synonym_en`   ADD COLUMN `isyellow` BOOLEAN NOT NULL DEFAULT FALSE 
 ALTER TABLE synonym_en ADD COLUMN root_word VARCHAR(255) NULL AFTER synonym_id;
 ALTER TABLE synonym_en DROP COLUMN reference_id;
 ALTER TABLE synonym_en ADD COLUMN isgreen TINYINT(1) NOT NULL DEFAULT 0 AFTER ersteller_id;
+
+-- SQL to add symptom_text column to both synonym tables
+ ALTER TABLE synonym_en ADD COLUMN symptom_text TEXT COLLATE utf8mb4_unicode_ci AFTER synonym_id; 
+ ALTER TABLE synonym_de ADD COLUMN symptom_text TEXT COLLATE utf8mb4_unicode_ci AFTER synonym_id; 
+
+ -- Add an index to improve query performance 
+  ALTER TABLE synonym_en ADD INDEX idx_word_symptom (word(50), symptom_text(100));
+   ALTER TABLE synonym_de ADD INDEX idx_word_symptom (word(50), symptom_text(100));

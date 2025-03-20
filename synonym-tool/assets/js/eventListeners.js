@@ -549,8 +549,9 @@ $(document).ready(function () {
       const targetUrl = `https://www.dictionary.com/browse/${encodeURIComponent(
         word
       )}`;
-      const proxyUrl = `proxy_facade.php?type=dictionary&targetUrl=${encodeURIComponent(targetUrl)}`;
-
+      const proxyUrl = `proxy_facade.php?type=dictionary&targetUrl=${encodeURIComponent(
+        targetUrl
+      )}`;
 
       $.ajax({
         url: proxyUrl,
@@ -690,7 +691,9 @@ $(document).ready(function () {
       const targetUrl = `https://www.thesaurus.com/browse/${encodeURIComponent(
         word
       )}`;
-      const proxyUrl = `proxy_facade.php?type=thesaurus&targetUrl=${encodeURIComponent(targetUrl)}`;
+      const proxyUrl = `proxy_facade.php?type=thesaurus&targetUrl=${encodeURIComponent(
+        targetUrl
+      )}`;
 
       $.ajax({
         url: proxyUrl,
@@ -1017,16 +1020,19 @@ $(document).ready(function () {
   }
 
   // Handle clicking the New Assignment button
-  // Handle clicking the New Assignment button
   $(document).on("click", "#newAssignmentBtn", function (event) {
     event.preventDefault();
 
     // Get the currently selected word
-    let selectedWord = $("#selected-word").text().trim();
-    if (!selectedWord) {
+    let selectedWord = $("#selected-word").text();
+    console.log("Before trim - Selected Word:", selectedWord);
+
+    if (!selectedWord || typeof selectedWord === "undefined") {
+      console.error("❌ Error: Selected word is undefined!");
       alert("Error: No word is currently selected.");
       return;
     }
+    selectedWord = selectedWord.trim();
 
     console.log("New Assignment button clicked for word:", selectedWord);
 
@@ -1037,19 +1043,44 @@ $(document).ready(function () {
     $("#notSureCheckbox").prop("checked", false);
     $("#commentText").val("");
 
-    // Get the current root word value (preserve it for the new assignment)
+    // Get the current root word value
     let rootWord = $("#root-word").val();
+    console.log("Before trim - Root Word:", rootWord);
 
-    // Extract master ID from URL to determine language
+    if (!rootWord || typeof rootWord === "undefined") {
+      console.warn(
+        "⚠️ Warning: Root word is undefined. Setting default value."
+      );
+      rootWord = "";
+    }
+    rootWord = rootWord.trim();
+
+    // Get the symptom text from the symptom details container
+    let symptomText = $("#symptom-details").text();
+    console.log("Before trim - Symptom Text:", symptomText);
+
+    if (!symptomText || typeof symptomText === "undefined") {
+      console.warn(
+        "⚠️ Warning: Symptom Text is undefined. Setting default value."
+      );
+      symptomText = "N/A";
+    }
+    symptomText = symptomText.trim();
+
+    // Extract master ID from URL
     const urlParams = new URLSearchParams(window.location.search);
-    const mid = urlParams.get("mid") || 5075; // Default to English (5075)
+    const mid = urlParams.get("mid") || "5075";
+
+    console.log("Submitting new assignment with:", {
+      word: selectedWord,
+      root_word: rootWord,
+      symptom_text: symptomText,
+      master_id: mid,
+    });
 
     // Start a fresh synonym search based on language
     if (mid === "5072") {
-      // German language sources
       console.log("Starting fresh German synonym search for:", selectedWord);
-      // Note: These are placeholder calls - replace with your actual functions
-      // for fetching German synonyms from external sources
       if (typeof fetchChatGPTSynonyms === "function")
         fetchChatGPTSynonyms(selectedWord);
       if (typeof fetchKorrekturenSynonyms === "function")
@@ -1059,42 +1090,35 @@ $(document).ready(function () {
           fetchSynonymsFromOpenThesaurus(selectedWord);
       }, 500);
     } else {
-      // English language sources
       console.log("Starting fresh English synonym search for:", selectedWord);
-      // Note: These are placeholder calls - replace with your actual functions
-      // for fetching English synonyms from external sources
       if (typeof fetchSynonymsFromDictionary === "function")
         fetchSynonymsFromDictionary(selectedWord);
       if (typeof fetchSynonymsFromThesaurus === "function")
         fetchSynonymsFromThesaurus(selectedWord);
     }
 
-    // Optional: Inform the user
+    // ✅ Pass symptomText in the AJAX request
+    $.ajax({
+      url: "update_synonym.php",
+      type: "POST",
+      data: {
+        word: selectedWord,
+        root_word: rootWord,
+        symptom_text: symptomText,
+        master_id: mid,
+      },
+      dataType: "json",
+      success: function (res) {
+        console.log("✅ New assignment response:", res);
+        alert(res.message || "New assignment created successfully.");
+      },
+      error: function (xhr, status, error) {
+        console.error("❌ AJAX Error (update_synonym.php):", status, error);
+        alert("Error creating a new assignment. Check console for details.");
+      },
+    });
+
     alert("Creating a new assignment for the word: " + selectedWord);
-  });
-
-  // Click the next clickable word (blue or green) in the sentence
-  function clickNextClickableWord() {
-    let clickableWords = $(".synonym-word, .synonym-word.green");
-    let currentIndex = clickableWords.index(
-      $(`.synonym-word[data-word='${selectedWord}']`)
-    );
-    if (currentIndex !== -1 && currentIndex < clickableWords.length - 1) {
-      clickableWords.eq(currentIndex + 1).trigger("click");
-    } else {
-      alert(
-        "No more clickable words in this symptom.\\nProcessing completed for this symptom."
-      );
-    }
-  }
-
-  // ✅ Use event delegation so it works for dynamically added elements
-  $(document).on("change", "#notSureCheckbox", function () {
-    if (this.checked) {
-      $("#commentModal").show();
-    } else {
-      $("#commentText").val("");
-    }
   });
 
   // ✅ Close modal and keep checkbox checked
@@ -1144,7 +1168,7 @@ $(document).on("submit", "#synonymForm", function (event) {
   event.preventDefault();
 
   // 1) Retrieve 'selectedWord' from #selected-word
-  let selectedWord = $("#selected-word").text().trim();
+  let selectedWord = $("#selected-word").text();
   if (!selectedWord) {
     alert("Error: Selected word is empty.");
     return;
@@ -1160,9 +1184,9 @@ $(document).on("submit", "#synonymForm", function (event) {
   // 3) Retrieve the root word from multiple possible locations
   let rootWord =
     $("#root-word-container input").val() ||
-    $("#root-word-container #root-word-display").text().trim() ||
+    $("#root-word-container #root-word-display").text() ||
     $("#root-word").val() ||
-    $("#root-word").text().trim();
+    $("#root-word").text();
 
   // Remove any trailing commas from root word
   rootWord = rootWord.replace(/,+$/, "");
@@ -1177,7 +1201,7 @@ $(document).on("submit", "#synonymForm", function (event) {
 
   // 5) Loop through each row of the table to find checked synonyms
   $("#synonymTable tbody tr").each(function () {
-    let synonymText = $(this).find("td:last").text().trim();
+    let synonymText = $(this).find("td:last").text();
 
     // For each checkbox in the row, figure out which category (S, Q, O, U)
     $(this)
@@ -1193,25 +1217,17 @@ $(document).on("submit", "#synonymForm", function (event) {
   // 6) Convert each Set into an array of {word: "..."} for JSON
   Object.keys(synonyms).forEach((cat) => {
     synonyms[cat] = Array.from(synonyms[cat]).map((syn) => ({
-      word: syn.trim(),
+      word: syn,
     }));
   });
 
   // 7) Collect the 'comment' if "Not Sure" checkbox is checked
   let comment = $("#notSureCheckbox").prop("checked")
-    ? $("#commentText").val().trim()
+    ? $("#commentText").val()
     : "";
 
-  console.log("Submitting synonym data:", {
-    word: selectedWord,
-    root_word: rootWord,
-    synonyms: synonyms,
-    comment: comment,
-    master_id: mid,
-  });
-
   // ✅ Capture manually entered synonym
-  let manualSynonymText = $("#manualSynonym").val().trim();
+  let manualSynonymText = $("#manualSynonym").val();
   let manualSynonymType = [];
 
   // ✅ Capture selected checkbox types for manual synonym
@@ -1226,14 +1242,18 @@ $(document).on("submit", "#synonymForm", function (event) {
     synonyms[type].push({ word: manualSynonymText });
   });
 
-  // ✅ Debugging: Log the manual synonym before sending
-  console.log("🔍 Submitting with Manual Synonym:", {
+  // ✅ Retrieve the symptom text from the worksheet
+  let symptomText = $("#symptom-details").text() || ""; // Handle it the same way as other fields
+
+  // ✅ Debugging: Log all data before submission
+  console.log("🔍 Submitting Synonym Data:", {
     word: selectedWord,
     root_word: rootWord,
     synonyms: synonyms,
     manual_synonym: manualSynonymText,
     manual_synonym_types: manualSynonymType,
     comment: comment,
+    symptom_text: symptomText, // ✅ Included symptom text
     master_id: mid,
   });
 
@@ -1248,11 +1268,12 @@ $(document).on("submit", "#synonymForm", function (event) {
       manual_synonym: manualSynonymText,
       manual_synonym_types: JSON.stringify(manualSynonymType),
       comment: comment,
+      symptom_text: symptomText, // ✅ Included symptom text
       master_id: mid, // Pass 'master_id' to use the correct table (synonym_de or synonym_en)
     },
     dataType: "json",
     success: function (res) {
-      console.log("Update response:", res);
+      console.log("✅ Update Response:", res);
       alert(res.message);
 
       // If the selected word contains a space, mark it with yellow-word (phrase); else mark it as green.
@@ -1266,7 +1287,7 @@ $(document).on("submit", "#synonymForm", function (event) {
       clickNextClickableWord();
     },
     error: function (xhr, status, error) {
-      console.error("AJAX Error (update_synonym.php):", status, error);
+      console.error("❌ AJAX Error (update_synonym.php):", status, error);
       console.error("Server Response:", xhr.responseText);
       alert("Error updating synonyms. Check console for details.");
     },
