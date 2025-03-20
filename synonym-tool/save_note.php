@@ -1,6 +1,7 @@
 <?php
 include '../config/route.php';
 header('Content-Type: application/json');
+ini_set('display_errors', 0); // Prevent HTML errors in output
 
 // Check if we have a valid request
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -30,77 +31,95 @@ $notesTable = ($masterId === 5072) ? 'synonym_de_notes' : 'synonym_en_notes';
 
 try {
     // For debugging
-    error_log("Saving note for word: '$word' in table: $synonymTable");
-    error_log("Note content: '$note'");
+    error_log("save_note.php: Attempting to save note for word: '$word' in $synonymTable");
     
-    // First, try an exact match for the synonym
-    $query = "SELECT id FROM $synonymTable WHERE word = '$word' LIMIT 1";
-    $result = mysqli_query($db, $query);
+    // First, check if the word exists in the synonym table
+    $findWordQuery = "SELECT * FROM $synonymTable WHERE word = '$word' LIMIT 1";
+    $wordResult = mysqli_query($db, $findWordQuery);
     
-    // If exact match fails, try a LIKE match
-    if (!$result || mysqli_num_rows($result) === 0) {
-        $query = "SELECT id FROM $synonymTable WHERE word LIKE '%$word%' LIMIT 1";
-        $result = mysqli_query($db, $query);
+    if (!$wordResult) {
+        error_log("save_note.php: Error finding word: " . mysqli_error($db));
+        echo json_encode(['success' => false, 'message' => "Query error: " . mysqli_error($db)]);
+        exit;
     }
     
-    // If still no match, try to insert the word
-    if (!$result || mysqli_num_rows($result) === 0) {
-        error_log("No existing synonym found, trying to insert new one for: '$word'");
+    $synonymId = null;
+    
+    // If word exists, get its ID
+    if (mysqli_num_rows($wordResult) > 0) {
+        $wordRow = mysqli_fetch_assoc($wordResult);
         
-        // Try to insert the word if it doesn't exist
-        $insertQuery = "INSERT INTO $synonymTable (word, isgreen) VALUES ('$word', 1)";
-        if (!mysqli_query($db, $insertQuery)) {
-            echo json_encode(['success' => false, 'message' => "Could not create synonym entry for word: $word"]);
+        // Try to find ID field (could be 'id', 'synonym_id', etc.)
+        if (isset($wordRow['id'])) {
+            $synonymId = $wordRow['id'];
+        } elseif (isset($wordRow['synonym_id'])) {
+            $synonymId = $wordRow['synonym_id'];
+        } else {
+            // Get the first column as a fallback
+            $keys = array_keys($wordRow);
+            $synonymId = $wordRow[$keys[0]];
+            error_log("save_note.php: Using fallback ID field: " . $keys[0] . " with value: " . $synonymId);
+        }
+    } else {
+        // If word doesn't exist, insert it into synonym table
+        error_log("save_note.php: Word '$word' not found, creating new entry");
+        
+        $insertWordQuery = "INSERT INTO $synonymTable (word) VALUES ('$word')";
+        if (!mysqli_query($db, $insertWordQuery)) {
+            error_log("save_note.php: Error inserting word: " . mysqli_error($db));
+            echo json_encode(['success' => false, 'message' => "Failed to insert word: " . mysqli_error($db)]);
             exit;
         }
         
-        // Get the ID of the newly inserted synonym
         $synonymId = mysqli_insert_id($db);
         
         if (!$synonymId) {
-            echo json_encode(['success' => false, 'message' => "Failed to get ID for newly created synonym"]);
+            error_log("save_note.php: Failed to get ID of newly inserted word");
+            echo json_encode(['success' => false, 'message' => "Failed to get ID for new word"]);
             exit;
         }
         
-        error_log("Created new synonym with ID: $synonymId for word: '$word'");
-    } else {
-        $row = mysqli_fetch_assoc($result);
-        $synonymId = $row['id'];
-        error_log("Found existing synonym with ID: $synonymId for word: '$word'");
+        error_log("save_note.php: Created new word with ID: $synonymId");
     }
     
     // Check if a note already exists for this synonym
-    $checkQuery = "SELECT note_id FROM $notesTable WHERE synonym_id = $synonymId";
-    error_log("Checking for existing note: $checkQuery");
+    $checkNoteQuery = "SELECT note_id FROM $notesTable WHERE synonym_id = $synonymId";
+    $checkResult = mysqli_query($db, $checkNoteQuery);
     
-    $checkResult = mysqli_query($db, $checkQuery);
+    if (!$checkResult) {
+        error_log("save_note.php: Error checking for existing note: " . mysqli_error($db));
+        echo json_encode(['success' => false, 'message' => "Failed to check for existing note: " . mysqli_error($db)]);
+        exit;
+    }
     
-    if ($checkResult && mysqli_num_rows($checkResult) > 0) {
+    if (mysqli_num_rows($checkResult) > 0) {
         // Update existing note
-        $row = mysqli_fetch_assoc($checkResult);
-        $noteId = $row['note_id'];
+        $noteRow = mysqli_fetch_assoc($checkResult);
+        $noteId = $noteRow['note_id'];
         
         $updateQuery = "UPDATE $notesTable SET note = '$note', updated_at = NOW() WHERE note_id = $noteId";
-        error_log("Updating existing note: $updateQuery");
+        error_log("save_note.php: Updating existing note with ID: $noteId");
         
         if (mysqli_query($db, $updateQuery)) {
             echo json_encode(['success' => true, 'message' => 'Note updated successfully']);
         } else {
+            error_log("save_note.php: Error updating note: " . mysqli_error($db));
             echo json_encode(['success' => false, 'message' => 'Error updating note: ' . mysqli_error($db)]);
         }
     } else {
         // Insert new note
         $insertQuery = "INSERT INTO $notesTable (synonym_id, note, created_at) VALUES ($synonymId, '$note', NOW())";
-        error_log("Inserting new note: $insertQuery");
+        error_log("save_note.php: Inserting new note for synonym ID: $synonymId");
         
         if (mysqli_query($db, $insertQuery)) {
             echo json_encode(['success' => true, 'message' => 'Note saved successfully']);
         } else {
+            error_log("save_note.php: Error saving note: " . mysqli_error($db));
             echo json_encode(['success' => false, 'message' => 'Error saving note: ' . mysqli_error($db)]);
         }
     }
 } catch (Exception $e) {
-    error_log("Error in save_note.php: " . $e->getMessage());
+    error_log("save_note.php: Exception: " . $e->getMessage());
     echo json_encode(['success' => false, 'message' => 'Error: ' . $e->getMessage()]);
 }
 ?>

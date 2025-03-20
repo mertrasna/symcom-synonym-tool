@@ -1,82 +1,153 @@
 <?php
-include '../config/route.php';
+// Turn off error display for production
+ini_set('display_errors', 0);
+error_reporting(E_ALL);
+
+// Set content type to JSON
 header('Content-Type: application/json');
 
-// Check if we have a valid request
+// Include configuration and database connection
+include '../config/route.php';
+
+// Function to return JSON error response
+function return_error($message) {
+    echo json_encode([
+        'success' => false,
+        'message' => $message
+    ]);
+    exit;
+}
+
+// Validate request method
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    echo json_encode(['success' => false, 'message' => 'Invalid request method']);
-    exit;
+    return_error('Invalid request method');
 }
 
-// Get parameters - only require word parameter
+// Check if word parameter exists
 if (!isset($_POST['word']) || empty($_POST['word'])) {
-    echo json_encode(['success' => false, 'message' => 'No word provided']);
-    exit;
+    return_error('No word provided');
 }
 
-// Sanitize inputs
+// Validate database connection
+if (!isset($db) || $db->connect_error) {
+    return_error('Database connection error: ' . ($db->connect_error ?? 'Unknown error'));
+}
+
+// Get and sanitize parameters
 $word = mysqli_real_escape_string($db, trim($_POST['word']));
 $masterId = isset($_POST['master_id']) ? intval($_POST['master_id']) : 5075;
 
-// Determine which table to use based on master_id
+// Determine which tables to use
 $synonymTable = ($masterId === 5072) ? 'synonym_de' : 'synonym_en';
 $notesTable = ($masterId === 5072) ? 'synonym_de_notes' : 'synonym_en_notes';
 
+// Log what we're doing (for debugging)
+error_log("fetch_note.php: Searching for notes for word '$word' in $synonymTable");
+
 try {
-    // The key fix: Join the tables directly and find ANY notes for the word
-    // without the LIMIT 1 on the first query
-    $query = "
-        SELECT n.note 
-        FROM $synonymTable s
-        JOIN $notesTable n ON s.id = n.synonym_id
-        WHERE s.word = '$word'
-        LIMIT 1
-    ";
+    // First we need to find the synonym_id for this word
+    $findSynonymQuery = "SELECT * FROM $synonymTable WHERE word = '$word' LIMIT 1";
+    $synonymResult = mysqli_query($db, $findSynonymQuery);
     
-    error_log("Executing query: $query");
-    $result = mysqli_query($db, $query);
+    if (!$synonymResult) {
+        error_log("fetch_note.php: Synonym query error: " . mysqli_error($db));
+        return_error("Failed to find synonym: " . mysqli_error($db));
+    }
     
-    if ($result && mysqli_num_rows($result) > 0) {
-        $row = mysqli_fetch_assoc($result);
-        echo json_encode([
-            'success' => true,
-            'note' => $row['note'],
-            'message' => 'Note found'
-        ]);
-    } else {
-        // Try a broader search if exact match fails
-        $query = "
-            SELECT n.note 
-            FROM $synonymTable s
-            JOIN $notesTable n ON s.id = n.synonym_id
-            WHERE s.word LIKE '%$word%'
-            LIMIT 1
-        ";
+    if (mysqli_num_rows($synonymResult) > 0) {
+        $synonymRow = mysqli_fetch_assoc($synonymResult);
+        $synonymId = $synonymRow['id'] ?? null; // Try to use 'id' field
         
-        error_log("Executing broader query: $query");
-        $result = mysqli_query($db, $query);
+        // If no 'id' field, try common alternatives
+        if ($synonymId === null) {
+            $synonymId = $synonymRow['synonym_id'] ?? $synonymRow['word_id'] ?? null;
+            
+            // If we still don't have an ID, dump the first row for debugging
+            if ($synonymId === null) {
+                error_log("fetch_note.php: Could not find ID field. Row data: " . json_encode($synonymRow));
+                
+                // Use the first field from the result as a last resort
+                $keys = array_keys($synonymRow);
+                if (!empty($keys)) {
+                    $synonymId = $synonymRow[$keys[0]];
+                    error_log("fetch_note.php: Using " . $keys[0] . " as ID field with value: " . $synonymId);
+                } else {
+                    return_error("Could not determine synonym ID");
+                }
+            }
+        }
         
-        if ($result && mysqli_num_rows($result) > 0) {
-            $row = mysqli_fetch_assoc($result);
+        // Now look for a note with this synonym_id
+        $noteQuery = "SELECT note FROM $notesTable WHERE synonym_id = $synonymId LIMIT 1";
+        $noteResult = mysqli_query($db, $noteQuery);
+        
+        if (!$noteResult) {
+            error_log("fetch_note.php: Note query error: " . mysqli_error($db));
+            return_error("Note query failed: " . mysqli_error($db));
+        }
+        
+        if (mysqli_num_rows($noteResult) > 0) {
+            $noteRow = mysqli_fetch_assoc($noteResult);
             echo json_encode([
                 'success' => true,
-                'note' => $row['note'],
+                'note' => $noteRow['note'],
+                'message' => 'Note found'
+            ]);
+        } else {
+            echo json_encode([
+                'success' => false,
+                'note' => '',
+                'message' => 'No note found for this synonym'
+            ]);
+        }
+    } else {
+        // If exact match fails, try with LIKE search
+        $findSynonymQuery = "SELECT * FROM $synonymTable WHERE word LIKE '%$word%' LIMIT 1";
+        $synonymResult = mysqli_query($db, $findSynonymQuery);
+        
+        if (!$synonymResult || mysqli_num_rows($synonymResult) === 0) {
+            echo json_encode([
+                'success' => false,
+                'note' => '',
+                'message' => 'No synonym found for this word'
+            ]);
+            exit;
+        }
+        
+        $synonymRow = mysqli_fetch_assoc($synonymResult);
+        $synonymId = $synonymRow['id'] ?? $synonymRow['synonym_id'] ?? $synonymRow['word_id'] ?? null;
+        
+        if ($synonymId === null) {
+            // Dump field names for debugging
+            error_log("fetch_note.php: Field names in synonym table: " . json_encode(array_keys($synonymRow)));
+            return_error("Could not determine synonym ID field");
+        }
+        
+        $noteQuery = "SELECT note FROM $notesTable WHERE synonym_id = $synonymId LIMIT 1";
+        $noteResult = mysqli_query($db, $noteQuery);
+        
+        if (!$noteResult) {
+            error_log("fetch_note.php: LIKE note query error: " . mysqli_error($db));
+            return_error("Note query failed: " . mysqli_error($db));
+        }
+        
+        if (mysqli_num_rows($noteResult) > 0) {
+            $noteRow = mysqli_fetch_assoc($noteResult);
+            echo json_encode([
+                'success' => true,
+                'note' => $noteRow['note'],
                 'message' => 'Note found with partial match'
             ]);
         } else {
             echo json_encode([
                 'success' => false,
                 'note' => '',
-                'message' => 'No note has been saved for this word yet'
+                'message' => 'No note found for this synonym'
             ]);
         }
     }
 } catch (Exception $e) {
-    error_log("Error in fetch_note.php: " . $e->getMessage());
-    
-    echo json_encode([
-        'success' => false,
-        'message' => 'Error: ' . $e->getMessage()
-    ]);
+    error_log("fetch_note.php: Exception: " . $e->getMessage());
+    return_error('Error: ' . $e->getMessage());
 }
 ?>

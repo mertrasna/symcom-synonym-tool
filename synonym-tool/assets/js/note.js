@@ -1,5 +1,62 @@
 // Note functionality for synonym tool
 $(document).ready(function () {
+  // Track processed words to prevent duplicate fetches
+  let processedWords = new Set();
+  // Debounce timer for fetching notes
+  let notesFetchTimer = null;
+
+  // Function to fetch notes with debounce
+  function debouncedFetchNote(word) {
+    // Clear any existing timer
+    if (notesFetchTimer) {
+      clearTimeout(notesFetchTimer);
+    }
+
+    // If we've already processed this word, don't fetch again
+    if (processedWords.has(word)) {
+      console.log(`✅ Note for '${word}' already fetched. Skipping request.`);
+      return;
+    }
+
+    // Set a timer to fetch the note after a delay
+    notesFetchTimer = setTimeout(function () {
+      // Get masterId from URL or use default (5075 for English)
+      const urlParams = new URLSearchParams(window.location.search);
+      const mid = urlParams.get("mid") || 5075;
+
+      console.log(`🔍 Fetching note for word: ${word}, master_id: ${mid}`);
+
+      $.ajax({
+        url: "fetch_note.php",
+        type: "POST",
+        data: {
+          word: word,
+          master_id: mid,
+        },
+        dataType: "json",
+        success: function (response) {
+          console.log("📝 Note fetch response:", response);
+          // Mark this word as processed
+          processedWords.add(word);
+
+          // If there's a successful note, add the indicator class
+          if (
+            response.success &&
+            response.note &&
+            response.note.trim() !== ""
+          ) {
+            $(`.synonym-word[data-word='${word}']`).addClass("has-note");
+          }
+        },
+        error: function (xhr, status, error) {
+          console.error("❌ Error fetching note:", status, error);
+          // Still mark as processed to prevent repeated attempts
+          processedWords.add(word);
+        },
+      });
+    }, 2000); // 2-second delay
+  }
+
   // Open the note modal when Add Note button is clicked
   $(document).on("click", "#addNoteBtn", function () {
     let selectedWord = $("#selected-word").text().trim();
@@ -177,35 +234,32 @@ $(document).ready(function () {
   });
 
   // Add indicator for words that have notes when they're loaded
-  function checkForExistingNotes() {
-    $(".synonym-word").each(function () {
-      let word = $(this).attr("data-word");
-      if (!word) return;
+  function initializeNotes() {
+    console.log("📝 Initializing notes for visible synonyms...");
 
-      const urlParams = new URLSearchParams(window.location.search);
-      const mid = urlParams.get("mid") || 5075;
+    // Only process the first 5 words initially to prevent flooding
+    let count = 0;
+    const MAX_INITIAL = 5;
 
-      $.ajax({
-        url: "fetch_note.php",
-        type: "POST",
-        data: {
-          word: word,
-          master_id: mid,
-        },
-        dataType: "json",
-        success: function (response) {
-          if (
-            response.success &&
-            response.note &&
-            response.note.trim() !== ""
-          ) {
-            $(`.synonym-word[data-word='${word}']`).addClass("has-note");
-          }
-        },
-      });
+    $(".synonym-word.green, .synonym-word.yellow-word").each(function () {
+      if (count < MAX_INITIAL) {
+        let word = $(this).attr("data-word");
+        if (word && !processedWords.has(word)) {
+          debouncedFetchNote(word);
+          count++;
+        }
+      }
     });
   }
 
-  // Run once when page loads
-  setTimeout(checkForExistingNotes, 1000);
+  // Run initialization after a short delay
+  setTimeout(initializeNotes, 1000);
+
+  // Improved click handler for synonym words - connect to existing event handlers
+  $(document).on("click", ".synonym-word", function () {
+    let selectedWord = $(this).attr("data-word").trim();
+    // Fetch note with debounce - add this line to existing handlers
+    debouncedFetchNote(selectedWord);
+    // Original functionality continues automatically...
+  });
 });
