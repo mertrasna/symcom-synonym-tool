@@ -5,11 +5,13 @@ require_once 'SynonymRepositoryInterface.php';
 class SynonymRepository implements SynonymRepositoryInterface {
     private $db;
     private $tableName;
+    private $masterId;
     
 
     // Constructor now accepts a masterId to determine the table
     public function __construct(mysqli $db, int $masterId = 5075) {
         $this->db = $db;
+        $this->masterId = $masterId;
         if ($masterId === 5072) {
             $this->tableName = 'synonym_de';
         } elseif ($masterId === 5075) {
@@ -274,6 +276,41 @@ class SynonymRepository implements SynonymRepositoryInterface {
                   VALUES ('{$data['word']}', '{$data['synonym']}', '{$data['cross_reference']}', '{$data['synonym_partial_2']}', '{$data['generic_term']}', '{$data['sub_term']}', '{$data['synonym_nn']}', '{$data['comment']}', '{$data['non_secure_flag']}', '{$data['source_reference_ns']}', '{$data['active']}')";
         return mysqli_query($this->db, $query);
     }
+
+    public function insertManualSynonym(string $word, string $rootWord): bool {
+        $wordEscaped = mysqli_real_escape_string($this->db, trim($word));
+        $rootWordEscaped = mysqli_real_escape_string($this->db, trim($rootWord));
+    
+        error_log("🔍 insertManualSynonym() called with: Word='$word', Root='$rootWord'");
+    
+        // ✅ 1. Check if the row exists
+        $fetchQuery = "SELECT synonym FROM {$this->tableName} WHERE word = '$rootWordEscaped'";
+        $fetchResult = mysqli_query($this->db, $fetchQuery);
+        $row = mysqli_fetch_assoc($fetchResult);
+    
+        if (!$row) {
+            error_log("❌ Root word '$rootWord' not found in table!");
+            return false;
+        }
+    
+        // ✅ 2. Append the new synonym (handle NULL values)
+        $updateQuery = "UPDATE {$this->tableName} 
+                        SET synonym = CONCAT(IFNULL(synonym, ''), IF(LENGTH(synonym) > 0, ', ', ''), '$wordEscaped') 
+                        WHERE word = '$rootWordEscaped'";
+    
+        error_log("🔹 Running Update Query: $updateQuery");
+    
+        if (!mysqli_query($this->db, $updateQuery)) {
+            error_log("❌ Update Error: " . mysqli_error($this->db));
+            return false;
+        }
+    
+        error_log("✅ Manual synonym '$word' added to '$rootWord'");
+        return true;
+    }
+    
+    
+    
 
     public function getSynonym($word) {
         $wordEscaped = mysqli_real_escape_string($this->db, $word);

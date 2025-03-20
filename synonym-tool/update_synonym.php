@@ -33,6 +33,28 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         }
     }
 
+    // handling manual entered synonyms
+    $manualSynonym = isset($_POST['manual_synonym']) ? trim($_POST['manual_synonym']) : '';
+    $manualTypes = isset($_POST['manual_synonym_types']) ? json_decode($_POST['manual_synonym_types'], true) : [];
+
+    if (!empty($manualSynonym) && !empty($manualTypes)) {
+        foreach ($manualTypes as $type) {
+            if (in_array($type, ["S", "Q", "O", "U"])) {
+                // ✅ Ensure the synonym is inserted successfully
+                $insertSuccess = $synonymRepo->insertManualSynonym($manualSynonym, $rootWord, $type);
+    
+                // ✅ If inserted, add it to selectedSynonyms
+                if ($insertSuccess && !in_array($manualSynonym, $selectedSynonyms[$type] ?? [])) {
+                    $selectedSynonyms[$type][] = $manualSynonym;
+                }
+            }
+        }
+    }
+    
+    // ✅ Log manual synonym data before sending to `processSynonymUpdate()`
+    error_log("🔍 Selected Synonyms (Before Processing): " . json_encode($selectedSynonyms));
+    
+
     // 5) Pass data to service
     $response = $synonymService->processSynonymUpdate($word, $rootWord, $comment, $selectedSynonyms, $notSure);
 

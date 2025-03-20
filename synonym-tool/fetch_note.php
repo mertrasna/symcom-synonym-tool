@@ -23,41 +23,59 @@ $synonymTable = ($masterId === 5072) ? 'synonym_de' : 'synonym_en';
 $notesTable = ($masterId === 5072) ? 'synonym_de_notes' : 'synonym_en_notes';
 
 try {
-    // First, get the synonym ID
-    $query = "SELECT id FROM $synonymTable WHERE word = '$word' LIMIT 1";
+    // The key fix: Join the tables directly and find ANY notes for the word
+    // without the LIMIT 1 on the first query
+    $query = "
+        SELECT n.note 
+        FROM $synonymTable s
+        JOIN $notesTable n ON s.id = n.synonym_id
+        WHERE s.word = '$word'
+        LIMIT 1
+    ";
+    
+    error_log("Executing query: $query");
     $result = mysqli_query($db, $query);
     
-    if (!$result || mysqli_num_rows($result) === 0) {
-        echo json_encode(['success' => false, 'message' => "Synonym not found for word: $word"]);
-        exit;
-    }
-    
-    $row = mysqli_fetch_assoc($result);
-    $synonymId = $row['id'];
-    
-    // Check if a note exists for this synonym
-    $checkQuery = "SELECT note FROM $notesTable WHERE synonym_id = $synonymId";
-    $checkResult = mysqli_query($db, $checkQuery);
-    
-    if ($checkResult && mysqli_num_rows($checkResult) > 0) {
-        // Return existing note
-        $row = mysqli_fetch_assoc($checkResult);
+    if ($result && mysqli_num_rows($result) > 0) {
+        $row = mysqli_fetch_assoc($result);
         echo json_encode([
-            'success' => true, 
+            'success' => true,
             'note' => $row['note'],
             'message' => 'Note found'
         ]);
     } else {
-        // No note found
-        echo json_encode([
-            'success' => false,
-            'note' => '',
-            'message' => 'No note found for this word'
-        ]);
+        // Try a broader search if exact match fails
+        $query = "
+            SELECT n.note 
+            FROM $synonymTable s
+            JOIN $notesTable n ON s.id = n.synonym_id
+            WHERE s.word LIKE '%$word%'
+            LIMIT 1
+        ";
+        
+        error_log("Executing broader query: $query");
+        $result = mysqli_query($db, $query);
+        
+        if ($result && mysqli_num_rows($result) > 0) {
+            $row = mysqli_fetch_assoc($result);
+            echo json_encode([
+                'success' => true,
+                'note' => $row['note'],
+                'message' => 'Note found with partial match'
+            ]);
+        } else {
+            echo json_encode([
+                'success' => false,
+                'note' => '',
+                'message' => 'No note has been saved for this word yet'
+            ]);
+        }
     }
 } catch (Exception $e) {
+    error_log("Error in fetch_note.php: " . $e->getMessage());
+    
     echo json_encode([
-        'success' => false, 
+        'success' => false,
         'message' => 'Error: ' . $e->getMessage()
     ]);
 }

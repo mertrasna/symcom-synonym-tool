@@ -22,6 +22,9 @@ $(document).ready(function () {
       },
       dataType: "json",
       success: function (response) {
+        // Log the response for debugging
+        console.log("Fetch note response:", response);
+
         if (response.success) {
           $("#noteText").val(response.note);
         } else {
@@ -31,10 +34,10 @@ $(document).ready(function () {
         // Set modal title
         $("#noteModal h3").text(`Add Note for "${selectedWord}"`);
 
-        // ✅ Enable editing when using "Add Note"
+        // Enable editing when using "Add Note"
         $("#noteText").prop("readonly", false);
 
-        // ✅ Show the Save button again
+        // Show the Save button again
         $("#saveNote").show();
 
         // Open the modal
@@ -42,6 +45,7 @@ $(document).ready(function () {
       },
       error: function (xhr, status, error) {
         console.error("Error fetching note:", status, error);
+        console.error("Response:", xhr.responseText);
         $("#noteText").val(""); // Clear on error
         $("#noteModal").show();
       },
@@ -73,6 +77,8 @@ $(document).ready(function () {
       },
       dataType: "json",
       success: function (response) {
+        console.log("Save note response:", response);
+
         if (response.success) {
           alert("Note saved successfully!");
 
@@ -95,7 +101,8 @@ $(document).ready(function () {
       },
       error: function (xhr, status, error) {
         console.error("AJAX Error:", status, error);
-        alert("Error saving note. Please try again.");
+        console.error("Response:", xhr.responseText);
+        alert("Error saving note. Check console for details.");
       },
     });
   });
@@ -111,6 +118,8 @@ $(document).ready(function () {
     const urlParams = new URLSearchParams(window.location.search);
     const mid = urlParams.get("mid") || 5075;
 
+    console.log("Viewing note for:", selectedWord, "Master ID:", mid);
+
     // Fetch the existing note
     $.ajax({
       url: "fetch_note.php",
@@ -121,19 +130,27 @@ $(document).ready(function () {
       },
       dataType: "json",
       success: function (response) {
-        if (response.success && response.note.trim() !== "") {
+        console.log("View note response:", response);
+
+        // Either use the note from the response or show a default message
+        if (response.success && response.note && response.note.trim() !== "") {
           $("#noteText").val(response.note);
         } else {
-          $("#noteText").val("No note available for this synonym.");
+          // Check for specific error conditions
+          if (response.message && response.message.includes("not found")) {
+            $("#noteText").val("No note has been saved for this word yet.");
+          } else {
+            $("#noteText").val("No note available for this synonym.");
+          }
         }
 
         // Set modal title
         $("#noteModal h3").text(`View Note for "${selectedWord}"`);
 
-        // ✅ Set textarea to readonly for viewing
+        // Set textarea to readonly for viewing
         $("#noteText").prop("readonly", true);
 
-        // ✅ Hide the Save button in View Mode
+        // Hide the Save button in View Mode
         $("#saveNote").hide();
 
         // Open the modal
@@ -141,6 +158,7 @@ $(document).ready(function () {
       },
       error: function (xhr, status, error) {
         console.error("Error fetching note:", status, error);
+        console.error("Response:", xhr.responseText);
         alert("Could not retrieve the note. Please try again later.");
       },
     });
@@ -176,7 +194,11 @@ $(document).ready(function () {
         },
         dataType: "json",
         success: function (response) {
-          if (response.success) {
+          if (
+            response.success &&
+            response.note &&
+            response.note.trim() !== ""
+          ) {
             $(`.synonym-word[data-word='${word}']`).addClass("has-note");
           }
         },

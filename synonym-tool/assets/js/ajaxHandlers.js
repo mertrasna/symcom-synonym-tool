@@ -145,6 +145,16 @@ function fetchRootWord(selectedWord, finalSynonyms) {
                   </tr>`;
       });
 
+      //  empty row for manual entry
+      tableHTML += `
+        <tr>
+          <td><input type="checkbox" name="S" id="manualS"></td>
+          <td><input type="checkbox" name="Q" id="manualQ"></td>
+          <td><input type="checkbox" name="O" id="manualO"></td>
+          <td><input type="checkbox" name="U" id="manualU"></td>
+          <td><input type="text" id="manualSynonym" placeholder="Enter new synonym..." style="width: 100%;"></td>
+        </tr>`;
+
       tableHTML += `</tbody></table>
               <div style="display: flex; align-items: center; margin-top: 10px;">
                 <div style="margin-right: 20px;">
@@ -178,27 +188,63 @@ function fetchRootWord(selectedWord, finalSynonyms) {
 }
 
 function submitSynonyms(selectedWord) {
-  // 1. Extract `mid` from URL (if needed to decide table: 5075 = English, 5072 = German)
   const urlParams = new URLSearchParams(window.location.search);
   const mid = urlParams.get("mid"); // e.g. "5075"
 
-  // 2. Get the root word
-  let rootWord = $("#root-word").val() || $("#root-word").text().trim();
+  selectedWord = selectedWord.trim();
+  if (!selectedWord) {
+    alert("Error: No word selected for synonym submission.");
+    return;
+  }
 
-  // 3. Build synonyms as an object of arrays of objects
+  let rootWord = $("#root-word").val() || $("#root-word").text().trim();
   let synonyms = { S: [], Q: [], O: [], U: [] };
 
+  // ✅ Loop through all synonyms in the table and collect them
   $("#synonymTable tbody tr").each(function () {
     let synonymText = $(this).find("td:last").text().trim();
     ["S", "Q", "O", "U"].forEach((type, index) => {
       if ($(this).find(`td:eq(${index}) input`).is(":checked")) {
-        // Push an object with a 'word' key
-        synonyms[type].push({ word: synonymText });
+        synonyms[type].push(synonymText); // ✅ Store as string
       }
     });
   });
 
-  // 4. Send the data to your PHP script, stringifying `synonyms`
+  // ✅ Capture manually entered synonym
+  let manualSynonymText = $("#manualSynonym").val().trim();
+  let manualSynonymType = [];
+
+  // ✅ Capture selected checkbox types for manual synonym
+  ["S", "Q", "O", "U"].forEach((type, index) => {
+    if ($(`#manual${type}`).is(":checked")) {
+      manualSynonymType.push(type);
+    }
+  });
+
+  // ✅ If the user entered a manual synonym but didn't select any type, alert them
+  if (manualSynonymText && manualSynonymType.length === 0) {
+    alert(
+      "Please select at least one category (S, Q, O, or U) for the manual synonym."
+    );
+    return;
+  }
+
+  // ✅ If a manual synonym is entered, add it to the respective categories
+  manualSynonymType.forEach((type) => {
+    synonyms[type].push(manualSynonymText); // ✅ Push as a string
+  });
+
+  // ✅ Log the data before sending to the server
+  console.log("🔍 Submitting Synonyms Data:", {
+    word: selectedWord,
+    root_word: rootWord,
+    synonyms: synonyms,
+    manual_synonym: manualSynonymText,
+    manual_synonym_types: manualSynonymType,
+    master_id: mid,
+  });
+
+  // ✅ Send the data via AJAX
   $.ajax({
     url: "update_synonym.php",
     type: "POST",
@@ -206,11 +252,12 @@ function submitSynonyms(selectedWord) {
       word: selectedWord,
       root_word: rootWord,
       synonyms: JSON.stringify(synonyms),
-      master_id: mid, // Only if your backend needs this to choose the correct table
+      manual_synonym: manualSynonymText,
+      manual_synonym_types: JSON.stringify(manualSynonymType),
+      master_id: mid,
     },
-    dataType: "json", // We want JSON back from the server
+    dataType: "json",
     success: function (res) {
-      // On success, show message or do something else
       alert(res.message);
     },
     error: function (xhr, status, error) {
