@@ -341,6 +341,7 @@ $(document).on("click", ".synonym-word", function () {
             return;
           }
 
+          
           console.log("✅ ChatGPT synonyms found:", synonyms);
 
           // Notify all observers with the fetched synonyms
