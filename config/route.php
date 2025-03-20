@@ -9,12 +9,16 @@ ini_set('max_input_vars', 10000);
 // Central European timezone
 date_default_timezone_set('Europe/Vienna');
 
-define("OPENAI_API_KEY", $_SERVER['OPENAI_API_KEY'] ?? getenv("OPENAI_API_KEY"));
+$apiKey = getenv("OPENAI_API_KEY") ?: $_SERVER['OPENAI_API_KEY'] ?? null;
 
-if (!OPENAI_API_KEY) {
-    die("❌ API key is missing. Make sure it's set in GitHub Secrets or environment variables.");
+// Debugging: Log the API key status
+file_put_contents(__DIR__ . '/debug.log', "API Key Retrieved: " . ($apiKey ? 'Yes' : 'No') . "\n", FILE_APPEND);
+
+if (!$apiKey) {
+    die(json_encode(["error" => "❌ API key is missing. Make sure it's set in the environment."]));
 }
 
+define("OPENAI_API_KEY", $apiKey);
 
 //session controls starts
 // Setting the session timeout to 2 hours
