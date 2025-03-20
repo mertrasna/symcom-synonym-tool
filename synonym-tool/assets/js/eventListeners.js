@@ -46,6 +46,21 @@ $(document).ready(function () {
     }
   });
 
+  $(document).on("click", ".synonym-word, .stopword", function () {
+    var selectedWord = $(this).attr("data-word").trim();
+    console.log("Selected Word:", selectedWord);
+
+    if (selectedWord) {
+      // Build the dictionary URL (modify the URL as needed)
+      var dictionaryURL = `https://www.dictionary.com/browse/${encodeURIComponent(selectedWord)}`;
+      
+      // Update the dictionary button's href and text
+      $("#dictionary-btn").attr("href", dictionaryURL);
+      $("#dictionary-btn").text(`🔎 Check dictionary for "${selectedWord}"`);
+    }
+});
+
+
   // Handle clicking on synonym words & stopwords
   // Handle clicking to fetch synonyms (Only updates the table)
 
