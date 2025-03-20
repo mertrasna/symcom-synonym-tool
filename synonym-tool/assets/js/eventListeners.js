@@ -193,7 +193,7 @@ $(document).on("click", ".synonym-word", function () {
                               console.log("Auto-clicking processed element again...");
                               setTimeout(function () {
                                   $clicked.trigger("click");
-                              }, 900);
+                              }, 500);
                           }
                       },
                       error: function (xhr, status, error) {
@@ -341,7 +341,7 @@ $(document).on("click", ".synonym-word", function () {
             return;
           }
 
-          
+
           console.log("✅ ChatGPT synonyms found:", synonyms);
 
           // Notify all observers with the fetched synonyms
