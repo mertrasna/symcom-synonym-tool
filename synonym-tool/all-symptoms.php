@@ -255,6 +255,7 @@ function processText($text, $stopwords, $db, $synonymTable) {
                 <input type="checkbox" id="notSureCheckbox" name="notSure" value="1"> Not Sure
             </div>
             <button type="button" id="newAssignmentBtn" style="background-color: #6c757d; color: white; border: none; border-radius: 4px; padding: 5px 10px; cursor: pointer;">New Assignment</button>
+            <button type="button" id="addNoteBtn" style="background-color: #28a745; color: white; border: none; border-radius: 4px; padding: 5px 10px; margin-left: 10px; cursor: pointer;">Add Note</button>
         </div>
 
         <button type="submit" id="submitSynonyms">Submit</button>
@@ -279,6 +280,29 @@ function processText($text, $stopwords, $db, $synonymTable) {
 
 </div>
 
+<!-- Note Modal -->
+<div id="noteModal" class="modal" style="display:none;">
+  <div class="modal-content">
+    <!-- Close button -->
+    <span class="close-note-modal" style="cursor:pointer; font-size: 20px;">&times;</span>
+
+    <!-- Title: Updates dynamically based on whether it's adding or viewing a note -->
+    <h3>Note</h3>
+
+    <!-- Note Text Area (Disabled for Viewing) -->
+    <textarea id="noteText" rows="4" cols="50" readonly></textarea>
+    
+    <br>
+
+    <!-- Save Note Button (Hidden when viewing a note) -->
+    <button id="saveNote">Save</button>
+    
+    <!-- Close Modal Button -->
+    <button id="closeNote">Close</button>
+  </div>
+</div>
+
+
 <!-- Load jQuery -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
@@ -301,6 +325,7 @@ function processText($text, $stopwords, $db, $synonymTable) {
 <script src="assets/js/ui.js"></script>
 <script src="assets/js/ajaxHandlers.js"></script>
 <script src="assets/js/eventListeners.js"></script>
+<script src="assets/js/note.js"></script>
 <script src="assets/js/helpers.js"></script>
 <script src="assets/js/modal.js"></script>
 <script src="assets/js/hover.js"></script>

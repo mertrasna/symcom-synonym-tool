@@ -105,13 +105,13 @@ function fetchRootWord(selectedWord, finalSynonyms) {
 
       let rootWordHTML =
         rootRes.success && rootRes.word
-        ? '<input type="text" id="root-word" value="' +
-        rootRes.word.replace(/[^\w\s]/g, "") + // Removes punctuation
-        '" placeholder="Enter root word..." style="padding:5px; border:1px solid #ccc; border-radius:5px; width:200px;">'
-      : '<input type="text" id="root-word" value="' +
-        selectedWord.replace(/[^\w\s]/g, "") + // Removes punctuation
-        '" placeholder="Enter root word..." style="padding:5px; border:1px solid #ccc; border-radius:5px; width:200px;">';
-        
+          ? '<input type="text" id="root-word" value="' +
+            rootRes.word.replace(/[^\w\s]/g, "") + // Removes punctuation
+            '" placeholder="Enter root word..." style="padding:5px; border:1px solid #ccc; border-radius:5px; width:200px;">'
+          : '<input type="text" id="root-word" value="' +
+            selectedWord.replace(/[^\w\s]/g, "") + // Removes punctuation
+            '" placeholder="Enter root word..." style="padding:5px; border:1px solid #ccc; border-radius:5px; width:200px;">';
+
       let tableHTML = `
             <div style="display: flex; align-items: center; justify-content: space-between; width: 100%; margin-bottom: 10px;">
                 <p><b>Selected Word:</b> <span id="selected-word">${selectedWord}</span></p>
@@ -152,6 +152,8 @@ function fetchRootWord(selectedWord, finalSynonyms) {
                 </div>
                 <button type="button" id="newAssignmentBtn" style="background-color: #6c757d; color: white; border: none; border-radius: 4px; padding: 5px 10px; cursor: pointer;">New Assignment</button>
                 <button id="toggleAllSBtn" type="button">Toggle All S</button>
+                <button id="addNoteBtn" type="button" style="background-color: #28a745; color: white; border: none; border-radius: 4px; padding: 5px 10px; margin-left: 10px; cursor: pointer;">📝 Note</button>
+                <button id="viewNoteBtn" type="button" style="background-color: #17a2b8; color: white; border: none; border-radius: 4px; padding: 5px 10px; margin-left: 10px; cursor: pointer;">👁 View Note</button>
               </div>
               <button type="submit" id="submitSynonyms">Submit</button>
             </form>
