@@ -236,7 +236,7 @@ setTimeout(function () {
     if (linkedText) {
       console.log("Linked phrase:", linkedText);
       fetchSynonymsFromThesaurus(linkedText)
-      fetchChatGPTSynonyms(linkedText);
+      chatGPTObservable.fetchSynonyms(linkedText);
     } else {
       console.warn("No words selected to link.");
     }
