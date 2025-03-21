@@ -113,6 +113,18 @@ python3 test-SynonymEnSubmission.py
 python3 test-SynonymFetchEn.py
 ```
 
+```bash
+cd /symcom-synonym-tool/synonym-tool/tests
+```
+
+use the following command lines below to run tests:
+
+```bash
+python3 highlight.py
+python3 hover.py
+
+
+
 ## 11. Running PHP Tests
 
 This project includes PHP tests. Follow the steps below to install the dependencies, download the required drivers, and run the tests.
