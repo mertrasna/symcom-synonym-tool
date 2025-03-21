@@ -41,10 +41,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     if (!empty($manualSynonym) && !empty($manualTypes)) {
         foreach ($manualTypes as $type) {
             if (in_array($type, ["S", "Q", "O", "U"])) {
-                // ✅ Ensure the synonym is inserted successfully
+                //  Ensure the synonym is inserted successfully
                 $insertSuccess = $synonymRepo->insertManualSynonym($manualSynonym, $rootWord, $type);
     
-                // ✅ If inserted, add it to selectedSynonyms
+                //  If inserted, add it to selectedSynonyms
                 if ($insertSuccess && !in_array($manualSynonym, $selectedSynonyms[$type] ?? [])) {
                     $selectedSynonyms[$type][] = $manualSynonym;
                 }
@@ -52,8 +52,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         }
     }
     
-    // ✅ Log manual synonym data before sending to `processSynonymUpdate()`
-    error_log("🔍 Selected Synonyms (Before Processing): " . json_encode($selectedSynonyms));
+    //  Log manual synonym data before sending to `processSynonymUpdate()`
+    error_log(" Selected Synonyms (Before Processing): " . json_encode($selectedSynonyms));
     
     // 5) Pass data to service, including symptom_text
     $response = $synonymService->processSynonymUpdate($word, $rootWord, $comment, $selectedSynonyms, $notSure, $symptomText); // Updated function call

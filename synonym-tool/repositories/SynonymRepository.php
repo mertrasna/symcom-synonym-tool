@@ -47,10 +47,10 @@ class SynonymRepository implements SynonymRepositoryInterface {
             ON DUPLICATE KEY UPDATE isyellow = 1
         ";
     
-        error_log("🔹 Insert Phrase Query: " . $insert_query);
+        error_log(" Insert Phrase Query: " . $insert_query);
     
         if (!mysqli_query($this->db, $insert_query)) {
-            error_log("❌ Insert Error: " . mysqli_error($this->db));
+            error_log("Insert Error: " . mysqli_error($this->db));
             return false;
         }
     
@@ -134,7 +134,7 @@ class SynonymRepository implements SynonymRepositoryInterface {
                   OR LOWER(TRIM(word)) LIKE LOWER('%$wordEscaped%')
                   AND isyellow = 1";
     
-        error_log("Executing Query: " . $query); // ✅ Log query
+        error_log("Executing Query: " . $query); // Log query
     
         $result = mysqli_query($this->db, $query);
         
@@ -281,31 +281,31 @@ class SynonymRepository implements SynonymRepositoryInterface {
         $wordEscaped = mysqli_real_escape_string($this->db, trim($word));
         $rootWordEscaped = mysqli_real_escape_string($this->db, trim($rootWord));
     
-        error_log("🔍 insertManualSynonym() called with: Word='$word', Root='$rootWord'");
+        error_log(" insertManualSynonym() called with: Word='$word', Root='$rootWord'");
     
-        // ✅ 1. Check if the row exists
+        // 1. Check if the row exists
         $fetchQuery = "SELECT synonym FROM {$this->tableName} WHERE word = '$rootWordEscaped'";
         $fetchResult = mysqli_query($this->db, $fetchQuery);
         $row = mysqli_fetch_assoc($fetchResult);
     
         if (!$row) {
-            error_log("❌ Root word '$rootWord' not found in table!");
+            error_log("Root word '$rootWord' not found in table!");
             return false;
         }
     
-        // ✅ 2. Append the new synonym (handle NULL values)
+        // 2. Append the new synonym (handle NULL values)
         $updateQuery = "UPDATE {$this->tableName} 
                         SET synonym = CONCAT(IFNULL(synonym, ''), IF(LENGTH(synonym) > 0, ', ', ''), '$wordEscaped') 
                         WHERE word = '$rootWordEscaped'";
     
-        error_log("🔹 Running Update Query: $updateQuery");
+        error_log(" Running Update Query: $updateQuery");
     
         if (!mysqli_query($this->db, $updateQuery)) {
-            error_log("❌ Update Error: " . mysqli_error($this->db));
+            error_log("Update Error: " . mysqli_error($this->db));
             return false;
         }
     
-        error_log("✅ Manual synonym '$word' added to '$rootWord'");
+        error_log("Manual synonym '$word' added to '$rootWord'");
         return true;
     }
     

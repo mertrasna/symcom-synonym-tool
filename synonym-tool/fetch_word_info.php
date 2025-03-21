@@ -20,23 +20,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    // ✅ Ensure master_id is retrieved correctly
+    // Ensure master_id is retrieved correctly
     $word = trim(mysqli_real_escape_string($db, $_POST['word']), " \t\n\r\0\x0B.,!?");
 
     $masterId = isset($_POST['master_id']) ? intval($_POST['master_id']) : 5075;
 
-    // ✅ Allow only predefined master IDs
+    // Allow only predefined master IDs
     $validMasterIds = [5072, 5075];
     if (!in_array($masterId, $validMasterIds)) {
         echo json_encode(["success" => false, "message" => "Invalid master_id"]);
         exit;
     }
 
-    // ✅ Choose the correct table based on master_id
+    // Choose the correct table based on master_id
     $table = ($masterId === 5072) ? 'synonym_de' : 'synonym_en';
 
-    // ✅ Debugging logs (Optional: check server logs for debugging)
-    error_log("🔍 Searching for exact word: $word in table: $table");
+    // Debugging logs (Optional: check server logs for debugging)
+    error_log(" Searching for exact word: $word in table: $table");
 
     // Query for exact match with isyellow = 1
     $queryYellow = "

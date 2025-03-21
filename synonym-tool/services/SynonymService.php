@@ -95,15 +95,15 @@ class SynonymService {
             $non_secure_flag = isset($synonyms[0]['non_secure_flag']) ? intval($synonyms[0]['non_secure_flag']) : 0;
             $isYellowDB = isset($synonyms[0]['isyellow']) ? intval($synonyms[0]['isyellow']) : 0;
     
-            error_log("🟡 Phrase Detected: " . ($isPhrase ? "Yes" : "No"));
-            error_log("🟡 Database says isyellow = " . $isYellowDB);
+            error_log(" Phrase Detected: " . ($isPhrase ? "Yes" : "No"));
+            error_log(" Database says isyellow = " . $isYellowDB);
     
             if ($isPhrase || $isYellowDB) {
-                error_log("🟡 Updating isyellow for phrase...");
+                error_log(" Updating isyellow for phrase...");
                 $yellowUpdated = $this->synonymRepository->updateIsYellow($word);
                 $greenUpdated = false; // Ensure it does not get marked as green
             } else {
-                error_log("✅ Updating isgreen for single word...");
+                error_log("Updating isgreen for single word...");
                 $greenUpdated = $this->synonymRepository->updateIsGreen($word);
                 $yellowUpdated = false; 
             }
@@ -117,7 +117,7 @@ class SynonymService {
             ];
         }
     
-        error_log("⚠️ No synonyms found for '$word'!");
+        error_log(" No synonyms found for '$word'!");
     
         return [
             'success' => false,
