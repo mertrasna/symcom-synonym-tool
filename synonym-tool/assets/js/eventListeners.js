@@ -15,15 +15,15 @@ $(document).ready(function () {
     window.location.href = url.toString(); // Reload with updated offset
   }
 
-  // "Reload New Symptoms" button click (offset +200)
+  // "Reload New Symptoms" button click 
   $(document).on("click", "#reloadSymptoms", function () {
     let currentOffset =
       parseInt(new URLSearchParams(window.location.search).get("offset")) || 0;
-    currentOffset += symptomsPerPage; // Increment by 200 each click
-    updateUrlWithOffset(currentOffset); // Reload with updated offset
+    currentOffset += symptomsPerPage; 
+    updateUrlWithOffset(currentOffset); 
   });
 
-  // "Back to Start" button click (resets offset)
+  // "Back to Start" button click 
   $(document).on("click", "#resetToStart", function () {
     updateUrlWithOffset(0); // Reset offset to 0 and reload
   });
@@ -59,10 +59,6 @@ $(document).ready(function () {
       $("#dictionary-btn").text(`🔎 Check dictionary for "${selectedWord}"`);
     }
 });
-
-
-  // Handle clicking on synonym words & stopwords
-  // Handle clicking to fetch synonyms (Only updates the table)
 
   // Handle clicking on synonym words & stopwords
   // Update korrekturen button when clicking on synonym-word or stopword.
@@ -234,8 +230,8 @@ $(document).on("click", ".synonym-word", function () {
 
     // Create a span to wrap the whole phrase
     let span = document.createElement("span");
-    span.classList.add("synonym-word", "yellow-word"); // Mark as yellow-word for phrases
-    span.setAttribute("data-word", text); // Store the full phrase as is
+    span.classList.add("synonym-word", "yellow-word"); 
+    span.setAttribute("data-word", text); 
     span.textContent = text;
 
     // Replace the selected content with this span
@@ -272,7 +268,7 @@ $(document).on("click", ".synonym-word", function () {
     }
   });
 
-  // ✅ ChatGPT Observable (Publisher)
+  //  ChatGPT Observable (Publisher)
   class ChatGPTObservable {
     constructor() {
       this.observers = [];
@@ -342,7 +338,7 @@ $(document).on("click", ".synonym-word", function () {
           }
 
 
-          console.log("✅ ChatGPT synonyms found:", synonyms);
+          console.log(" ChatGPT synonyms found:", synonyms);
 
           // Notify all observers with the fetched synonyms
           this.notify({ word: selectedWord, synonyms, master_id: masterId });
@@ -353,7 +349,7 @@ $(document).on("click", ".synonym-word", function () {
     }
   }
 
-  // ✅ Synonym Table Observer (Updates UI)
+  //  Synonym Table Observer (Updates UI)
   class SynonymTableObserver {
     update(data) {
       console.log("📝 Updating UI with synonyms:", data);
@@ -387,7 +383,7 @@ $(document).on("click", ".synonym-word", function () {
 
       $("#synonymTableContainer").html(tableHTML);
       $("#synonymTableContainer input[type='checkbox']").prop("checked", false);
-      console.log("✅ UI updated with new synonyms!");
+      console.log(" UI updated with new synonyms!");
     }
   }
 
@@ -395,7 +391,7 @@ $(document).on("click", ".synonym-word", function () {
     async update(data) {
       console.log("📤 Preparing to save to DB:", data);
 
-      // ✅ Ensure word is valid
+      //  Ensure word is valid
       if (!data.word || data.word.trim() === "") {
         console.warn("⚠️ Word is missing or empty. Aborting save.");
         return;
@@ -431,7 +427,7 @@ $(document).on("click", ".synonym-word", function () {
         });
 
         const result = await response.json();
-        console.log("✅ Server Response:", result);
+        console.log(" Server Response:", result);
 
         if (!result.success) {
           console.warn(`⚠️ Database Insert Failed: ${result.message}`);
@@ -442,7 +438,7 @@ $(document).on("click", ".synonym-word", function () {
     }
   }
 
-  // ✅ Initialize Observer Pattern
+  //  Initialize Observer Pattern
   const chatGPTObservable = new ChatGPTObservable();
   const synonymTableObserver = new SynonymTableObserver();
   const synonymDatabaseObserver = new SynonymDatabaseObserver();
@@ -588,13 +584,13 @@ $(document).on("click", ".synonym-word", function () {
             }
           });
 
-          // ✅ If synonyms are found, save them under the original word
+          //  If synonyms are found, save them under the original word
           if (synonymList.length > 0) {
-            console.log("✅ Dictionary.com synonyms found:", synonymList);
+            console.log(" Dictionary.com synonyms found:", synonymList);
             addSynonymsToTable(originalWord, synonymList);
 
             const synonymData = {
-              word: originalWord, // ✅ Always save under the original word
+              word: originalWord, //  Always save under the original word
               synonym: synonymList.join(","),
               cross_reference: "",
               synonym_partial_2: "",
@@ -616,7 +612,7 @@ $(document).on("click", ".synonym-word", function () {
               data: synonymData,
               dataType: "json",
               success: function (response) {
-                console.log("✅ Insert Synonym Response:", response);
+                console.log(" Insert Synonym Response:", response);
               },
               error: function (xhr, status, error) {
                 console.error(
@@ -634,7 +630,7 @@ $(document).on("click", ".synonym-word", function () {
               console.log(
                 `🔄 No synonyms for '${word}'. Trying '${transformedWord}'`
               );
-              fetchWord(transformedWord, originalWord); // ✅ Keep the original word for saving
+              fetchWord(transformedWord, originalWord); //  Keep the original word for saving
             } else {
               console.log(
                 `ℹ️ No synonyms found for '${word}' on Dictionary.com.`
@@ -655,7 +651,7 @@ $(document).on("click", ".synonym-word", function () {
     fetchWord(selectedWord);
   }
 
-  // ✅ Word transformation function: Only changes the word for searching, not saving
+  //  Word transformation function: Only changes the word for searching, not saving
   function transformWord(word) {
     let transformedWord = null;
 
@@ -731,13 +727,13 @@ $(document).on("click", ".synonym-word", function () {
             });
           }
 
-          // ✅ If synonyms are found, save them under the original word
+          //  If synonyms are found, save them under the original word
           if (synonymList.length > 0) {
-            console.log("✅ Thesaurus.com synonyms found:", synonymList);
+            console.log(" Thesaurus.com synonyms found:", synonymList);
             addSynonymsToTable(originalWord, synonymList);
 
             const synonymData = {
-              word: originalWord, // ✅ Always save under the original word
+              word: originalWord, //  Always save under the original word
               synonym: synonymList.join(","),
               cross_reference: "",
               synonym_partial_2: "",
@@ -759,7 +755,7 @@ $(document).on("click", ".synonym-word", function () {
               data: synonymData,
               dataType: "json",
               success: function (response) {
-                console.log("✅ Insert Synonym Response:", response);
+                console.log(" Insert Synonym Response:", response);
               },
               error: function (xhr, status, error) {
                 console.error(
@@ -777,7 +773,7 @@ $(document).on("click", ".synonym-word", function () {
               console.log(
                 `🔄 No synonyms for '${word}'. Trying '${transformedWord}'`
               );
-              fetchWord(transformedWord, originalWord); // ✅ Keep the original word for saving
+              fetchWord(transformedWord, originalWord); //  Keep the original word for saving
             } else {
               console.log(
                 `ℹ️ No synonyms found for '${word}' on Thesaurus.com.`
@@ -800,7 +796,7 @@ $(document).on("click", ".synonym-word", function () {
 
   function addSynonymsToTable(word, synonyms) {
     if (!synonyms || synonyms.length === 0) {
-      return; // ⛔ No synonyms provided, do nothing
+      return;
     }
 
     let existingSynonyms = new Set();
@@ -818,7 +814,7 @@ $(document).on("click", ".synonym-word", function () {
     });
 
     if (newSynonyms.length === 0) {
-      return; // ⛔ All synonyms were duplicates, do nothing
+      return; 
     }
 
     // Limit synonyms to 7
@@ -914,7 +910,7 @@ $(document).on("click", ".synonym-word", function () {
     console.log("📝 Adding New Rows to Table:", newRows);
 
     $("#synonymTable tbody").append(newRows);
-    console.log("✅ Synonyms added successfully!");
+    console.log(" Synonyms added successfully!");
   }
 
   // Function to fetch Synonyms from OpenThesaurus.de
@@ -998,7 +994,7 @@ $(document).on("click", ".synonym-word", function () {
             );
             if (response.success) {
               console.log(
-                "✅ Successfully saved OpenThesaurus synonyms for:",
+                " Successfully saved OpenThesaurus synonyms for:",
                 selectedWord
               );
             } else {
@@ -1107,7 +1103,7 @@ $(document).on("click", ".synonym-word", function () {
         fetchSynonymsFromThesaurus(selectedWord);
     }
 
-    // ✅ Pass symptomText in the AJAX request
+    //  Pass symptomText in the AJAX request
     $.ajax({
       url: "update_synonym.php",
       type: "POST",
@@ -1119,7 +1115,7 @@ $(document).on("click", ".synonym-word", function () {
       },
       dataType: "json",
       success: function (res) {
-        console.log("✅ New assignment response:", res);
+        console.log(" New assignment response:", res);
         alert(res.message || "New assignment created successfully.");
       },
       error: function (xhr, status, error) {
@@ -1131,7 +1127,7 @@ $(document).on("click", ".synonym-word", function () {
     alert("Creating a new assignment for the word: " + selectedWord);
   });
 
-  // ✅ Close modal and keep checkbox checked
+  //  Close modal and keep checkbox checked
   $(document).on("click", "#saveComment", function () {
     $("#commentModal").hide();
   });
@@ -1236,26 +1232,26 @@ $(document).on("submit", "#synonymForm", function (event) {
     ? $("#commentText").val()
     : "";
 
-  // ✅ Capture manually entered synonym
+  //  Capture manually entered synonym
   let manualSynonymText = $("#manualSynonym").val();
   let manualSynonymType = [];
 
-  // ✅ Capture selected checkbox types for manual synonym
+  //  Capture selected checkbox types for manual synonym
   ["S", "Q", "O", "U"].forEach((type, index) => {
     if ($(`#manual${type}`).is(":checked")) {
       manualSynonymType.push(type);
     }
   });
 
-  // ✅ If a manual synonym is entered, add it to the respective categories
+  //  If a manual synonym is entered, add it to the respective categories
   manualSynonymType.forEach((type) => {
     synonyms[type].push({ word: manualSynonymText });
   });
 
-  // ✅ Retrieve the symptom text from the worksheet
+  //  Retrieve the symptom text from the worksheet
   let symptomText = $("#symptom-details").text() || ""; // Handle it the same way as other fields
 
-  // ✅ Debugging: Log all data before submission
+  //  Debugging: Log all data before submission
   console.log("🔍 Submitting Synonym Data:", {
     word: selectedWord,
     root_word: rootWord,
@@ -1263,7 +1259,7 @@ $(document).on("submit", "#synonymForm", function (event) {
     manual_synonym: manualSynonymText,
     manual_synonym_types: manualSynonymType,
     comment: comment,
-    symptom_text: symptomText, // ✅ Included symptom text
+    symptom_text: symptomText, //  Included symptom text
     master_id: mid,
   });
 
@@ -1278,12 +1274,12 @@ $(document).on("submit", "#synonymForm", function (event) {
       manual_synonym: manualSynonymText,
       manual_synonym_types: JSON.stringify(manualSynonymType),
       comment: comment,
-      symptom_text: symptomText, // ✅ Included symptom text
+      symptom_text: symptomText, //  Included symptom text
       master_id: mid, // Pass 'master_id' to use the correct table (synonym_de or synonym_en)
     },
     dataType: "json",
     success: function (res) {
-      console.log("✅ Update Response:", res);
+      console.log(" Update Response:", res);
       alert(res.message);
 
       // If the selected word contains a space, mark it with yellow-word (phrase); else mark it as green.
@@ -1325,10 +1321,10 @@ $(document).on("click", "#toggleAllSBtn", function () {
 
   if (allChecked) {
     checkboxes.prop("checked", false); // Uncheck all
-    console.log("✅ All 'S' checkboxes unchecked.");
+    console.log(" All 'S' checkboxes unchecked.");
   } else {
     checkboxes.prop("checked", true); // Check all
-    console.log("✅ All 'S' checkboxes checked.");
+    console.log(" All 'S' checkboxes checked.");
   }
 });
 

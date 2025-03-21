@@ -201,16 +201,10 @@ $(document).ready(function () {
           }
         }
 
-        // Set modal title
+  
         $("#noteModal h3").text(`View Note for "${selectedWord}"`);
-
-        // Set textarea to readonly for viewing
         $("#noteText").prop("readonly", true);
-
-        // Hide the Save button in View Mode
         $("#saveNote").hide();
-
-        // Open the modal
         $("#noteModal").show();
       },
       error: function (xhr, status, error) {
@@ -255,11 +249,9 @@ $(document).ready(function () {
   // Run initialization after a short delay
   setTimeout(initializeNotes, 1000);
 
-  // Improved click handler for synonym words - connect to existing event handlers
+  
   $(document).on("click", ".synonym-word", function () {
     let selectedWord = $(this).attr("data-word").trim();
-    // Fetch note with debounce - add this line to existing handlers
     debouncedFetchNote(selectedWord);
-    // Original functionality continues automatically...
   });
 });

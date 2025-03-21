@@ -43,7 +43,7 @@
 }
 
 .linked-words {
-  background-color: yellow; /* Highlights linked words */
+  background-color: yellow; 
   border-radius: 5px;
   padding: 2px 4px;
   display: inline-block;
@@ -55,7 +55,7 @@
   transition: width 0.3s ease;
   overflow-y: auto;
 }
-/* Table Styling */
+
 .styled-table {
   width: 100%;
   border-collapse: collapse;
@@ -106,7 +106,7 @@
   background-color: darkorange;
 }
 
-/* Dictionary Button */
+
 .dictionary-button {
   display: block;
   width: 100%;
@@ -125,9 +125,9 @@
   background-color: #218838;
 }
 
-/* Modal container */
+
 #commentModal {
-  display: none; /* Hidden by default */
+  display: none; 
   position: fixed;
   z-index: 1000;
   left: 0;
@@ -135,22 +135,22 @@
   width: 100%;
   height: 100%;
   overflow: auto;
-  background-color: rgba(0, 0, 0, 0.4); /* semi-transparent blue overlay */
+  background-color: rgba(0, 0, 0, 0.4); 
 }
 
-/* Modal content */
+
 .modal-content {
-  background-color: #fff; /* white background */
+  background-color: #fff;
   margin: 15% auto;
   padding: 20px;
-  border: 2px solid #007bff; /* blue border */
+  border: 2px solid #007bff; 
   width: 300px;
   border-radius: 4px;
   position: relative;
   text-align: center;
 }
 
-/* Close button */
+
 .close-modal {
   color: #007bff;
   float: right;
@@ -165,7 +165,6 @@
   text-decoration: none;
 }
 
-/* Save button */
 #saveComment,
 #closeComment {
   background-color: #007bff;
@@ -181,7 +180,7 @@
   background-color: #0056b3;
 }
 
-/* Optional: Style the textarea inside the modal */
+
 #commentText {
   width: 100%;
   padding: 8px;
@@ -191,9 +190,9 @@
   resize: vertical;
 }
 
-/* Make the synonym table container scrollable with a fixed height */
+
 #synonymForm {
-  max-height: 400px; /* Adjust as needed */
+  max-height: 400px; 
   overflow-y: auto;
   overflow-x: hidden;
   padding: 10px;
@@ -201,10 +200,10 @@
   box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
 }
 
-/* Ensure the synonym table adjusts well within the form */
+
 #synonymTable {
   width: 100%;
-  table-layout: fixed; /* Uniform column width */
+  table-layout: fixed; 
   border-collapse: collapse;
 }
 
@@ -213,12 +212,12 @@
   border: 1px solid #050404;
   padding: 8px;
   text-align: center;
-  word-wrap: break-word; /* Handle long words */
+  word-wrap: break-word;
   overflow-wrap: break-word;
   white-space: normal;
 }
 
-/* Sticky header for better readability while scrolling */
+
 #synonymTable thead th {
   background-color: #f4f4f4;
   font-weight: bold;
@@ -227,7 +226,7 @@
   z-index: 1;
 }
 
-/* Highlight hover effect for better interactivity */
+
 #synonymTable tbody tr:hover {
   background-color: #f0f0f0;
 }
@@ -248,7 +247,7 @@
 
 #worksheet-controls {
   display: flex;
-  gap: 10px; /* Adds space between buttons */
+  gap: 10px; 
   margin-top: 10px;
 }
 
@@ -267,10 +266,10 @@
 }
 
 #toggleAllSBtn {
-  background-color: #544f49; /* Orange background */
+  background-color: #544f49; 
 }
 
-/* ✅ Hover Effects */
+
 #newAssignmentBtn:hover {
   background-color: #0056b3;
 }
@@ -279,18 +278,18 @@
   background-color: #e68a00;
 }
 
-/* ✅ Click Effects */
+
 #newAssignmentBtn:active,
 #toggleAllSBtn:active {
   transform: scale(0.98);
 }
 
 .synonym-word.yellow-word {
-  color: #006400; /* DarkGreen text */
-  background-color: lightgrey; /* Light green highlight */
+  color: #006400; 
+  background-color: lightgrey; 
 }
 
-/* Styles for Note button */
+
 #addNoteBtn {
   background-color: #28a745;
   color: white;
