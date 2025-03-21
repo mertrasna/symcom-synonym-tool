@@ -97,11 +97,8 @@ cd /symcom-synonym-tool/synonym-tool/tests-selenium
 use the following command lines below to run tests:
 
 ```bash
-python3 test_synonym_management.py
-python3 test_rootword.py
-python3 test_external.py
-python3 nonsecure.py
-
+python3 test-SynonymEnSubmission.py
+python3 test-SynonymFetchEn.py
 ```
 
 
