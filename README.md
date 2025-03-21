@@ -73,6 +73,17 @@ This project includes Selenium-based UI tests. Follow the steps below to install
 
 Open your terminal and install the required packages by running:
 
+
+```bash
+python3 -m venv .venv
+```
+
+
+```bash
+source .venv/bin/activate
+```
+
+
 ```bash
 pip install selenium webdriver-manager mysql-connector-python pytest
 ```
