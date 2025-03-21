@@ -45,7 +45,7 @@ $(document).ready(function () {
     let hoverTimeout;
     let lastWord = null;
 
-    // ✅ Retrieve master_id from URL parameters
+    //  Retrieve master_id from URL parameters
     function getMasterId() {
         let urlParams = new URLSearchParams(window.location.search);
         return urlParams.has("mid") ? parseInt(urlParams.get("mid")) : 5075; // Default to 5075 if not found
@@ -66,7 +66,7 @@ $(document).ready(function () {
 
             $popup.html("<em>Loading...</em>").fadeIn(200);
 
-            // ✅ Fetch master_id dynamically
+            //  Fetch master_id dynamically
             let masterId = getMasterId();
             console.log("🔍 Fetching synonyms for:", word, "📌 Master ID:", masterId);
 
@@ -75,7 +75,7 @@ $(document).ready(function () {
                 type: "POST",
                 data: { 
                     word: word,
-                    master_id: masterId  // ✅ Ensure master_id is passed correctly
+                    master_id: masterId  //  Ensure master_id is passed correctly
                 },
                 dataType: "json",
                 success: function (response) {

@@ -106,10 +106,10 @@ function fetchRootWord(selectedWord, finalSynonyms) {
       let rootWordHTML =
         rootRes.success && rootRes.word
           ? '<input type="text" id="root-word" value="' +
-            rootRes.word.replace(/[^\w\s]/g, "") + // Removes punctuation
+            rootRes.word.replace(/[^\w\s]/g, "") + 
             '" placeholder="Enter root word..." style="padding:5px; border:1px solid #ccc; border-radius:5px; width:200px;">'
           : '<input type="text" id="root-word" value="' +
-            selectedWord.replace(/[^\w\s]/g, "") + // Removes punctuation
+            selectedWord.replace(/[^\w\s]/g, "") + 
             '" placeholder="Enter root word..." style="padding:5px; border:1px solid #ccc; border-radius:5px; width:200px;">';
 
       let tableHTML = `
@@ -200,28 +200,28 @@ function submitSynonyms(selectedWord) {
   let rootWord = $("#root-word").val() || $("#root-word").text().trim();
   let synonyms = { S: [], Q: [], O: [], U: [] };
 
-  // ✅ Loop through all synonyms in the table and collect them
+  //  Loop through all synonyms in the table and collect them
   $("#synonymTable tbody tr").each(function () {
     let synonymText = $(this).find("td:last").text().trim();
     ["S", "Q", "O", "U"].forEach((type, index) => {
       if ($(this).find(`td:eq(${index}) input`).is(":checked")) {
-        synonyms[type].push(synonymText); // ✅ Store as string
+        synonyms[type].push(synonymText); //  Store as string
       }
     });
   });
 
-  // ✅ Capture manually entered synonym
+  //  Capture manually entered synonym
   let manualSynonymText = $("#manualSynonym").val().trim();
   let manualSynonymType = [];
 
-  // ✅ Capture selected checkbox types for manual synonym
+  //  Capture selected checkbox types for manual synonym
   ["S", "Q", "O", "U"].forEach((type, index) => {
     if ($(`#manual${type}`).is(":checked")) {
       manualSynonymType.push(type);
     }
   });
 
-  // ✅ If the user entered a manual synonym but didn't select any type, alert them
+  //  If the user entered a manual synonym but didn't select any type, alert them
   if (manualSynonymText && manualSynonymType.length === 0) {
     alert(
       "Please select at least one category (S, Q, O, or U) for the manual synonym."
@@ -229,12 +229,12 @@ function submitSynonyms(selectedWord) {
     return;
   }
 
-  // ✅ If a manual synonym is entered, add it to the respective categories
+  //  If a manual synonym is entered, add it to the respective categories
   manualSynonymType.forEach((type) => {
-    synonyms[type].push(manualSynonymText); // ✅ Push as a string
+    synonyms[type].push(manualSynonymText); //  Push as a string
   });
 
-  // ✅ Log the data before sending to the server
+  //  Log the data before sending to the server
   console.log("🔍 Submitting Synonyms Data:", {
     word: selectedWord,
     root_word: rootWord,
@@ -244,7 +244,7 @@ function submitSynonyms(selectedWord) {
     master_id: mid,
   });
 
-  // ✅ Send the data via AJAX
+  //  Send the data via AJAX
   $.ajax({
     url: "update_synonym.php",
     type: "POST",
