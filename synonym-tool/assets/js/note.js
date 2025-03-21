@@ -1,257 +1,156 @@
-// Note functionality for synonym tool
-$(document).ready(function () {
-  // Track processed words to prevent duplicate fetches
-  let processedWords = new Set();
-  // Debounce timer for fetching notes
-  let notesFetchTimer = null;
+// [Pattern: Module + Class-Based Organization]
+class SynonymNoteManager {
+  constructor() {
+    this.processedWords = new Set(); // [Pattern: Cache/Tracking]
+    this.notesFetchTimer = null;
+    this.maxInitialNotes = 5;
+    this.init();
+  }
 
-  // Function to fetch notes with debounce
-  function debouncedFetchNote(word) {
-    // Clear any existing timer
-    if (notesFetchTimer) {
-      clearTimeout(notesFetchTimer);
-    }
+  // [Pattern: Observer] - Sets up all event listeners
+  init() {
+    $(document).on("click", "#addNoteBtn", () => this.openNoteModal());
+    $(document).on("click", "#viewNoteBtn", () => this.viewNote());
+    $(document).on("click", "#saveNote", () => this.saveNote());
+    $(document).on("click", ".close-note-modal, #closeNote", () => this.closeModal());
+    $(document).on("click", ".synonym-word", (e) => {
+      const word = $(e.currentTarget).data("word");
+      this.debouncedFetchNote(word);
+    });
+    $(window).on("click", (e) => {
+      if ($(e.target).is("#noteModal")) this.closeModal();
+    });
 
-    // If we've already processed this word, don't fetch again
-    if (processedWords.has(word)) {
-      console.log(`✅ Note for '${word}' already fetched. Skipping request.`);
-      return;
-    }
+    setTimeout(() => this.initializeNotes(), 1000);
+  }
 
-    // Set a timer to fetch the note after a delay
-    notesFetchTimer = setTimeout(function () {
-      // Get masterId from URL or use default (5075 for English)
-      const urlParams = new URLSearchParams(window.location.search);
-      const mid = urlParams.get("mid") || 5075;
+  // [Pattern: Debounce]
+  debouncedFetchNote(word) {
+    if (this.notesFetchTimer) clearTimeout(this.notesFetchTimer);
+    if (this.processedWords.has(word)) return;
 
-      console.log(`🔍 Fetching note for word: ${word}, master_id: ${mid}`);
+    this.notesFetchTimer = setTimeout(() => {
+      const mid = this.getMasterId();
+      console.log(`🔍 Fetching note for: ${word}`);
 
+      // [Pattern: Command]
       $.ajax({
         url: "fetch_note.php",
         type: "POST",
-        data: {
-          word: word,
-          master_id: mid,
-        },
+        data: { word, master_id: mid },
         dataType: "json",
-        success: function (response) {
-          console.log("📝 Note fetch response:", response);
-          // Mark this word as processed
-          processedWords.add(word);
-
-          // If there's a successful note, add the indicator class
-          if (
-            response.success &&
-            response.note &&
-            response.note.trim() !== ""
-          ) {
+        success: (res) => {
+          this.processedWords.add(word);
+          if (res.success && res.note?.trim() !== "") {
             $(`.synonym-word[data-word='${word}']`).addClass("has-note");
           }
         },
-        error: function (xhr, status, error) {
-          console.error("❌ Error fetching note:", status, error);
-          // Still mark as processed to prevent repeated attempts
-          processedWords.add(word);
-        },
+        error: () => this.processedWords.add(word),
       });
-    }, 2000); // 2-second delay
+    }, 2000);
   }
 
-  // Open the note modal when Add Note button is clicked
-  $(document).on("click", "#addNoteBtn", function () {
-    let selectedWord = $("#selected-word").text().trim();
-    if (!selectedWord) {
-      alert("Please select a synonym word first.");
-      return;
-    }
+  openNoteModal() {
+    const word = this.getSelectedWord();
+    if (!word) return alert("Please select a synonym word first.");
 
-    // Get masterId from URL or use default (5075 for English)
-    const urlParams = new URLSearchParams(window.location.search);
-    const mid = urlParams.get("mid") || 5075;
+    const mid = this.getMasterId();
 
-    // Check if there's an existing note
     $.ajax({
       url: "fetch_note.php",
       type: "POST",
-      data: {
-        word: selectedWord,
-        master_id: mid,
-      },
+      data: { word, master_id: mid },
       dataType: "json",
-      success: function (response) {
-        // Log the response for debugging
-        console.log("Fetch note response:", response);
-
-        if (response.success) {
-          $("#noteText").val(response.note);
-        } else {
-          $("#noteText").val(""); // Ensure the field is empty for new notes
-        }
-
-        // Set modal title
-        $("#noteModal h3").text(`Add Note for "${selectedWord}"`);
-
-        // Enable editing when using "Add Note"
+      success: (res) => {
+        $("#noteText").val(res.success ? res.note : "");
+        $("#noteModal h3").text(`Add Note for "${word}"`);
         $("#noteText").prop("readonly", false);
-
-        // Show the Save button again
         $("#saveNote").show();
-
-        // Open the modal
         $("#noteModal").show();
       },
-      error: function (xhr, status, error) {
-        console.error("Error fetching note:", status, error);
-        console.error("Response:", xhr.responseText);
-        $("#noteText").val(""); // Clear on error
+      error: () => {
+        $("#noteText").val("");
         $("#noteModal").show();
-      },
+      }
     });
-  });
+  }
 
-  // Close the note modal
-  $(document).on("click", ".close-note-modal, #closeNote", function () {
-    $("#noteModal").hide();
-  });
+  saveNote() {
+    const word = this.getSelectedWord();
+    const note = $("#noteText").val();
+    const mid = this.getMasterId();
 
-  // Save the note
-  $(document).on("click", "#saveNote", function () {
-    let selectedWord = $("#selected-word").text().trim();
-    let noteText = $("#noteText").val();
-
-    // Get masterId from URL or use default
-    const urlParams = new URLSearchParams(window.location.search);
-    const mid = urlParams.get("mid") || 5075;
-
-    // Save note to database
+    // [Pattern: Command]
     $.ajax({
       url: "save_note.php",
       type: "POST",
-      data: {
-        word: selectedWord,
-        note: noteText,
-        master_id: mid,
-      },
+      data: { word, note, master_id: mid },
       dataType: "json",
-      success: function (response) {
-        console.log("Save note response:", response);
-
-        if (response.success) {
+      success: (res) => {
+        if (res.success) {
           alert("Note saved successfully!");
-
-          // Mark the synonym as having a note
-          if (noteText.trim() !== "") {
-            $(`.synonym-word[data-word='${selectedWord}']`).addClass(
-              "has-note"
-            );
-          } else {
-            $(`.synonym-word[data-word='${selectedWord}']`).removeClass(
-              "has-note"
-            );
-          }
-
-          // Close the modal
-          $("#noteModal").hide();
+          const el = $(`.synonym-word[data-word='${word}']`);
+          note.trim() !== "" ? el.addClass("has-note") : el.removeClass("has-note");
+          this.closeModal();
         } else {
-          alert("Error saving note: " + response.message);
+          alert("Error saving note: " + res.message);
         }
       },
-      error: function (xhr, status, error) {
-        console.error("AJAX Error:", status, error);
-        console.error("Response:", xhr.responseText);
-        alert("Error saving note. Check console for details.");
-      },
+      error: () => alert("Error saving note. Check console for details.")
     });
-  });
+  }
 
-  $(document).on("click", "#viewNoteBtn", function () {
-    let selectedWord = $("#selected-word").text().trim();
-    if (!selectedWord) {
-      alert("Please select a synonym word first.");
-      return;
-    }
+  viewNote() {
+    const word = this.getSelectedWord();
+    const mid = this.getMasterId();
 
-    // Get masterId from URL or use default (5075 for English)
-    const urlParams = new URLSearchParams(window.location.search);
-    const mid = urlParams.get("mid") || 5075;
-
-    console.log("Viewing note for:", selectedWord, "Master ID:", mid);
-
-    // Fetch the existing note
     $.ajax({
       url: "fetch_note.php",
       type: "POST",
-      data: {
-        word: selectedWord,
-        master_id: mid,
-      },
+      data: { word, master_id: mid },
       dataType: "json",
-      success: function (response) {
-        console.log("View note response:", response);
-
-        // Either use the note from the response or show a default message
-        if (response.success && response.note && response.note.trim() !== "") {
-          $("#noteText").val(response.note);
-        } else {
-          // Check for specific error conditions
-          if (response.message && response.message.includes("not found")) {
-            $("#noteText").val("No note has been saved for this word yet.");
-          } else {
-            $("#noteText").val("No note available for this synonym.");
-          }
-        }
-
-  
-        $("#noteModal h3").text(`View Note for "${selectedWord}"`);
+      success: (res) => {
+        const msg = res.success && res.note?.trim() !== ""
+          ? res.note
+          : "No note available for this synonym.";
+        $("#noteText").val(msg);
+        $("#noteModal h3").text(`View Note for "${word}"`);
         $("#noteText").prop("readonly", true);
         $("#saveNote").hide();
         $("#noteModal").show();
       },
-      error: function (xhr, status, error) {
-        console.error("Error fetching note:", status, error);
-        console.error("Response:", xhr.responseText);
-        alert("Could not retrieve the note. Please try again later.");
-      },
+      error: () => alert("Could not retrieve the note.")
     });
-  });
+  }
 
-  // Ensure "Save Note" button is shown again when opening the Add Note modal
-  $(document).on("click", "#addNoteBtn", function () {
-    $("#saveNote").show();
-  });
-
-  // Close modal when clicking outside of it
-  $(window).click(function (event) {
-    if ($(event.target).is("#noteModal")) {
-      $("#noteModal").hide();
-    }
-  });
-
-  // Add indicator for words that have notes when they're loaded
-  function initializeNotes() {
-    console.log("📝 Initializing notes for visible synonyms...");
-
-    // Only process the first 5 words initially to prevent flooding
+  initializeNotes() {
     let count = 0;
-    const MAX_INITIAL = 5;
-
-    $(".synonym-word.green, .synonym-word.yellow-word").each(function () {
-      if (count < MAX_INITIAL) {
-        let word = $(this).attr("data-word");
-        if (word && !processedWords.has(word)) {
-          debouncedFetchNote(word);
+    $(".synonym-word.green, .synonym-word.yellow-word").each((_, el) => {
+      if (count < this.maxInitialNotes) {
+        const word = $(el).data("word");
+        if (word && !this.processedWords.has(word)) {
+          this.debouncedFetchNote(word);
           count++;
         }
       }
     });
   }
 
-  // Run initialization after a short delay
-  setTimeout(initializeNotes, 1000);
+  closeModal() {
+    $("#noteModal").hide();
+  }
 
-  
-  $(document).on("click", ".synonym-word", function () {
-    let selectedWord = $(this).attr("data-word").trim();
-    debouncedFetchNote(selectedWord);
-  });
+  getSelectedWord() {
+    return $("#selected-word").text().trim();
+  }
+
+  getMasterId() {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get("mid") || 5075;
+  }
+}
+
+// [Pattern: Module] - Instantiating the note manager as a self-contained unit
+$(document).ready(() => {
+  new SynonymNoteManager();
 });
