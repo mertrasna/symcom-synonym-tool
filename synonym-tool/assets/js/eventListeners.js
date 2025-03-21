@@ -324,7 +324,7 @@ $(document).on("click", ".synonym-word", function () {
           console.log("OpenAI Response:", data);
 
           if (!data.choices || !data.choices[0] || !data.choices[0].message) {
-            console.error("⚠️ Invalid response from OpenAI API:", data);
+            console.error(" Invalid response from OpenAI API:", data);
             return;
           }
 
@@ -336,7 +336,7 @@ $(document).on("click", ".synonym-word", function () {
 
           if (synonyms.length === 0) {
             console.warn(
-              `⚠️ No valid synonyms found for '${selectedWord}' from ChatGPT.`
+              ` No valid synonyms found for '${selectedWord}' from ChatGPT.`
             );
             return;
           }
@@ -397,12 +397,12 @@ $(document).on("click", ".synonym-word", function () {
 
       // ✅ Ensure word is valid
       if (!data.word || data.word.trim() === "") {
-        console.warn("⚠️ Word is missing or empty. Aborting save.");
+        console.warn(" Word is missing or empty. Aborting save.");
         return;
       }
 
       if (!data.synonyms || data.synonyms.length === 0) {
-        console.warn("⚠️ No synonyms provided. Aborting save.");
+        console.warn(" No synonyms provided. Aborting save.");
         return;
       }
 
@@ -434,7 +434,7 @@ $(document).on("click", ".synonym-word", function () {
         console.log("✅ Server Response:", result);
 
         if (!result.success) {
-          console.warn(`⚠️ Database Insert Failed: ${result.message}`);
+          console.warn(` Database Insert Failed: ${result.message}`);
         }
       } catch (error) {
         console.error("❌ Error saving ChatGPT synonyms:", error);
@@ -873,7 +873,7 @@ $(document).on("click", ".synonym-word", function () {
 
     if (currentCount >= maxTotal) {
       console.warn(
-        "⚠️ The table already has 15 synonyms. Not adding any more."
+        " The table already has 15 synonyms. Not adding any more."
       );
       return;
     }
@@ -891,7 +891,7 @@ $(document).on("click", ".synonym-word", function () {
     // 7) If none remain, do nothing
     if (synonymsToAdd.length === 0) {
       console.warn(
-        "⚠️ No new synonyms added (all were duplicates or limit reached)."
+        " No new synonyms added (all were duplicates or limit reached)."
       );
       return;
     }
@@ -1002,7 +1002,7 @@ $(document).on("click", ".synonym-word", function () {
                 selectedWord
               );
             } else {
-              console.warn("⚠️ Error saving synonyms:", response.message);
+              console.warn(" Error saving synonyms:", response.message);
             }
           },
           error: function (xhr, status, error) {
@@ -1059,7 +1059,7 @@ $(document).on("click", ".synonym-word", function () {
 
     if (!rootWord || typeof rootWord === "undefined") {
       console.warn(
-        "⚠️ Warning: Root word is undefined. Setting default value."
+        " Warning: Root word is undefined. Setting default value."
       );
       rootWord = "";
     }
@@ -1071,7 +1071,7 @@ $(document).on("click", ".synonym-word", function () {
 
     if (!symptomText || typeof symptomText === "undefined") {
       console.warn(
-        "⚠️ Warning: Symptom Text is undefined. Setting default value."
+        " Warning: Symptom Text is undefined. Setting default value."
       );
       symptomText = "N/A";
     }

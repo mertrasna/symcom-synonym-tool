@@ -81,7 +81,7 @@
                 <th style="width:5%;">Generic Term</th>
                 <th style="width:5%;">Sub Term</th>
                 <th style="width:5%;">Comment</th>
-                <th style="width:5%;">Note</th> <!-- Added Note Column -->
+                <th style="width:5%;">Note</th> 
             </tr>
         </thead>
         <tbody>
@@ -95,7 +95,7 @@
                         <td><?php echo htmlspecialchars($row['generic_term']); ?></td>
                         <td><?php echo htmlspecialchars($row['sub_term']); ?></td>
                         <td><?php echo htmlspecialchars($row['comment']); ?></td>
-                        <td><?php echo htmlspecialchars($row['note'] ?? ''); ?></td> <!-- Display Note -->
+                        <td><?php echo htmlspecialchars($row['note'] ?? ''); ?></td> 
                     </tr>
             <?php
                 }
