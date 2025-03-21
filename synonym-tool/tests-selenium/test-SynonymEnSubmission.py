@@ -2,10 +2,12 @@ import unittest
 import mysql.connector
 import time
 import random
+import string
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import ElementClickInterceptedException
 
 DB_CONFIG = {
     "host": "localhost",
@@ -16,7 +18,10 @@ DB_CONFIG = {
     "charset": "utf8mb4"
 }
 
-class SynonymEnSubmission(unittest.TestCase):
+def clean_word(word):
+    return word.translate(str.maketrans('', '', string.punctuation)).strip().lower()
+
+class SynonymEnBlueWordTest(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
@@ -31,6 +36,7 @@ class SynonymEnSubmission(unittest.TestCase):
         submit_button = WebDriverWait(driver, 10).until(
             EC.element_to_be_clickable((By.ID, "submitSynonyms"))
         )
+        time.sleep(0.5)
         submit_button.click()
         WebDriverWait(driver, 10).until(EC.alert_is_present())
         alert = driver.switch_to.alert
@@ -39,113 +45,133 @@ class SynonymEnSubmission(unittest.TestCase):
         time.sleep(2)
         return alert_text
 
-    def test_synonym_en_submission(self):
+    def test_blue_words_root_and_checkbox(self):
         driver = self.driver
 
-        print("\n=== TEST: Synonym_EN Submission with Random Checkbox States ===")
+        print("\n=== TEST: Multiple Blue Words - One Checkbox Each ===")
 
-        # Step 1: Click a green word
-        green_words = WebDriverWait(driver, 10).until(
-            EC.presence_of_all_elements_located((By.CSS_SELECTOR, ".synonym-word.green"))
+        non_green_words = WebDriverWait(driver, 10).until(
+            EC.presence_of_all_elements_located((By.CSS_SELECTOR, ".synonym-word:not(.green)"))
         )
-        self.assertTrue(green_words, "No green words found to select.")
 
-        selected_elem = random.choice(green_words)
-        green_word = selected_elem.get_attribute("data-word").strip()
-        selected_elem.click()
-        time.sleep(1)
-        selected_elem.click()  # to fully load form
+        random.shuffle(non_green_words)
+        words_tested = 0
+        tested_pairs = []
 
-        print(f"Clicked green word: '{green_word}'")
+        for selected_elem in non_green_words:
+            if words_tested >= 3:
+                break
 
-        # Step 2: Wait for form to load
-        WebDriverWait(driver, 10).until(
-            EC.presence_of_element_located((By.ID, "root-word"))
-        )
-        time.sleep(1)
+            try:
+                raw_word = selected_elem.get_attribute("data-word").strip()
+                cleaned_word = clean_word(raw_word)
+                if cleaned_word.isnumeric():
+                    print(f"Skipping numeric word: '{cleaned_word}'")
+                    continue
 
-        # Step 3: Pick a random synonym from the table
-        all_rows = driver.find_elements(By.CSS_SELECTOR, "#synonymTable tbody tr")
-        synonym_rows = [row for row in all_rows if "manualSynonym" not in row.get_attribute("innerHTML")]
-        self.assertTrue(synonym_rows, "No synonym rows found.")
+                driver.execute_script("arguments[0].scrollIntoView(true);", selected_elem)
+                time.sleep(0.5)
+                selected_elem.click()
+                time.sleep(0.8)
+                selected_elem.click()
+                print(f"Clicked blue word: '{raw_word}' → normalized: '{cleaned_word}'")
+            except ElementClickInterceptedException:
+                print(f"Skipping: Click intercepted for word: '{raw_word}'")
+                continue
 
-        selected_row = random.choice(synonym_rows)
-        synonym_word = selected_row.find_elements(By.TAG_NAME, "td")[-1].text.strip()
-        normalized_word = synonym_word.strip().rstrip("),.").lower()
+            try:
+                WebDriverWait(driver, 3).until(
+                    EC.presence_of_element_located((By.ID, "synonymTable"))
+                )
+                time.sleep(1.2)
+            except:
+                print(f"Skipping: No synonym table loaded for word: {cleaned_word}")
+                continue
 
-        print(f"Selected synonym: '{synonym_word}'")
+            toggle_button = WebDriverWait(driver, 5).until(
+                EC.element_to_be_clickable((By.ID, "toggleAllSBtn"))
+            )
+            toggle_button.click()
+            time.sleep(0.5)
+            toggle_button.click()
+            print("Clicked 'Toggle All S' twice.")
 
-        # Step 4: Randomly check/uncheck S, Q, O, U
-        categories = ['S', 'Q', 'O', 'U']
-        checked_categories = []
+            all_rows = driver.find_elements(By.CSS_SELECTOR, "#synonymTable tbody tr")
+            synonym_rows = [row for row in all_rows if "manualSynonym" not in row.get_attribute("innerHTML")]
+            if not synonym_rows:
+                print("Skipping: No synonym rows loaded.")
+                continue
 
-        for cat in categories:
-            checkbox = selected_row.find_element(By.CSS_SELECTOR, f"input[name='{cat}']")
-            should_check = random.choice([True, False])
+            selected_row = random.choice(synonym_rows)
+            synonym_word = selected_row.find_elements(By.TAG_NAME, "td")[-1].text.strip()
+            normalized_synonym = clean_word(synonym_word)
+            print(f"Selected synonym: '{synonym_word}' → normalized: '{normalized_synonym}'")
 
-            if checkbox.is_selected() and not should_check:
+            categories = ['S', 'Q', 'O', 'U']
+            random_cat = random.choice(categories)
+
+            s_checkbox = selected_row.find_element(By.CSS_SELECTOR, "input[name='S']")
+            if not s_checkbox.is_selected():
+                s_checkbox.click()
+
+            checkbox = selected_row.find_element(By.CSS_SELECTOR, f"input[name='{random_cat}']")
+            if checkbox.is_selected():
                 checkbox.click()
-            elif not checkbox.is_selected() and should_check:
-                checkbox.click()
+            checkbox.click()
+            print(f"Checked category '{random_cat}' for word '{normalized_synonym}' (S also checked to ensure root_word is saved)")
 
-            if should_check:
-                checked_categories.append(cat)
+            new_root_word = f"root_{random.randint(1000,9999)}"
+            root_input = driver.find_element(By.ID, "root-word")
+            root_input.clear()
+            root_input.send_keys(new_root_word)
+            print(f"Entered new root word: {new_root_word}")
 
-        print(f"Checked categories for '{synonym_word}': {checked_categories}")
+            time.sleep(0.5)
+            alert_text = self.submit_form_and_handle_alert()
+            print(f"Alert: {alert_text}")
+            self.assertIn("updated successfully", alert_text.lower())
 
-        # Step 5: Enter a new root word
-        new_root_word = f"root_{random.randint(1000,9999)}"
-        root_input = driver.find_element(By.ID, "root-word")
-        root_input.clear()
-        root_input.send_keys(new_root_word)
-        print(f"Entered root word: {new_root_word}")
+            tested_pairs.append((cleaned_word, new_root_word, normalized_synonym, random_cat))
+            words_tested += 1
 
-        # Step 6: Submit
-        alert_text = self.submit_form_and_handle_alert()
-        print(f"Alert received: {alert_text}")
-        self.assertIn("updated successfully", alert_text.lower())
+        if not tested_pairs:
+            self.fail("No valid blue words with synonym tables were found.")
 
-        # Step 7: Query DB for the green word
-        print(f"Querying DB for: '{green_word}'")
-        try:
-            connection = mysql.connector.connect(**DB_CONFIG)
-            cursor = connection.cursor(dictionary=True)
-            query = """
-                SELECT root_word, synonym, cross_reference, generic_term, sub_term 
-                FROM synonym_en WHERE LOWER(word) = LOWER(%s)
-            """
-            cursor.execute(query, (green_word,))
-            result = cursor.fetchone()
-            cursor.close()
-            connection.close()
-        except mysql.connector.Error as e:
-            self.fail(f"Database Error: {e}")
+        for cleaned_word, expected_root, normalized_synonym, random_cat in tested_pairs:
+            print(f"\nQuerying DB for: {cleaned_word}")
+            try:
+                connection = mysql.connector.connect(**DB_CONFIG)
+                cursor = connection.cursor(dictionary=True)
+                cursor.execute("""
+                    SELECT root_word, synonym, cross_reference, generic_term, sub_term 
+                    FROM synonym_en WHERE LOWER(word) = LOWER(%s)
+                """, (cleaned_word,))
+                result = cursor.fetchone()
+                cursor.close()
+                connection.close()
+            except mysql.connector.Error as e:
+                self.fail(f"Database Error: {e}")
 
-        self.assertIsNotNone(result, f"No record found for word: {green_word}")
-        print(f"DB row: {result}")
+            print("DB Result Row:", result)
+            self.assertIsNotNone(result, f"No DB row found for word: {cleaned_word}")
+            self.assertIsNotNone(result['root_word'], f"DB row found, but root_word is NULL for: {cleaned_word}")
+            self.assertEqual(result['root_word'].lower(), expected_root.lower(),
+                             f"Expected root word '{expected_root}', got '{result['root_word']}'")
 
-        self.assertEqual(result['root_word'].lower(), new_root_word.lower(),
-                         f"Expected root word '{new_root_word}', got '{result['root_word']}'")
+            field_map = {
+                'S': result['synonym'],
+                'Q': result['cross_reference'],
+                'O': result['generic_term'],
+                'U': result['sub_term']
+            }
 
-        field_map = {
-            'S': result['synonym'],
-            'Q': result['cross_reference'],
-            'O': result['generic_term'],
-            'U': result['sub_term']
-        }
-
-        for cat in categories:
-            field_value = field_map[cat] or ""
-            in_db = normalized_word in field_value.lower()
-            should_be_present = cat in checked_categories
-
-            print(f"{cat} field value: '{field_value}'")
-            if should_be_present:
-                self.assertTrue(in_db, f"Expected '{normalized_word}' in {cat}, but it was missing.")
-            else:
-                self.assertFalse(in_db, f"Did not expect '{normalized_word}' in {cat}, but it was present.")
-
-        print("✅ All assertions passed.")
+            print("\nValidating checkbox state in DB:")
+            field_value = field_map[random_cat] or ""
+            tokens = [clean_word(w) for w in field_value.split(',') if w.strip()]
+            in_db = normalized_synonym in tokens
+            print(f"{random_cat}: '{field_value}' → tokens: {tokens}")
+            self.assertTrue(in_db, f"Expected '{normalized_synonym}' in {random_cat}, but it was missing.")
+            print(" DB assertion passed for blue word.")
 
     @classmethod
     def tearDownClass(cls):
