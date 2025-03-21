@@ -6,11 +6,11 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from webdriver_manager.chrome import ChromeDriverManager  # ✅ NEW
 
 # -------------------------------------------------------------------
 # Configuration
 # -------------------------------------------------------------------
-CHROME_DRIVER_PATH = "/usr/local/bin/chromedriver"
 TARGET_URL = "http://localhost:8080/synonym-tool/all-symptoms.php?mid=5072"
 
 class HoverSynonymPopupTest(unittest.TestCase):
@@ -19,8 +19,8 @@ class HoverSynonymPopupTest(unittest.TestCase):
     def setUpClass(cls):
         print("\n========== Test Setup ==========")
         print("Launching browser and navigating to the test page...")
-        service = Service(CHROME_DRIVER_PATH)
-        cls.driver = webdriver.Chrome(service=service)
+        # ✅ Automatically handles the ChromeDriver installation and setup
+        cls.driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
         cls.driver.get(TARGET_URL)
         cls.driver.maximize_window()
         WebDriverWait(cls.driver, 10).until(

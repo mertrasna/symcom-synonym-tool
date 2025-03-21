@@ -1,12 +1,13 @@
 import unittest
+import time
+import mysql.connector
 from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-import mysql.connector
-import time
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager  # ✅ NEW
 
 # ---------------------------------------
 # Configuration
@@ -19,8 +20,8 @@ DB_CONFIG = {
     "database": "symcom_minified_db"
 }
 
-CHROME_DRIVER_PATH = "/usr/local/bin/chromedriver"
 TARGET_URL = "http://localhost:8080/synonym-tool/all-symptoms.php?mid=5075"
+
 TEST_TERMS = [
     {"word": "now and then", "synonym": "occasionally , every now and then , regularly", "expected_isyellow": 1, "expected_isgreen": 0},
     {"word": "powers", "synonym": "abilities", "expected_isyellow": 0, "expected_isgreen": 1}
@@ -92,8 +93,9 @@ class SynonymToolTest(unittest.TestCase):
         print("Setting up test class...")
         for term in TEST_TERMS:
             add_word_to_db(term["word"], synonym=term["synonym"])
-        cls.service = Service(CHROME_DRIVER_PATH)
-        cls.driver = webdriver.Chrome(service=cls.service)
+
+        # ✅ Use ChromeDriverManager here
+        cls.driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
         cls.driver.get(TARGET_URL)
         cls.driver.maximize_window()
         WebDriverWait(cls.driver, 10).until(EC.presence_of_element_located((By.TAG_NAME, "body")))
