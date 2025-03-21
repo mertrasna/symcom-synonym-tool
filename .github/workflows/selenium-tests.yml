@@ -1,4 +1,4 @@
-name: Selenium Tests
+name: PHP Tests
 
 on:
   push:
@@ -7,34 +7,45 @@ on:
   pull_request:
 
 jobs:
-  selenium-tests:
+  php-tests:
     runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:5.7
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: symcom_minified_db
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
         with:
-          python-version: "3.9"
+          php-version: "7.1"
+          extensions: mysqli, mbstring
+          tools: composer:v2
 
-      - name: Install Chrome and ChromeDriver
+      - name: Import Database Schema
         run: |
-          sudo apt-get update
-          sudo apt-get install -y google-chrome-stable
-          CHROME_VERSION=$(google-chrome --version | awk '{print $3}')
-          CHROMEDRIVER_VERSION=$(curl -s "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_$CHROME_VERSION")
-          wget -q "https://chromedriver.storage.googleapis.com/$CHROMEDRIVER_VERSION/chromedriver_linux64.zip"
-          unzip chromedriver_linux64.zip
-          sudo mv chromedriver /usr/local/bin/
-          rm chromedriver_linux64.zip
-          chromedriver --version
+          mysql -h 127.0.0.1 -u root -proot symcom_minified_db < new_database_synonym_test.sql
+          mysql -h 127.0.0.1 -u root -proot symcom_minified_db < synonym-tool/test-symptoms/update_tables.sql
 
-      - name: Install Selenium
-        run: pip install selenium
+      - name: Install Composer Dependencies
+        run: composer install --no-interaction --prefer-dist
 
-      - name: Run Selenium Tests
+      - name: Prepare Test Directory
         run: |
-          python synonym_tool/tests-selenium/test3-nextword.py
-          python synonym_tool/tests-selenium/test4-reload.py
+          mkdir -p synonym-tool/tests
+          cp -f synonym-tool/tests-php/* synonym-tool/tests/
+
+      - name: Run Manual Entry Tests
+        run: vendor/bin/phpunit --bootstrap vendor/autoload.php --testdox synonym-tool/tests/ManualEntryTest.php
+
+      - name: Run Note Functionality Tests
+        run: vendor/bin/phpunit --bootstrap vendor/autoload.php --testdox synonym-tool/tests/NoteFunctionalityTest.php
